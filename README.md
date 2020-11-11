@@ -16,6 +16,10 @@ For now it will be local only, with SQLite DB.
     > python -m pip install Django
 - Creating requirements file
     > python -m pip freeze > requirements.txt
+- Creating main Django project
+    > django-admin startproject Load_Planning_Project
+- Checked created project with running local server and going to http://127.0.0.1:8000/
+    > python Load_Planning_Project/manage.py runserver
 
 **ToDo List:**
 - In Employees table - is Position_ID related to the Degree_ID and not to the Employee_ID (3NF possibly violated)?
