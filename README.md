@@ -23,6 +23,7 @@ For now it will be local only, with SQLite DB.
 - Created new Django app - Employees_Management
     > cd Load_Planning_Project\
     python manage.py startapp Employees_Management
+- Created some basic view for the main project (division for menu and 'body' sections)
 
 **ToDo List:**
 - In Employees table - is Position_ID related to the Degree_ID and not to the Employee_ID (3NF possibly violated)?
