@@ -1,4 +1,4 @@
-##08/11/2020
+###08/11/2020
 
 - Moved DB model to the MySQL Workbench (Because of trail restrictions of app.dbdesigner.net)
 - Major changes to the model - actually that one was in about 50% made from scratch.
@@ -48,5 +48,5 @@
 - Theoretically (by the provided excel file) Editor_ID in Plans table depends on the Employee and the Order number, but not on the Lesson Type.
 To be checked if that is correct. 
 
-##20/11/2020
+###20/11/2020
 - Creating basic model of the DB https://app.dbdesigner.net/designer/schema/364137
