@@ -8,26 +8,14 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###11/11/2020
+###12/11/2020
 
-- Added Subcontracts table - forget about it in the first version of the MySQL Workbench model
-- Created Salaries table from money related column in the Employees table.
-- Installation of Django module (Django v3.1.3)
-    > python -m pip install Django
-- Creating requirements file
-    > python -m pip freeze > requirements.txt
-- Creating main Django project
-    > django-admin startproject Load_Planning_Project
-- Checked created project with running local server and going to http://127.0.0.1:8000/
-    > python Load_Planning_Project/manage.py runserver
-- Created new Django app - Employees_Management
-    > cd Load_Planning_Project\
-    python manage.py startapp Employees_Management
-- Created some basic view for the main project (division for menu and 'body' sections)
-- Created basic view for Employees_Management app and added link for it in base page
-
-**ToDo List:**
-- In Employees table - is Position_ID related to the Degree_ID and not to the Employee_ID (3NF possibly violated)?
-- Is future salary table dependant on the Position/Degree or is it unique for each Employee?
-
+- Making basic Models: Degrees and Positions
+- Preparing migrations, checking SQL format and migrating models to the DB
+    > python manage.py makemigrations\
+    python manage.py sqlmigrate Employees_Management 0001
+    python manage.py migrate
+    - Output for the SQL: 
+        > CREATE TABLE "Employees_Management_degrees" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(45) NOT NULL);\
+        CREATE TABLE "Employees_Management_positions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(45) NOT NULL);\
 
