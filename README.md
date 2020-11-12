@@ -10,12 +10,19 @@ For now it will be local only, with SQLite DB.
 ## Last changes
 ###12/11/2020
 
-- Making basic Models: Degrees and Positions
-- Preparing migrations, checking SQL format and migrating models to the DB
+- Changed name of app "Employees_Management" into "employees"
+- Made basic employees' Models: Degrees and Positions
+- Prepared migrations, checking SQL format and migrating models to the DB
     > python manage.py makemigrations\
-    python manage.py sqlmigrate Employees_Management 0001
+    python manage.py sqlmigrate employees 0001
     python manage.py migrate
-    - Output for the SQL: 
-        > CREATE TABLE "Employees_Management_degrees" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(45) NOT NULL);\
-        CREATE TABLE "Employees_Management_positions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(45) NOT NULL);\
-
+- Checked tables with python shell
+    > python manage.py shell
+- Added some records with help of the shell
+    > from employees.models import Degrees, Positions\
+    d = Degrees(name='prof.')\
+    d.save()\
+    p = Positions(name='adiunkt')\
+    p.save()\
+    quit()
+- Changed index.html for now to display full list of records
