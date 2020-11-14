@@ -1,20 +1,11 @@
-{% extends "base.html" %}
+{% extends "employees/base.html" %}
 
-{% block content %}
-
-<h3>Pracownicy</h3>
-
-<h4>Stopnie</h4>
-{% if degrees %}
-    {% for object in degrees %}
-        {{ object.name|safe }} |
-    {% endfor %}
-{% endif %}
-
-<h4>Pozycje</h4>
-{% if positions %}
-    {% for object in positions %}
-        {{ object.name|safe }} |
+{% block local_content %}
+<h4>{{ table_name }}</h4>
+{% if objects %}
+    {% for object in objects %}
+        {{ object.name|safe }}
+        <br>
     {% endfor %}
 {% endif %}
 

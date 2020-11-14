@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <b>Employees |</b>
+    <a href="{% url 'employees:degrees' %}">Degrees</a>
+    <a href="{% url 'employees:positions' %}">Positions</a>
+</div>
+<hr>
+<div>
+    {% block local_content %}{% endblock %}
+</div>
+{% endblock %}

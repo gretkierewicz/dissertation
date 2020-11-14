@@ -1,3 +1,22 @@
+###12/11/2020
+
+- Changed name of app "Employees_Management" into "employees"
+- Made basic employees' Models: Degrees and Positions
+- Prepared migrations, checking SQL format and migrating models to the DB
+    > python manage.py makemigrations\
+    python manage.py sqlmigrate employees 0001
+    python manage.py migrate
+- Checked tables with python shell
+    > python manage.py shell
+- Added some records with help of the shell
+    > from employees.models import Degrees, Positions\
+    d = Degrees(name='prof.')\
+    d.save()\
+    p = Positions(name='adiunkt')\
+    p.save()\
+    quit()
+- Changed index.html for now to display full list of records
+
 ###11/11/2020
 
 - Added Subcontracts table - forget about it in the first version of the MySQL Workbench model
