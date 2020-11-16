@@ -1,12 +1,42 @@
 {% extends "employees/base.html" %}
 
 {% block local_content %}
-<h4>{{ table_name }}</h4>
-{% if objects %}
-    {% for object in objects %}
-        {{ object.name|safe }}
-        <br>
-    {% endfor %}
-{% endif %}
+    <b>{{ table_name }}</b>
+    <br><br>
+    {% if objects %}
+        <table>
+            <tr>
+                {{ columns }}
+            </tr>
+            {% for object in objects %}
+            <tr>
+                {% if object_id != object.id %}
+                    {{ object.html_table_row }}
+                    <td><a href="{% url 'employees:edit_record' table_name=table_name object_id=object.id %}">Edit</a></td>
+                    <td><a href="{% url 'employees:del_record' table_name=table_name object_id=object.id %}">Delete</a></td>
+                {% else %}
+                    <form action="{% url 'employees:edit_record' table_name=table_name object_id=object.id %}" method="post">
+                        {% csrf_token %}
+                        <td>{{ form.name }}</td>
+                        <td><input type="submit" value="Submit"></td>
+                        <td> </td>
+                    </form>
+                {% endif %}
+            </tr>
+            {% endfor %}
 
+        </table>
+    {% endif %}
+
+    {% if new_flag %}
+        <br>
+        <form action="{% url 'employees:new_record' table_name=table_name %}" method="post">
+            {% csrf_token %}
+            {{ form.name }}
+            <input type="submit" value="Submit">
+        </form>
+    {% else %}
+        <br>
+        <a href="{% url 'employees:new_record' table_name=table_name %}">Create new</a>
+    {% endif %}
 {% endblock %}

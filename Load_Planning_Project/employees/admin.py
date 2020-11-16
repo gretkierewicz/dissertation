@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Degrees, Positions
+
+admin.site.register(Degrees)
+admin.site.register(Positions)

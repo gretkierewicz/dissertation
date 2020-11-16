@@ -3,8 +3,8 @@
 {% block content %}
 <div>
     <b>Employees |</b>
-    <a href="{% url 'employees:degrees' %}">Degrees</a>
-    <a href="{% url 'employees:positions' %}">Positions</a>
+    <a href="{% url 'employees:show_table' table_name='Degrees' %}">Degrees</a>
+    <a href="{% url 'employees:show_table' table_name='Positions' %}">Positions</a>
 </div>
 <hr>
 <div>

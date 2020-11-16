@@ -1,3 +1,7 @@
+###14/11/2020
+
+- Changed how data is displayed. Preparation for including forms.
+
 ###12/11/2020
 
 - Changed name of app "Employees_Management" into "employees"

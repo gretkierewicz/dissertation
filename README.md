@@ -8,7 +8,9 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###14/11/2020
+###16/11/2020
 
-- Changed how data is displayed. Preparation for including forms.
+- Building basic views and forms for show/create new/edit/delete functions
+- Refactoring code for better usability when working with many tables
+- Building universal views for any kind of a table
 
