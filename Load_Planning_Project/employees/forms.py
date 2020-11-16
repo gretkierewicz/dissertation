@@ -6,9 +6,9 @@ from .models import Degrees, Positions
 class DegreeForm(ModelForm):
     class Meta:
         model = Degrees
-        fields = ['name']
+        fields = '__all__'
         widgets = {
-            'name': TextInput(attrs={'size': 5})
+            'name': TextInput(attrs={'size': 45})
         }
 
 
@@ -17,5 +17,5 @@ class PositionForm(ModelForm):
         model = Positions
         fields = ['name']
         widgets = {
-            'name': TextInput(attrs={'size': 5})
+            'name': TextInput(attrs={'size': 45})
         }

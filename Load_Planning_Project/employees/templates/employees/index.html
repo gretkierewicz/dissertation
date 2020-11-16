@@ -14,13 +14,6 @@
                     {{ object.html_table_row }}
                     <td><a href="{% url 'employees:edit_record' table_name=table_name object_id=object.id %}">Edit</a></td>
                     <td><a href="{% url 'employees:del_record' table_name=table_name object_id=object.id %}">Delete</a></td>
-                {% else %}
-                    <form action="{% url 'employees:edit_record' table_name=table_name object_id=object.id %}" method="post">
-                        {% csrf_token %}
-                        <td>{{ form.name }}</td>
-                        <td><input type="submit" value="Submit"></td>
-                        <td> </td>
-                    </form>
                 {% endif %}
             </tr>
             {% endfor %}
@@ -28,15 +21,28 @@
         </table>
     {% endif %}
 
+    {% if object_id %}
+        <br>
+        <b>Edit record:</b>
+        <form action="{% url 'employees:edit_record' table_name=table_name object_id=object_id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_table }}
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+
     {% if new_flag %}
         <br>
+        <b>Create new record:</b>
         <form action="{% url 'employees:new_record' table_name=table_name %}" method="post">
             {% csrf_token %}
-            {{ form.name }}
+            {{ form.as_table }}
             <input type="submit" value="Submit">
         </form>
     {% else %}
         <br>
         <a href="{% url 'employees:new_record' table_name=table_name %}">Create new</a>
+        <br>
     {% endif %}
 {% endblock %}

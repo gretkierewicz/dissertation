@@ -22,10 +22,8 @@ def new_record(request, table_name):
     if request.method == 'POST':
         form = TABLES[table_name]['form'](request.POST)
         if form.is_valid():
-            record_check = TABLES[table_name]['model'].objects.filter(name=form.instance.name).first()
-            if record_check is None:
-                form.save()
-        return redirect('employees:show_table')
+            form.save()
+        return redirect('employees:show_table', table_name=table_name)
 
     # GET method
     else:
@@ -44,14 +42,12 @@ def edit_record(request, table_name, object_id):
 
     # POST method
     if request.method == 'POST':
-        record_from_form = TABLES[table_name]['model']()
-        form = TABLES[table_name]['form'](request.POST, instance=record_from_form)
+        form = TABLES[table_name]['form'](request.POST, instance=record)
         if form.is_valid():
-            record.name = record_from_form.name
-            record.save()
-            return redirect('employees:show_table')
+            form.save()
+            return redirect('employees:show_table', table_name=table_name)
 
-        return redirect('employees:show_table')
+        return redirect('employees:show_table', table_name=table_name)
 
     # GET method
     else:
@@ -60,9 +56,7 @@ def edit_record(request, table_name, object_id):
             'columns': TABLES[table_name]['model'].html_columns,
             'objects': TABLES[table_name]['model'].objects.all().order_by('name'),
             'object_id': object_id,
-            'form': TABLES[table_name]['form'](initial={
-                'name': record.name,
-            }),
+            'form': TABLES[table_name]['form'](instance=record),
         }
     return render(request, 'employees/index.html', context)
 
@@ -71,4 +65,4 @@ def del_record(request, table_name, object_id):
     record = get_object_or_404(TABLES[table_name]['model'], pk=object_id)
     if record:
         record.delete()
-    return redirect('employees:show_table')
+    return redirect('employees:show_table', table_name=table_name)

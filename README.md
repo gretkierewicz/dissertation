@@ -13,4 +13,10 @@ For now it will be local only, with SQLite DB.
 - Building basic views and forms for show/create new/edit/delete functions
 - Refactoring code for better usability when working with many tables
 - Building universal views for any kind of a table
+- More corrections to the code, so any table can be handled 
+
+To be done:
+
+- Validation of fields/moving some parts of code to models if needed
+- Make a Employees table to check how everything works with bigger table
 
