@@ -1,10 +1,11 @@
-from .forms import DegreeForm, PositionForm
-from .models import Degrees, Positions
+from .forms import DegreeForm, PositionForm, EmployeeForm
+from .models import Degrees, Positions, Employees
 from django.shortcuts import render, get_object_or_404, redirect
 
 TABLES = {
     'Degrees': {'model': Degrees, 'form': DegreeForm},
     'Positions': {'model': Positions, 'form': PositionForm},
+    'Employees': {'model': Employees, 'form': EmployeeForm},
 }
 
 
@@ -12,7 +13,7 @@ def show_table(request, table_name='Degrees'):
     context = {
         'table_name': TABLES[table_name]['model'].table_name,
         'columns': TABLES[table_name]['model'].html_columns,
-        'objects': TABLES[table_name]['model'].objects.all().order_by('name'),
+        'objects': TABLES[table_name]['model'].objects.all(),
     }
     return render(request, 'employees/index.html', context)
 
@@ -30,7 +31,7 @@ def new_record(request, table_name):
         context = {
             'table_name': TABLES[table_name]['model'].table_name,
             'columns': TABLES[table_name]['model'].html_columns,
-            'objects': TABLES[table_name]['model'].objects.all().order_by('name'),
+            'objects': TABLES[table_name]['model'].objects.all(),
             'new_flag': True,
             'form': TABLES[table_name]['form'](),
         }
@@ -54,7 +55,7 @@ def edit_record(request, table_name, object_id):
         context = {
             'table_name': TABLES[table_name]['model'].table_name,
             'columns': TABLES[table_name]['model'].html_columns,
-            'objects': TABLES[table_name]['model'].objects.all().order_by('name'),
+            'objects': TABLES[table_name]['model'].objects.all(),
             'object_id': object_id,
             'form': TABLES[table_name]['form'](instance=record),
         }
