@@ -34,7 +34,7 @@ class Employees(models.Model):
     abbreviation = models.CharField(max_length=5, null=True, blank=True)
     degree = models.ForeignKey(Degrees, on_delete=models.SET_NULL, null=True)
     position = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, blank=True)
-    e_mail = models.EmailField(max_length=45)
+    e_mail = models.EmailField(max_length=45, unique=True)
     supervisor = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     year_of_studies = models.PositiveSmallIntegerField(null=True, blank=True)
     is_procedure_for_a_doctoral_degree_approved = models.BooleanField(default=False)

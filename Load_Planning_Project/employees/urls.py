@@ -9,4 +9,5 @@ urlpatterns = [
     path('<str:table_name>/new', views.new_record, name='new_record'),
     path('<str:table_name>/<int:object_id>/edit', views.edit_record, name='edit_record'),
     path('<str:table_name>/<int:object_id>/del', views.del_record, name='del_record'),
+    path('<str:table_name>/export', views.export_csv, name='export_csv'),
 ]

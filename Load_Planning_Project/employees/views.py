@@ -1,6 +1,11 @@
 from .forms import DegreeForm, PositionForm, EmployeeForm
 from .models import Degrees, Positions, Employees
+
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+
+import csv
+
 
 TABLES = {
     'Degrees': {'model': Degrees, 'form': DegreeForm},
@@ -67,3 +72,15 @@ def del_record(request, table_name, object_id):
     if record:
         record.delete()
     return redirect('employees:show_table', table_name=table_name)
+
+
+def export_csv(request, table_name):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(table_name + '.csv')
+
+    writer = csv.writer(response)
+    writer.writerow([field.name for field in TABLES[table_name]['model']._meta.get_fields()[1:]])
+    for obj in TABLES[table_name]['model'].objects.all():
+        writer.writerow([getattr(obj, field.name) for field in TABLES[table_name]['model']._meta.get_fields()[1:]])
+    return response
