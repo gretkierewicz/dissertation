@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, Form, FileField
 
 from .models import Degrees, Positions, Employees
 
@@ -19,3 +19,7 @@ class EmployeeForm(ModelForm):
     class Meta:
         model = Employees
         fields = '__all__'
+
+
+class UploadFileForm(Form):
+    file = FileField()

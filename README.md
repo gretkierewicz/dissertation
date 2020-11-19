@@ -8,16 +8,14 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###17/11/2020
+###18/11/2020
 
-- Added Employees table
-- Some minor customization of displayed tables
-- Inserted UNIQUE property for e_mail column in Employees table
-- CSV Export option
+- Creating new file-importing-form and view for managing the file
+- Managing importing data on model level
 
 To be done:
 
+- View of imported data and possibility to accept or reject it
 - Validation of fields/moving some parts of code to models if needed
-- Messages about statuses - edited properly and such
+- Messages about statuses - edited properly
 - Validation of UNIQUE columns -> form should pop out message about field (it does not now)
-- CSV Import option

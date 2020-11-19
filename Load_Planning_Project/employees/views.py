@@ -1,10 +1,12 @@
-from .forms import DegreeForm, PositionForm, EmployeeForm
+from .forms import DegreeForm, PositionForm, EmployeeForm, UploadFileForm
 from .models import Degrees, Positions, Employees
 
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-import csv
+from csv import DictReader
+from csv import writer as csv_writer
+from io import StringIO
 
 
 TABLES = {
@@ -37,7 +39,7 @@ def new_record(request, table_name):
             'table_name': TABLES[table_name]['model'].table_name,
             'columns': TABLES[table_name]['model'].html_columns,
             'objects': TABLES[table_name]['model'].objects.all(),
-            'new_flag': True,
+            'new_record_flag': True,
             'form': TABLES[table_name]['form'](),
         }
         return render(request, 'employees/index.html', context)
@@ -79,8 +81,30 @@ def export_csv(request, table_name):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="{}"'.format(table_name + '.csv')
 
-    writer = csv.writer(response)
+    writer = csv_writer(response)
     writer.writerow([field.name for field in TABLES[table_name]['model']._meta.get_fields()[1:]])
     for obj in TABLES[table_name]['model'].objects.all():
         writer.writerow([getattr(obj, field.name) for field in TABLES[table_name]['model']._meta.get_fields()[1:]])
     return response
+
+
+def import_csv(request, table_name):
+    # POST method
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            TABLES[table_name]['model'].import_data(
+                DictReader(StringIO(request.FILES['file'].read().decode('UTF-8')), delimiter=','))
+
+        return redirect('employees:show_table', table_name=table_name)
+
+    # GET method
+    else:
+        context = {
+            'table_name': TABLES[table_name]['model'].table_name,
+            'columns': TABLES[table_name]['model'].html_columns,
+            'objects': TABLES[table_name]['model'].objects.all(),
+            'import_csv_flag': True,
+            'form': UploadFileForm(),
+        }
+        return render(request, 'employees/index.html', context)

@@ -36,7 +36,7 @@
         </form>
     {% endif %}
 
-    {% if new_flag %}
+    {% if new_record_flag %}
         <br>
         <b>Create new record:</b>
         <form action="{% url 'employees:new_record' table_name=table_name %}" method="post">
@@ -51,4 +51,16 @@
     {% endif %}
     <br>
     <a href="{% url 'employees:export_csv' table_name=table_name %}">Export table</a>
+    <br>
+    {% if import_csv_flag %}
+        <br>
+        <form action="{% url 'employees:import_csv' table_name=table_name %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_ul }}
+            <input type="submit" value="Submit">
+        </form>
+    {% else %}
+        <br>
+        <a href="{% url 'employees:import_csv' table_name=table_name %}">Import table</a>
+    {% endif %}
 {% endblock %}
