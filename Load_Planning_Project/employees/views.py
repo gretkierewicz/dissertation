@@ -1,8 +1,11 @@
 from .forms import DegreeForm, PositionForm, EmployeeForm, UploadFileForm
 from .models import Degrees, Positions, Employees
 
+from django.contrib import messages
+from django.contrib.messages import add_message
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.html import format_html
 
 from csv import DictReader
 from csv import writer as csv_writer
@@ -31,6 +34,8 @@ def new_record(request, table_name):
         form = TABLES[table_name]['form'](request.POST)
         if form.is_valid():
             form.save()
+            add_message(request, messages.INFO,
+                        format_html(u'Record <span style="color: green;"><b>created</b></span> successfully.'))
         return redirect('employees:show_table', table_name=table_name)
 
     # GET method
@@ -53,6 +58,8 @@ def edit_record(request, table_name, object_id):
         form = TABLES[table_name]['form'](request.POST, instance=record)
         if form.is_valid():
             form.save()
+            add_message(request, messages.INFO,
+                        format_html(u'Record <span style="color: blue;"><b>edited</b></span> successfully.'))
             return redirect('employees:show_table', table_name=table_name)
 
         return redirect('employees:show_table', table_name=table_name)
@@ -73,6 +80,8 @@ def del_record(request, table_name, object_id):
     record = get_object_or_404(TABLES[table_name]['model'], pk=object_id)
     if record:
         record.delete()
+        add_message(request, messages.INFO,
+                    format_html(u'Record <span style="color: red;"><b>deleted</b></span> successfully.'))
     return redirect('employees:show_table', table_name=table_name)
 
 
@@ -92,10 +101,12 @@ def import_csv(request, table_name):
     # POST method
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
+        msg_table = []
         if form.is_valid():
-            TABLES[table_name]['model'].import_data(
+            msg_table = TABLES[table_name]['model'].import_data(
                 DictReader(StringIO(request.FILES['file'].read().decode('UTF-8')), delimiter=','))
-
+        for msg in msg_table:
+            add_message(request, messages.INFO, msg)
         return redirect('employees:show_table', table_name=table_name)
 
     # GET method

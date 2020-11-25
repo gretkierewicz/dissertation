@@ -12,10 +12,11 @@ For now it will be local only, with SQLite DB.
 
 - Changing import procedure - will need messages to give feedback about failed records and such
 - Eliminating creation of empty string entries in the Degrees and Positions tables
+- Messages about statuses - edited properly deleted and so on
+- Updated import procedure for employees model - more validation of data
 
 To be done:
 
-- Validation of fields/moving some parts of code to models if needed
-- Messages about statuses - edited properly deleted and so on
-- Validation of UNIQUE columns -> form should pop out message about field (it does not now)
+- Change methods that should be 'PUT' or 'DELETE' at least to the 'POST' for now!
+- Validation in the online form - popping out messages for fields
 - Implement TESTS!

@@ -27,5 +27,12 @@
         <div>
             {% block content %}{% endblock %}
         </div>
+
+        {% if messages %}
+            <hr>
+            {% for record in messages %}
+                {{ record.message }}<br>
+            {% endfor %}
+        {% endif %}
     </body>
 </html>
