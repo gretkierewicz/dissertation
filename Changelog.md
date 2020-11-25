@@ -1,3 +1,8 @@
+###18/11/2020
+
+- Creating new file-importing-form and view for managing the file
+- Managing importing data on model level
+
 ###17/11/2020
 
 - Added Employees table
@@ -5,24 +10,12 @@
 - Inserted UNIQUE property for e_mail column in Employees table
 - CSV Export option
 
-To be done:
-
-- Validation of fields/moving some parts of code to models if needed
-- Messages about statuses - edited properly and such
-- Validation of UNIQUE columns -> form should pop out message about field (it does not now)
-- CSV Import option
-
 ###16/11/2020
 
 - Building basic views and forms for show/create new/edit/delete functions
 - Refactoring code for better usability when working with many tables
 - Building universal views for any kind of a table
 - More corrections to the code, so any table can be handled 
-
-To be done:
-
-- Validation of fields/moving some parts of code to models if needed
-- Make a Employees table to check how everything works with bigger table
 
 ###14/11/2020
 
@@ -64,10 +57,6 @@ To be done:
     python manage.py startapp Employees_Management
 - Created some basic view for the main project (division for menu and 'body' sections)
 - Created basic view for Employees_Management app and added link for it in base page
-
-**ToDo List:**
-- In Employees table - is Position_ID related to the Degree_ID and not to the Employee_ID (3NF possibly violated)?
-- Is future salary table dependant on the Position/Degree or is it unique for each Employee?
 
 ###08/11/2020
 
@@ -112,12 +101,6 @@ To be done:
  - Plans - Many-To-Many table with 3 FKs: Employee_ID, Module_ID and LessonType_ID.
     - Only with additional columns: Number_of_hours and Editor_ID
     - K column from sheet not relevant as it is defined in Modules table 
-
-**ToDo List:**
-- Extract data about money from Employees table - that will allow for the better access division in the future.
-- Check the tables for (at least) 3NF.
-- Theoretically (by the provided excel file) Editor_ID in Plans table depends on the Employee and the Order number, but not on the Lesson Type.
-To be checked if that is correct. 
 
 ###20/11/2020
 - Creating basic model of the DB https://app.dbdesigner.net/designer/schema/364137

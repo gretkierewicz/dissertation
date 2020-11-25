@@ -8,14 +8,14 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###18/11/2020
+###25/11/2020
 
-- Creating new file-importing-form and view for managing the file
-- Managing importing data on model level
+- Changing import procedure - will need messages to give feedback about failed records and such
+- Eliminating creation of empty string entries in the Degrees and Positions tables
 
 To be done:
 
-- View of imported data and possibility to accept or reject it
 - Validation of fields/moving some parts of code to models if needed
-- Messages about statuses - edited properly
+- Messages about statuses - edited properly deleted and so on
 - Validation of UNIQUE columns -> form should pop out message about field (it does not now)
+- Implement TESTS!

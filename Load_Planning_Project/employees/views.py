@@ -82,9 +82,9 @@ def export_csv(request, table_name):
     response['Content-Disposition'] = 'attachment; filename="{}"'.format(table_name + '.csv')
 
     writer = csv_writer(response)
-    writer.writerow([field.name for field in TABLES[table_name]['model']._meta.get_fields()[1:]])
+    writer.writerow([field.name for field in TABLES[table_name]['model']._meta.get_fields()[2:]])
     for obj in TABLES[table_name]['model'].objects.all():
-        writer.writerow([getattr(obj, field.name) for field in TABLES[table_name]['model']._meta.get_fields()[1:]])
+        writer.writerow([getattr(obj, field.name) for field in TABLES[table_name]['model']._meta.get_fields()[2:]])
     return response
 
 
