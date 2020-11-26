@@ -1,4 +1,9 @@
-###18/11/2020
+###25/11/2020
+
+- Changing import procedure - will need messages to give feedback about failed records and such
+- Eliminating creation of empty string entries in the Degrees and Positions tables
+- Messages about statuses - edited properly deleted and so on
+- Updated import procedure for employees model - more validation of data###18/11/2020
 
 - Creating new file-importing-form and view for managing the file
 - Managing importing data on model level

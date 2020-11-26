@@ -22,7 +22,7 @@ TABLES = {
 def show_table(request, table_name='Degrees'):
     context = {
         'table_name': TABLES[table_name]['model'].table_name,
-        'columns': TABLES[table_name]['model'].html_columns,
+        'column_headers': TABLES[table_name]['model'].html_column_headers,
         'objects': TABLES[table_name]['model'].objects.all(),
     }
     return render(request, 'employees/index.html', context)
@@ -42,7 +42,7 @@ def new_record(request, table_name):
     else:
         context = {
             'table_name': TABLES[table_name]['model'].table_name,
-            'columns': TABLES[table_name]['model'].html_columns,
+            'column_headers': TABLES[table_name]['model'].html_column_headers,
             'objects': TABLES[table_name]['model'].objects.all(),
             'new_record_flag': True,
             'form': TABLES[table_name]['form'](),
@@ -68,7 +68,7 @@ def edit_record(request, table_name, object_id):
     else:
         context = {
             'table_name': TABLES[table_name]['model'].table_name,
-            'columns': TABLES[table_name]['model'].html_columns,
+            'column_headers': TABLES[table_name]['model'].html_column_headers,
             'objects': TABLES[table_name]['model'].objects.all(),
             'object_id': object_id,
             'form': TABLES[table_name]['form'](instance=record),
@@ -113,7 +113,7 @@ def import_csv(request, table_name):
     else:
         context = {
             'table_name': TABLES[table_name]['model'].table_name,
-            'columns': TABLES[table_name]['model'].html_columns,
+            'column_headers': TABLES[table_name]['model'].html_column_headers,
             'objects': TABLES[table_name]['model'].objects.all(),
             'import_csv_flag': True,
             'form': UploadFileForm(),

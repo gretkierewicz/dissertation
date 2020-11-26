@@ -1,5 +1,3 @@
-from django.contrib import messages
-from django.contrib.messages import add_message
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.html import format_html
@@ -9,7 +7,7 @@ class Degrees(models.Model):
     name = models.CharField(max_length=45, unique=True)
 
     table_name = "Degrees"
-    html_columns = format_html(u"<th>Name</th>")
+    html_column_headers = format_html(u"<th>Name</th>")
 
     def __str__(self):
         return self.name
@@ -36,7 +34,7 @@ class Positions(models.Model):
     name = models.CharField(max_length=45, unique=True)
 
     table_name = "Positions"
-    html_columns = format_html(u"<th>Name</th>")
+    html_column_headers = format_html(u"<th>Name</th>")
 
     def __str__(self):
         return self.name
@@ -72,7 +70,7 @@ class Employees(models.Model):
     has_scholarship = models.BooleanField(default=False)
 
     table_name = "Employees"
-    html_columns = format_html(u"<th>First Name</th><th>Last Name</th><th>Abbreviation</th><th>Degree</th>\
+    html_column_headers = format_html(u"<th>First Name</th><th>Last Name</th><th>Abbreviation</th><th>Degree</th>\
     <th>Position</th><th>E-mail</th><th>Supervisor</th><th>Year of studies</th>\
     <th>Is procedure for a doctoral degree approved</th><th>Has scholarship</th>")
 
