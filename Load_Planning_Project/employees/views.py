@@ -13,9 +13,9 @@ from io import StringIO
 
 
 TABLES = {
-    'Degrees': {'model': Degrees, 'form': DegreeForm},
-    'Positions': {'model': Positions, 'form': PositionForm},
-    'Employees': {'model': Employees, 'form': EmployeeForm},
+    'Degrees': {'model': Degrees, 'form': DegreeForm, 'can_del_records': False},
+    'Positions': {'model': Positions, 'form': PositionForm, 'can_del_records': False},
+    'Employees': {'model': Employees, 'form': EmployeeForm, 'can_del_records': True},
 }
 
 
@@ -24,6 +24,7 @@ def show_table(request, table_name='Degrees'):
         'table_name': TABLES[table_name]['model'].table_name,
         'column_headers': TABLES[table_name]['model'].html_column_headers,
         'objects': TABLES[table_name]['model'].objects.all(),
+        'can_del_records': TABLES[table_name]['can_del_records'],
     }
     return render(request, 'employees/index.html', context)
 
@@ -44,6 +45,7 @@ def new_record(request, table_name):
             'table_name': TABLES[table_name]['model'].table_name,
             'column_headers': TABLES[table_name]['model'].html_column_headers,
             'objects': TABLES[table_name]['model'].objects.all(),
+            'can_del_records': TABLES[table_name]['can_del_records'],
             'new_record_flag': True,
             'form': TABLES[table_name]['form'](),
         }
@@ -70,6 +72,7 @@ def edit_record(request, table_name, object_id):
             'table_name': TABLES[table_name]['model'].table_name,
             'column_headers': TABLES[table_name]['model'].html_column_headers,
             'objects': TABLES[table_name]['model'].objects.all(),
+            'can_del_records': TABLES[table_name]['can_del_records'],
             'object_id': object_id,
             'form': TABLES[table_name]['form'](instance=record),
         }
@@ -77,12 +80,18 @@ def edit_record(request, table_name, object_id):
 
 
 def del_record(request, table_name, object_id):
-    record = get_object_or_404(TABLES[table_name]['model'], pk=object_id)
-    if record:
-        record.delete()
-        add_message(request, messages.INFO,
-                    format_html(u'Record <span style="color: red;"><b>deleted</b></span> successfully.'))
-    return redirect('employees:show_table', table_name=table_name)
+    # POST method
+    if request.method == 'POST':
+        record = get_object_or_404(TABLES[table_name]['model'], pk=object_id)
+        if record:
+            record.delete()
+            add_message(request, messages.INFO,
+                        format_html(u'Record <span style="color: red;"><b>deleted</b></span> successfully.'))
+        return redirect('employees:show_table', table_name=table_name)
+
+    # GET method
+    else:
+        return redirect('employees:show_table', table_name=table_name)
 
 
 def export_csv(request, table_name):
@@ -115,6 +124,7 @@ def import_csv(request, table_name):
             'table_name': TABLES[table_name]['model'].table_name,
             'column_headers': TABLES[table_name]['model'].html_column_headers,
             'objects': TABLES[table_name]['model'].objects.all(),
+            'can_del_records': TABLES[table_name]['can_del_records'],
             'import_csv_flag': True,
             'form': UploadFileForm(),
         }

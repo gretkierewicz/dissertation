@@ -17,8 +17,14 @@
                 {% else %}
                     <td><span style="color: green;"><b>Edit</b></span></td>
                 {% endif %}
-                <td><a style="color: red;" href="{% url 'employees:del_record' table_name=table_name object_id=object.id %}">
-                    Delete</a></td>
+                {% if can_del_records %}
+                    <td>
+                        <form action="{% url 'employees:del_record' table_name=table_name object_id=object.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" value="Delete">
+                        </form>
+                    </td>
+                {% endif %}
             </tr>
             {% endfor %}
 

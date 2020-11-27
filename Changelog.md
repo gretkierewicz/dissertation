@@ -1,3 +1,7 @@
+###26/11/2020
+
+- Renamed 'columns' to column_headers for better readability
+
 ###25/11/2020
 
 - Changing import procedure - will need messages to give feedback about failed records and such

@@ -8,13 +8,13 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###26/11/2020
+###27/11/2020
 
-- Renamed 'columns' to column_headers for better readability
+- Added can_delete_records flag for each table (in views for now)
+- Delete view now responds to the POST method - need to update for DELETE later 
 
 To be done:
 
-- Change methods that should be 'PUT' or 'DELETE' at least to the 'POST' for now!
+- Update methods that should be 'PUT' or 'DELETE'
 - Validation in the online form - popping out messages for fields
 - Implement TESTS!
-- Add can_edit/can_delete flags for TABLES and view
