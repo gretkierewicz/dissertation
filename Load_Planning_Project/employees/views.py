@@ -1,5 +1,6 @@
 from .forms import DegreeForm, PositionForm, EmployeeForm, UploadFileForm
 from .models import Degrees, Positions, Employees
+from .serializers import DegreeSerializer
 
 from django.contrib import messages
 from django.contrib.messages import add_message
@@ -10,6 +11,7 @@ from django.utils.html import format_html
 from csv import DictReader
 from csv import writer as csv_writer
 from io import StringIO
+from rest_framework import viewsets
 
 
 TABLES = {
@@ -17,6 +19,11 @@ TABLES = {
     'Positions': {'model': Positions, 'form': PositionForm, 'can_del_records': False},
     'Employees': {'model': Employees, 'form': EmployeeForm, 'can_del_records': True},
 }
+
+
+class DegreeViewSet(viewsets.ModelViewSet):
+    queryset = Degrees.objects.all().order_by('name')
+    serializer_class = DegreeSerializer
 
 
 def show_table(request, table_name='Degrees'):

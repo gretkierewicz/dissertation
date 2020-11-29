@@ -1,4 +1,7 @@
-###26/11/2020
+###27/11/2020
+
+- Added can_delete_records flag for each table (in views for now)
+- Delete view now responds to the POST method - need to update for DELETE later ###26/11/2020
 
 - Renamed 'columns' to column_headers for better readability
 

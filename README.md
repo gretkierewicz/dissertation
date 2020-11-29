@@ -8,10 +8,9 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###27/11/2020
+###29/11/2020
 
-- Added can_delete_records flag for each table (in views for now)
-- Delete view now responds to the POST method - need to update for DELETE later 
+- First steps in the Django REST framework with help of https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c
 
 To be done:
 
