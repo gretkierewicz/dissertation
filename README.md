@@ -11,9 +11,9 @@ For now it will be local only, with SQLite DB.
 ###29/11/2020
 
 - First steps in the Django REST framework with help of https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c
+- Creating basic serializers and views for REST API - all tables included now
 
 To be done:
 
-- Update methods that should be 'PUT' or 'DELETE'
 - Validation in the online form - popping out messages for fields
 - Implement TESTS!
