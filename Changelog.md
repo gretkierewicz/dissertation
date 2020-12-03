@@ -1,3 +1,8 @@
+###29/11/2020
+
+- First steps in the Django REST framework with help of https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c
+- Creating basic serializers and views for REST API - all tables included now
+
 ###27/11/2020
 
 - Added can_delete_records flag for each table (in views for now)

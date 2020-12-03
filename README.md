@@ -8,10 +8,9 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###29/11/2020
+###03/12/2020
 
-- First steps in the Django REST framework with help of https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c
-- Creating basic serializers and views for REST API - all tables included now
+- Going for pure REST Api, cleaning most of the unused code
 
 To be done:
 
