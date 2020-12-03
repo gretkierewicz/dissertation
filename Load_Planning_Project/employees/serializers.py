@@ -16,6 +16,16 @@ class PositionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    degree = serializers.HyperlinkedRelatedField(
+        view_name='degrees-detail', queryset=Degrees.objects.all().order_by('name')
+    )
+    position = serializers.HyperlinkedRelatedField(
+        view_name='positions-detail', queryset=Positions.objects.all().order_by('name')
+    )
+    supervisor = serializers.HyperlinkedRelatedField(
+        view_name='employees-detail', queryset=Employees.objects.all().order_by('abbreviation'), allow_null=True
+    )
+
     class Meta:
         model = Employees
         fields = '__all__'
