@@ -26,6 +26,11 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
         view_name='employees-detail', queryset=Employees.objects.all().order_by('abbreviation'), allow_null=True
     )
 
+    def validate_supervisor(self, data):
+        if self.initial_data['abbreviation'] == data.abbreviation:
+            raise serializers.ValidationError("Cannot self reference that field!")
+        return data
+
     class Meta:
         model = Employees
         fields = '__all__'

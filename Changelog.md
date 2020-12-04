@@ -1,3 +1,8 @@
+###03/12/2020
+
+- Going for pure REST Api, cleaning most of the unused code
+- Minor customization of the Form's fields
+
 ###29/11/2020
 
 - First steps in the Django REST framework with help of https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c

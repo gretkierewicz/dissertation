@@ -8,13 +8,12 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###03/12/2020
+###04/12/2020
 
-- Going for pure REST Api, cleaning most of the unused code
-- Minor customization of the Form's fields
+- Added custom validator for Supervisor field - no more self referencing!
 
 To be done:
 
 - Excluding self referencing employees in supervisor field - if possible
-- Validation in the online form - popping out messages for fields
 - Implement TESTS!
+- Implementing additional models
