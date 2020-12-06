@@ -8,10 +8,20 @@ class DegreeViewSet(ModelViewSet):
     queryset = Degrees.objects.all().order_by('name')
     serializer_class = DegreeSerializer
 
+    def get_renderer_context(self):
+        context = super().get_renderer_context()
+        context['header'] = (['name'])
+        return context
+
 
 class PositionViewSet(ModelViewSet):
     queryset = Positions.objects.all().order_by('name')
     serializer_class = PositionSerializer
+
+    def get_renderer_context(self):
+        context = super().get_renderer_context()
+        context['header'] = (['name'])
+        return context
 
 
 class EmployeeViewSet(ModelViewSet):
