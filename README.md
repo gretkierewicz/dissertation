@@ -11,10 +11,11 @@ For now it will be local only, with SQLite DB.
 ###06/12/2020
 
 - Adding repr fields for EmployeeSerializer (https://blog.ridmik.com/a-cleaner-alternative-to-serializermethodfield-in-django/)
+- Allowing GET method with format set to CSV - globally
+- Manipulation of csv fields with get_renderer_context method overwrite - for better readability of file
 
 To be done:
 
-- Including CSV forms in REST Api
-- Excluding self referencing employees in supervisor field - if possible
+- Implement CSV import
 - Implement TESTS!
-- Implementing additional models
+- Implement additional models
