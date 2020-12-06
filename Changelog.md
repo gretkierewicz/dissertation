@@ -1,3 +1,8 @@
+###04/12/2020
+
+- Added custom validator for Supervisor field - no more self referencing!
+- pip install djangorestframework-csv
+
 ###03/12/2020
 
 - Going for pure REST Api, cleaning most of the unused code

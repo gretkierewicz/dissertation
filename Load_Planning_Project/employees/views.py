@@ -17,3 +17,4 @@ class PositionViewSet(viewsets.ModelViewSet):
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employees.objects.all().order_by('abbreviation')
     serializer_class = EmployeeSerializer
+

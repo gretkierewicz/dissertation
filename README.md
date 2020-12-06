@@ -8,12 +8,13 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###04/12/2020
+###06/12/2020
 
-- Added custom validator for Supervisor field - no more self referencing!
+- Adding repr fields for EmployeeSerializer (https://blog.ridmik.com/a-cleaner-alternative-to-serializermethodfield-in-django/)
 
 To be done:
 
+- Including CSV forms in REST Api
 - Excluding self referencing employees in supervisor field - if possible
 - Implement TESTS!
 - Implementing additional models
