@@ -37,9 +37,11 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
 
     def validate_supervisor(self, data):
-        if self.initial_data['abbreviation'] == data.abbreviation:
-            raise ValidationError("Cannot self reference that field!")
-        return data
+        try:
+            if self.initial_data.get('abbreviation') == data.abbreviation:
+                raise ValidationError("Cannot self reference that field!")
+        finally:
+            return data
 
     class Meta:
         model = Employees
