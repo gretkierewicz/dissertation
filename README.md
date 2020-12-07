@@ -8,14 +8,16 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###06/12/2020
+###07/12/2020
 
-- Adding repr fields for EmployeeSerializer (https://blog.ridmik.com/a-cleaner-alternative-to-serializermethodfield-in-django/)
-- Allowing GET method with format set to CSV - globally
-- Manipulation of csv fields with get_renderer_context method overwrite - for better readability of file
+- Minor fix for allowing empty supervisor form field
+- Added EmployeeRenderer class for even better CSV export labels
+- Created additional option - bulk upload - allowing sending CSV file(s) with some validation. \
+    POST method for sending new values (existing entries with unique field will not be updated) \
+    PUT method for updating existing entries and creating new as well \
+    Validation for Employees model because of related fields
 
 To be done:
 
-- Implement CSV import
 - Implement TESTS!
 - Implement additional models

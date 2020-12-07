@@ -1,3 +1,9 @@
+###06/12/2020
+
+- Adding repr fields for EmployeeSerializer (https://blog.ridmik.com/a-cleaner-alternative-to-serializermethodfield-in-django/)
+- Allowing GET method with format set to CSV - globally
+- Manipulation of csv fields with get_renderer_context method overwrite - for better readability of file
+
 ###04/12/2020
 
 - Added custom validator for Supervisor field - no more self referencing!
