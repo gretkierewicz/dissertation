@@ -17,6 +17,7 @@ For now it will be local only, with SQLite DB.
     PUT method for updating existing entries and creating new as well \
     Validation for Employees model because of related fields
 - Making example of disallowing DELETE method from view (DegreesViewSet)
+- Big cleanup of not used files and entries
 
 To be done:
 
