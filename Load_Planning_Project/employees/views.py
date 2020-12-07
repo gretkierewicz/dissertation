@@ -5,18 +5,24 @@ from io import StringIO
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
-from rest_framework.status import HTTP_303_SEE_OTHER
+from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.status import HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer
 
 
-class DegreeViewSet(ModelViewSet):
+class DegreeViewSet(mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.ListModelMixin,
+                    GenericViewSet):
+    # disallow DELETE for that view
     queryset = Degrees.objects.all().order_by('name')
     serializer_class = DegreeSerializer
 
