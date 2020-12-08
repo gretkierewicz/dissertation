@@ -32,7 +32,7 @@ class DegreeViewSet(mixins.CreateModelMixin,
         return context
 
     @action(detail=False, methods=['POST'])
-    def bulk_upload(self, request):
+    def csv_files_upload(self, request):
         serializer = self.get_serializer()
         if len(request.FILES) != 0:
             for key in request.FILES.keys():
@@ -58,7 +58,7 @@ class PositionViewSet(ModelViewSet):
         return context
 
     @action(detail=False, methods=['POST'])
-    def bulk_upload(self, request):
+    def csv_files_upload(self, request):
         serializer = self.get_serializer()
         if len(request.FILES) != 0:
             for key in request.FILES.keys():
@@ -90,7 +90,7 @@ class EmployeeViewSet(ModelViewSet):
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, EmployeeRenderer, )
 
     @action(detail=False, methods=['PUT', 'POST'])
-    def bulk_upload(self, request):
+    def csv_files_upload(self, request):
         serializer = self.get_serializer()
         if len(request.FILES) != 0:
             for key in request.FILES.keys():

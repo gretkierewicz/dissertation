@@ -1,3 +1,14 @@
+###07/12/2020
+
+- Minor fix for allowing empty supervisor form field
+- Added EmployeeRenderer class for even better CSV export labels
+- Created additional option - bulk upload - allowing sending CSV file(s) with some validation. \
+    POST method for sending new values (existing entries with unique field will not be updated) \
+    PUT method for updating existing entries and creating new as well \
+    Validation for Employees model because of related fields
+- Making example of disallowing DELETE method from view (DegreesViewSet)
+- Big cleanup of not used files and entries
+
 ###06/12/2020
 
 - Adding repr fields for EmployeeSerializer (https://blog.ridmik.com/a-cleaner-alternative-to-serializermethodfield-in-django/)
