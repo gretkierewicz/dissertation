@@ -116,13 +116,15 @@ class EmployeeViewSet(ModelViewSet):
                     row['year_of_studies'] = year_of_studies.group() if year_of_studies else None
 
                     try:
+                        # with POST only create new entries, with PUT - only update existing ones
                         employee = Employees.objects.get(e_mail=row.get('e_mail'))
-                        # with POST only create new entries, with PUT - update existing ones
-                        if request.method == 'POST':
-                            continue
-                        serializer = self.get_serializer(employee, data=row)
+                        if request.method == 'PUT':
+                            serializer = self.get_serializer(employee, data=row)
+                            serializer.is_valid(raise_exception=True)
+                            serializer.save()
                     except ObjectDoesNotExist:
-                        serializer = self.get_serializer(data=row)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save()
+                        if request.method == 'POST':
+                            serializer = self.get_serializer(data=row)
+                            serializer.is_valid(raise_exception=True)
+                            serializer.save()
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('employees-list')})
