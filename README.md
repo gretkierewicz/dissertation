@@ -12,8 +12,12 @@ For now it will be local only, with SQLite DB.
 
 - Changed naming from bulk_upload to csv_files_upload because function should only accept files in such format
 - Correction for employees/csv_files_upload - PUT will only update existing entries and ignore new
+- Created validator for year_of_studies - serializer did not recognize field type properly
 
 To be done:
 
 - Implement TESTS!
 - Implement additional models
+- Implement filters, sorting or search
+- Add commentary
+- Add messages/errors

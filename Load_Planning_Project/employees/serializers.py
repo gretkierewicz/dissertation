@@ -43,6 +43,11 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         finally:
             return data
 
+    def validate_year_of_studies(self, data):
+        if data < 0:
+            raise ValidationError("Only positive numbers!")
+        return data
+
     class Meta:
         model = Employees
         fields = '__all__'
