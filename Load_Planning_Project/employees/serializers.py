@@ -37,11 +37,10 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
 
     def validate_supervisor(self, data):
-        try:
+        if data:
             if self.initial_data.get('abbreviation') == data.abbreviation:
                 raise ValidationError("Cannot self reference that field!")
-        finally:
-            return data
+        return data
 
     def validate_year_of_studies(self, data):
         if data < 0:
