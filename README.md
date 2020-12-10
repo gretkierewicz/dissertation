@@ -8,9 +8,9 @@ Project created with **Python v3.6.7**
 For now it will be local only, with SQLite DB.
 
 ## Last changes
-###09/12/2020
+###10/12/2020
 
-- Supervisor validation - FIX 
+- Writing first unit test - DegreeSerializer / list all
 
 To be done:
 

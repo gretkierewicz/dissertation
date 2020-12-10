@@ -1,3 +1,7 @@
+###09/12/2020
+
+- Supervisor validation - FIX 
+
 ###08/12/2020
 
 - Changed naming from bulk_upload to csv_files_upload because function should only accept files in such format
