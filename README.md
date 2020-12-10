@@ -11,10 +11,10 @@ For now it will be local only, with SQLite DB.
 ###10/12/2020
 
 - Writing first unit test - DegreeSerializer / list all
+- Writing tests for all methods (https://restfulapi.net/http-methods/)
 
 To be done:
 
-- Implement TESTS!
 - Implement additional models
 - Implement filters, sorting or search
 - Add commentary
