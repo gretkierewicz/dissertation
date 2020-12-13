@@ -12,7 +12,8 @@ Local with SQLite DB
 ###13/12/2020
 
 - Corrections after deploying at ct8.pl
-- Running app at http://gret.ct8.pl/ with use of MySQL (possible tests at PostgreSQL/MongoDB)
+- Running app at http://gret.ct8.pl/ with use of MySQL (possible future tests with PostgreSQL/MongoDB)
+- Tests for Employees model, view and serializer
 
 To be done:
 
