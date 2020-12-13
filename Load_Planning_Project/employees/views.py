@@ -48,7 +48,11 @@ class DegreeViewSet(mixins.CreateModelMixin,
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('degrees-list')})
 
 
-class PositionViewSet(ModelViewSet):
+class PositionViewSet(mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.ListModelMixin,
+                      GenericViewSet):
     queryset = Positions.objects.all().order_by('name')
     serializer_class = PositionSerializer
 

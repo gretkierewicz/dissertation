@@ -15,6 +15,7 @@ Local with SQLite DB
 - Running app at http://gret.ct8.pl/ with use of MySQL (possible future tests with PostgreSQL/MongoDB)
 - Tests for Employees model, view and serializer
 - Tests for Positions model, view and serializer - 1 Fail - delete still possible
+- FIX - delete not possible at Position view
 
 To be done:
 
