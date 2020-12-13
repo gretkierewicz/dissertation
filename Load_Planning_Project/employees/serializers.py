@@ -43,6 +43,9 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         return data
 
     def validate_year_of_studies(self, data):
+        if data is None:
+            return data
+        # Fix for SQLite (CHECK constraint failed error)
         if data < 0:
             raise ValidationError("Only positive numbers!")
         return data

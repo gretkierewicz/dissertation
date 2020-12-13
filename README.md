@@ -16,6 +16,7 @@ Local with SQLite DB
 - Tests for Employees model, view and serializer
 - Tests for Positions model, view and serializer - 1 Fail - delete still possible
 - FIX - delete not possible at Position view
+- FIX - sending empty 'year_of_studies' field was causing error because of SQLite correction
 
 To be done:
 
