@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory
 
 from .models import Degrees, Positions, Employees
-from .serializers import DegreeSerializer, EmployeeSerializer
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer
 
 client = APIClient()
 factory = APIRequestFactory()
@@ -98,6 +98,95 @@ class DegreeViewSetTest(TestCase):
     def test_delete_valid(self):
         # try to delete record
         response = client.delete(reverse('degrees-detail', kwargs={'pk': self.degree.pk}))
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class PositionViewSetTest(TestCase):
+    def setUp(self):
+        for i in range(3):
+            Positions.objects.create(name='position_{}'.format(i))
+        self.position = Positions.objects.create(name='test')
+        self.name_max_len = 45
+        self.valid_data = {'name': self.name_max_len * 'x'}
+
+    def test_get_list(self):
+        # try to read all records
+        response = client.get(reverse('positions-list'))
+        positions = Positions.objects.all()
+        serializer = PositionSerializer(positions, context={'request': factory.get('/')}, many=True)
+        self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_valid_data(self):
+        # try to read one valid record
+        response = client.get(reverse('positions-detail', kwargs={'pk': self.position.pk}))
+        test_position = Positions.objects.get(pk=self.position.pk)
+        serializer = PositionSerializer(test_position, context={'request': factory.get('/')})
+        self.assertEqual(serializer.data, {
+            'url': factory.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).build_absolute_uri(),
+            'name': test_position.name
+        }, 'Serialization failed')
+        self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_invalid_data(self):
+        # try to read not existing record
+        response = client.get(reverse('positions-detail', kwargs={'pk': 100}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_post_valid_data(self):
+        # try to create one record
+        response = client.post(reverse('positions-list'), json.dumps(self.valid_data), content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_post_invalid_data(self):
+        # try to create record with invalid data
+        response = client.post(
+            reverse('positions-list'),
+            json.dumps({'name': ''}),
+            content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'blank')
+        response = client.post(
+            reverse('positions-list'),
+            json.dumps({'name': self.name_max_len * 'x' + 'x'}),
+            content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'max_length')
+
+    def test_put_valid_data(self):
+        # try to update record with valid data
+        response = client.put(
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            json.dumps(self.valid_data),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_put_invalid_data(self):
+        # try to update record with invalid data
+        response = client.put(
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            json.dumps({'name': ''}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'blank')
+        response = client.put(
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            json.dumps({'name': self.name_max_len * 'x' + 'x'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'max_length')
+
+    def test_delete_valid(self):
+        # try to delete record
+        response = client.delete(reverse('positions-detail', kwargs={'pk': self.position.pk}))
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
