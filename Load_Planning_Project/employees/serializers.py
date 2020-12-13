@@ -38,8 +38,8 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
 
     def validate_supervisor(self, data):
         if data:
-            # THIS IS COMPLETELY WRONG! is.valid when abbreviation field is changed during sending form!
-            if self.initial_data.get('abbreviation') == data.abbreviation:
+            # supervisor's sent field is compared to user's url - cannot match!
+            if self.initial_data.get('supervisor') == self.context.get('request').build_absolute_uri():
                 raise ValidationError("Cannot self reference that field!")
         return data
 

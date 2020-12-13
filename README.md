@@ -18,6 +18,7 @@ Local with SQLite DB
 - FIX - delete not possible at Position view
 - FIX - sending empty 'year_of_studies' field was causing error because of SQLite correction
 - Major refactoring TESTs, after adding supervisor self relation test - bug was found
+- FIX - employee cannot be it's supervisor anymore - it would be better to exclude employee's abbreviation from form's list too
 
 To be done:
 
