@@ -17,6 +17,7 @@ Local with SQLite DB
 - Tests for Positions model, view and serializer - 1 Fail - delete still possible
 - FIX - delete not possible at Position view
 - FIX - sending empty 'year_of_studies' field was causing error because of SQLite correction
+- Major refactoring TESTs, after adding supervisor self relation test - bug was found
 
 To be done:
 

@@ -38,14 +38,15 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
 
     def validate_supervisor(self, data):
         if data:
+            # THIS IS COMPLETELY WRONG! is.valid when abbreviation field is changed during sending form!
             if self.initial_data.get('abbreviation') == data.abbreviation:
                 raise ValidationError("Cannot self reference that field!")
         return data
 
     def validate_year_of_studies(self, data):
+        # validation because of DRF mapping PositiveInteger model Field into Integer serializer Field
         if data is None:
             return data
-        # Fix for SQLite (CHECK constraint failed error)
         if data < 0:
             raise ValidationError("Only positive numbers!")
         return data

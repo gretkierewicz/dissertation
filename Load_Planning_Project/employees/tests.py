@@ -42,15 +42,15 @@ class DegreeViewSetTest(TestCase):
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('degrees-detail', kwargs={'pk': 100}))
+        response = client.get(reverse('degrees-detail', kwargs={'pk': 5}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_post_valid_data(self):
+    def test_create_valid_data(self):
         # try to create one record
         response = client.post(reverse('degrees-list'), json.dumps(self.valid_data), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_post_invalid_data(self):
+    def test_create_invalid_data(self):
         # try to create record with invalid data
         response = client.post(
             reverse('degrees-list'),
@@ -67,33 +67,59 @@ class DegreeViewSetTest(TestCase):
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['name'][0].code, 'max_length')
 
-    def test_put_valid_data(self):
+    def test_update_valid_data(self):
         # try to update record with valid data
         response = client.put(
             reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, 'PUT method')
 
-    def test_put_invalid_data(self):
+        response = client.patch(
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            json.dumps(self.valid_data),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, 'PATCH method')
+
+    def test_update_invalid_data(self):
         # try to update record with invalid data
         response = client.put(
             reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'PUT method, blank value')
         # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['name'][0].code, 'blank')
+        self.assertEqual(response.data['name'][0].code, 'blank', 'PUT method')
+
+        response = client.patch(
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            json.dumps({'name': ''}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'PATCH method, blank value')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'blank', 'PATCH method')
+
         response = client.put(
             reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'PUT method, max length')
         # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['name'][0].code, 'max_length')
+        self.assertEqual(response.data['name'][0].code, 'max_length', 'PUT method')
+
+        response = client.patch(
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            json.dumps({'name': self.name_max_len * 'x' + 'x'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'PATCH method, max length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'max_length', 'PATCH method')
 
     def test_delete_valid(self):
         # try to delete record
@@ -131,15 +157,15 @@ class PositionViewSetTest(TestCase):
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('positions-detail', kwargs={'pk': 100}))
+        response = client.get(reverse('positions-detail', kwargs={'pk': 5}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_post_valid_data(self):
+    def test_create_valid_data(self):
         # try to create one record
         response = client.post(reverse('positions-list'), json.dumps(self.valid_data), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_post_invalid_data(self):
+    def test_create_invalid_data(self):
         # try to create record with invalid data
         response = client.post(
             reverse('positions-list'),
@@ -156,7 +182,7 @@ class PositionViewSetTest(TestCase):
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['name'][0].code, 'max_length')
 
-    def test_put_valid_data(self):
+    def test_update_valid_data(self):
         # try to update record with valid data
         response = client.put(
             reverse('positions-detail', kwargs={'pk': self.position.pk}),
@@ -165,7 +191,14 @@ class PositionViewSetTest(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_put_invalid_data(self):
+        response = client.patch(
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            json.dumps(self.valid_data),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_update_invalid_data(self):
         # try to update record with invalid data
         response = client.put(
             reverse('positions-detail', kwargs={'pk': self.position.pk}),
@@ -175,7 +208,26 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['name'][0].code, 'blank')
+
+        response = client.patch(
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            json.dumps({'name': ''}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'blank')
+
         response = client.put(
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            json.dumps({'name': self.name_max_len * 'x' + 'x'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['name'][0].code, 'max_length')
+
+        response = client.patch(
             reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
@@ -206,10 +258,14 @@ class EmployeesViewSetTest(TestCase):
                 supervisor=self.employee,
                 year_of_studies=i,
             )
+
         self.first_name_max_len = 45
         self.last_name_max_len = 45
         self.abbreviation_max_len = 5
         self.e_mail_max_len = 45
+        self.min_year = 0
+        self.max_year = 100
+
         self.valid_data = {
             'first_name': self.first_name_max_len * 'x',
             'last_name': self.last_name_max_len * 'x',
@@ -217,7 +273,7 @@ class EmployeesViewSetTest(TestCase):
             'degree': client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).data.get('url'),
             'position': client.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).data.get('url'),
             'e_mail': (self.e_mail_max_len - 5) * 'x' + '@x.xx',
-            'supervisor': client.get(reverse('employees-detail', kwargs={'pk': self.employee.pk})).data.get('url'),
+            'supervisor': client.get(reverse('employees-detail', kwargs={'pk': 1})).data.get('url'),
             'year_of_studies': 1,
             'is_procedure_for_a_doctoral_degree_approved': True,
             'has_scholarship': True,
@@ -231,6 +287,9 @@ class EmployeesViewSetTest(TestCase):
             'e_mail': 'a@a.aa',
             'supervisor': None,
         }
+
+        self.e_mail_error_table = [(None, 'null'), ('', 'blank'), (self.e_mail_max_len * 'x' + '@x.xx', 'max_length'),
+                                   ('x', 'invalid'), ('xx@', 'invalid'), ('@x.xx', 'invalid'), ('x@x.x', 'invalid')]
 
     def test_get_list(self):
         # try to read all records
@@ -290,207 +349,505 @@ class EmployeesViewSetTest(TestCase):
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('employees-detail', kwargs={'pk': 100}))
+        response = client.get(reverse('employees-detail', kwargs={'pk': 5}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_post_valid_data(self):
-        # try to create one record with valid data
-        response = client.post(reverse('employees-list'), json.dumps(self.valid_data), content_type='application/json')
+    def test_create_valid_data_full(self):
+        # try to create one record with full amount of valid data
+        response = client.post(reverse('employees-list'),
+                               json.dumps(self.valid_data),
+                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_post_valid_min_data(self):
-        # try to create one record with min data
+    def test_create_valid_data_min(self):
+        # try to create one record with min amount of valid data
         response = client.post(reverse('employees-list'),
                                json.dumps(self.valid_data_min),
                                content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_post_valid_year_of_studies_min(self):
-        # try to create one record with min data
-        valid_data_with_year = self.valid_data
-
-        valid_data_with_year['year_of_studies'] = 0
-        response = client.post(reverse('employees-list'),
-                               json.dumps(valid_data_with_year),
-                               content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_post_valid_year_of_studies_max(self):
-        # try to create one record with min data
-        valid_data_with_year = self.valid_data
-
-        valid_data_with_year['year_of_studies'] = 100
-        response = client.post(reverse('employees-list'),
-                               json.dumps(valid_data_with_year),
-                               content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
     def test_post_invalid_first_name(self):
-        # try to create one record with invalid data for first name
         invalid_data = self.valid_data
 
         invalid_data['first_name'] = None
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['first_name'][0].code, 'null')
 
         invalid_data['first_name'] = ''
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['first_name'][0].code, 'blank')
 
         invalid_data['first_name'] = self.first_name_max_len * 'x' + 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['first_name'][0].code, 'max_length')
+
+    def test_put_invalid_first_name(self):
+        invalid_data = self.valid_data
+
+        invalid_data['first_name'] = None
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['first_name'][0].code, 'null')
+
+        invalid_data['first_name'] = ''
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['first_name'][0].code, 'blank')
+
+        invalid_data['first_name'] = self.first_name_max_len * 'x' + 'x'
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['first_name'][0].code, 'max_length')
+
+    def test_patch_invalid_first_name(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'first_name': None}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['first_name'][0].code, 'null')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'first_name': ''}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['first_name'][0].code, 'blank')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'first_name': self.first_name_max_len * 'x' + 'x'}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['first_name'][0].code, 'max_length')
 
     def test_post_invalid_last_name(self):
-        # try to create one record with invalid data for last name
         invalid_data = self.valid_data
 
         invalid_data['last_name'] = None
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['last_name'][0].code, 'null')
 
         invalid_data['last_name'] = ''
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['last_name'][0].code, 'blank')
 
         invalid_data['last_name'] = self.last_name_max_len * 'x' + 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['last_name'][0].code, 'max_length')
+
+    def test_put_invalid_last_name(self):
+        invalid_data = self.valid_data
+
+        invalid_data['last_name'] = None
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['last_name'][0].code, 'null')
+
+        invalid_data['last_name'] = ''
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['last_name'][0].code, 'blank')
+
+        invalid_data['last_name'] = self.last_name_max_len * 'x' + 'x'
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['last_name'][0].code, 'max_length')
+
+    def test_patch_invalid_last_name(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'last_name': None}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['last_name'][0].code, 'null')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'last_name': ''}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['last_name'][0].code, 'blank')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'last_name': self.last_name_max_len * 'x' + 'x'}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['last_name'][0].code, 'max_length')
 
     def test_post_invalid_abbreviation(self):
-        # try to create one record with invalid data for abbreviation
         invalid_data = self.valid_data
 
         invalid_data['abbreviation'] = None
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['abbreviation'][0].code, 'null')
 
         invalid_data['abbreviation'] = ''
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['abbreviation'][0].code, 'blank')
 
         invalid_data['abbreviation'] = self.abbreviation_max_len * 'x' + 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['abbreviation'][0].code, 'max_length')
+
+    def test_put_invalid_abbreviation(self):
+        invalid_data = self.valid_data
+
+        invalid_data['abbreviation'] = None
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['abbreviation'][0].code, 'null')
+
+        invalid_data['abbreviation'] = ''
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['abbreviation'][0].code, 'blank')
+
+        invalid_data['abbreviation'] = self.abbreviation_max_len * 'x' + 'x'
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['abbreviation'][0].code, 'max_length')
+
+    def test_patch_invalid_abbreviation(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'abbreviation': None}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['abbreviation'][0].code, 'null')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'abbreviation': ''}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['abbreviation'][0].code, 'blank')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'abbreviation': self.abbreviation_max_len * 'x' + 'x'}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['abbreviation'][0].code, 'max_length')
 
     def test_post_invalid_degree(self):
-        # try to create one record with invalid data for degree
         invalid_data = self.valid_data
 
         invalid_data['degree'] = None
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['degree'][0].code, 'null')
 
         invalid_data['degree'] = 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['degree'][0].code, 'no_match')
+
+    def test_put_invalid_degree(self):
+        invalid_data = self.valid_data
+
+        invalid_data['degree'] = None
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['degree'][0].code, 'null')
+
+        invalid_data['degree'] = 'x'
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['degree'][0].code, 'no_match')
+
+    def test_patch_invalid_degree(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'degree': None}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['degree'][0].code, 'null')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'degree': 'x'}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['degree'][0].code, 'no_match')
 
     def test_post_invalid_position(self):
-        # try to create one record with invalid data for position
         invalid_data = self.valid_data
 
         invalid_data['position'] = None
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['position'][0].code, 'null')
 
         invalid_data['position'] = 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.post(reverse('employees-list'),
+                               json.dumps(invalid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['position'][0].code, 'no_match')
+
+    def test_put_invalid_position(self):
+        invalid_data = self.valid_data
+
+        invalid_data['position'] = None
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['position'][0].code, 'null')
+
+        invalid_data['position'] = 'x'
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['position'][0].code, 'no_match')
+
+    def test_patch_invalid_position(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'position': None}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['position'][0].code, 'null')
+
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'position': 'x'}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['position'][0].code, 'no_match')
 
     def test_post_invalid_email(self):
-        # try to create one record with invalid data for email
         invalid_data = self.valid_data
+        for pair in self.e_mail_error_table:
+            invalid_data['e_mail'] = pair[0]
+            response = client.post(reverse('employees-list'),
+                                   json.dumps(invalid_data),
+                                   content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, pair[1])
+            # Check if ErrorDetail's code is returned properly
+            self.assertEqual(response.data['e_mail'][0].code, pair[1])
 
-        invalid_data['e_mail'] = None
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'null')
+    def test_put_invalid_email(self):
+        invalid_data = self.valid_data
+        for pair in self.e_mail_error_table:
+            invalid_data['e_mail'] = pair[0]
+            response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                  json.dumps(invalid_data),
+                                  content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, pair[1])
+            # Check if ErrorDetail's code is returned properly
+            self.assertEqual(response.data['e_mail'][0].code, pair[1])
 
-        invalid_data['e_mail'] = ''
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'blank')
+    def test_patch_invalid_email(self):
+        for pair in self.e_mail_error_table:
+            response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                    json.dumps({'e_mail': pair[0]}),
+                                    content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, pair[1])
+            # Check if ErrorDetail's code is returned properly
+            self.assertEqual(response.data['e_mail'][0].code, pair[1])
 
-        invalid_data['e_mail'] = self.e_mail_max_len * 'x' + '@x.xx'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'max_length')
-
-        invalid_data['e_mail'] = 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'invalid')
-
-        invalid_data['e_mail'] = 'xx@'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'invalid')
-
-        invalid_data['e_mail'] = '@x.xx'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'invalid')
-
-        invalid_data['e_mail'] = 'x@x.x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Check if ErrorDetail's code is returned properly
-        self.assertEqual(response.data['e_mail'][0].code, 'invalid')
-
-    def test_post_invalid_supervisor(self):
-        # try to create one record with invalid data for supervisor
+    def test_put_invalid_supervisor(self):
         invalid_data = self.valid_data
 
         invalid_data['supervisor'] = 'x'
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['supervisor'][0].code, 'no_match')
 
-    def test_post_invalid_year_of_studies(self):
-        # try to create one record with invalid data for supervisor
-        invalid_data = self.valid_data
+        invalid_data['supervisor'] = client.get(
+            reverse('employees-detail', kwargs={'pk': self.employee.pk})).data.get('url')
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(invalid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'invalid')
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['supervisor'][0].code, 'invalid')
 
-        invalid_data['year_of_studies'] = -.01
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
+    def test_post_valid_year_of_studies_min(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = self.min_year
+        response = client.post(reverse('employees-list'),
+                               json.dumps(valid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_put_valid_year_of_studies_min(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = self.min_year
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(valid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_patch_valid_year_of_studies_min(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'year_of_studies': self.min_year}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_post_valid_year_of_studies_max(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = self.max_year
+        response = client.post(reverse('employees-list'),
+                               json.dumps(valid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_put_valid_year_of_studies_max(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = self.max_year
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(valid_data),
+                              content_type='application/json')
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_patch_valid_year_of_studies_max(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'year_of_studies': self.max_year}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_post_invalid_year_of_studies_negative(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = -.0001
+        response = client.post(reverse('employees-list'),
+                               json.dumps(valid_data),
+                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value lower than 0')
 
-        invalid_data['year_of_studies'] = .5
-        response = client.post(reverse('employees-list'), json.dumps(invalid_data), content_type='application/json')
+    def test_put_invalid_year_of_studies_negative(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = -.0001
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(valid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value lower than 0')
+
+    def test_patch_invalid_year_of_studies_negative(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'year_of_studies': -0.0001}),
+                                content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value lower than 0')
+
+    def test_post_invalid_year_of_studies_fraction(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = 0.3
+        response = client.post(reverse('employees-list'),
+                               json.dumps(valid_data),
+                               content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value is not integer')
+
+    def test_put_invalid_year_of_studies_fraction(self):
+        valid_data = self.valid_data
+        valid_data['year_of_studies'] = 0.3
+        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                              json.dumps(valid_data),
+                              content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if ErrorDetail's code is returned properly
+        self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value is not integer')
+
+    def test_patch_invalid_year_of_studies_fraction(self):
+        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+                                json.dumps({'year_of_studies': 0.3}),
+                                content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value is not integer')
