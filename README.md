@@ -5,13 +5,14 @@ Project created with **Python v3.6.7**
 
 ## Test-site
 
-For now it will be local only, with SQLite DB.
+http://gret.ct8.pl/ with MySQL DB\
+Local with SQLite DB
 
 ## Last changes
-###10/12/2020
+###13/12/2020
 
-- Writing first unit test - DegreeSerializer / list all
-- Writing tests for all methods (https://restfulapi.net/http-methods/)
+- Corrections after deploying at ct8.pl
+- Running app at http://gret.ct8.pl/ with use of MySQL (possible tests at PostgreSQL/MongoDB)
 
 To be done:
 

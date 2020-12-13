@@ -1,3 +1,8 @@
+###10/12/2020
+
+- Writing first unit test - DegreeSerializer / list all
+- Writing tests for all methods (https://restfulapi.net/http-methods/)
+
 ###09/12/2020
 
 - Supervisor validation - FIX 
