@@ -30,15 +30,17 @@ class DegreeViewSetTest(TestCase):
 
     def test_get_valid_data(self):
         # try to read one valid record
-        response = client.get(reverse('degrees-detail', kwargs={'name': self.degree.name}))
+        response = client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk}))
         test_degree = Degrees.objects.get(pk=self.degree.pk)
         serializer = DegreeSerializer(test_degree, context={'request': factory.get('/')})
         self.assertEqual(serializer.data, {
-            'url': factory.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).build_absolute_uri(),
+            'url': factory.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).build_absolute_uri(),
             'name': test_degree.name,
             'employees': [
-                factory.get(reverse('employees-detail', kwargs={'name': employee.abbreviation})).build_absolute_uri() \
-                for employee in test_degree.employees.all()
+                factory.get(reverse(
+                    'employees-detail',
+                    kwargs={'abbreviation': employee.abbreviation}
+                )).build_absolute_uri() for employee in test_degree.employees.all()
             ]
         }, 'Serialization failed')
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
@@ -46,7 +48,7 @@ class DegreeViewSetTest(TestCase):
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('degrees-detail', kwargs={'name': 'non_existing_name'}))
+        response = client.get(reverse('degrees-detail', kwargs={'pk': 10}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_valid_data(self):
@@ -73,7 +75,7 @@ class DegreeViewSetTest(TestCase):
 
     def test_put_valid_data(self):
         response = client.put(
-            reverse('degrees-detail', kwargs={'name': self.degree.name}),
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
@@ -81,7 +83,7 @@ class DegreeViewSetTest(TestCase):
 
     def test_patch_valid_data(self):
         response = client.patch(
-            reverse('degrees-detail', kwargs={'name': self.degree.name}),
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
@@ -90,7 +92,7 @@ class DegreeViewSetTest(TestCase):
     def test_update_invalid_data(self):
         # try to update record with invalid data
         response = client.put(
-            reverse('degrees-detail', kwargs={'name': self.degree.name}),
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -99,7 +101,7 @@ class DegreeViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank', 'PUT method')
 
         response = client.patch(
-            reverse('degrees-detail', kwargs={'name': self.degree.name}),
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -108,7 +110,7 @@ class DegreeViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank', 'PATCH method')
 
         response = client.put(
-            reverse('degrees-detail', kwargs={'name': self.degree.name}),
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -117,7 +119,7 @@ class DegreeViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'max_length', 'PUT method')
 
         response = client.patch(
-            reverse('degrees-detail', kwargs={'name': self.degree.name}),
+            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -127,7 +129,7 @@ class DegreeViewSetTest(TestCase):
 
     def test_delete_valid(self):
         # try to delete record
-        response = client.delete(reverse('degrees-detail', kwargs={'name': self.degree.name}))
+        response = client.delete(reverse('degrees-detail', kwargs={'pk': self.degree.pk}))
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -149,15 +151,17 @@ class PositionViewSetTest(TestCase):
 
     def test_get_valid_data(self):
         # try to read one valid record
-        response = client.get(reverse('positions-detail', kwargs={'name': self.position.name}))
+        response = client.get(reverse('positions-detail', kwargs={'pk': self.position.pk}))
         test_position = Positions.objects.get(pk=self.position.pk)
         serializer = PositionSerializer(test_position, context={'request': factory.get('/')})
         self.assertEqual(serializer.data, {
-            'url': factory.get(reverse('positions-detail', kwargs={'name': self.position.name})).build_absolute_uri(),
+            'url': factory.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).build_absolute_uri(),
             'name': test_position.name,
             'employees': [
-                factory.get(reverse('employees-detail', kwargs={'name': employee.abbreviation})).build_absolute_uri() \
-                for employee in test_position.employees.all()
+                factory.get(reverse(
+                    'employees-detail',
+                    kwargs={'abbreviation': employee.abbreviation}
+                )).build_absolute_uri() for employee in test_position.employees.all()
             ]
         }, 'Serialization failed')
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
@@ -165,7 +169,7 @@ class PositionViewSetTest(TestCase):
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('positions-detail', kwargs={'name': 'non_existing_name'}))
+        response = client.get(reverse('positions-detail', kwargs={'pk': 10}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_valid_data(self):
@@ -192,7 +196,7 @@ class PositionViewSetTest(TestCase):
 
     def test_put_valid_data(self):
         response = client.put(
-            reverse('positions-detail', kwargs={'name': self.position.name}),
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
@@ -200,7 +204,7 @@ class PositionViewSetTest(TestCase):
 
     def test_patch_valid_data(self):
         response = client.patch(
-            reverse('positions-detail', kwargs={'name': self.position.name}),
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
@@ -209,7 +213,7 @@ class PositionViewSetTest(TestCase):
     def test_update_invalid_data(self):
         # try to update record with invalid data
         response = client.put(
-            reverse('positions-detail', kwargs={'name': self.position.name}),
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -218,7 +222,7 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank')
 
         response = client.patch(
-            reverse('positions-detail', kwargs={'name': self.position.name}),
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -227,7 +231,7 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank')
 
         response = client.put(
-            reverse('positions-detail', kwargs={'name': self.position.name}),
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -236,7 +240,7 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'max_length')
 
         response = client.patch(
-            reverse('positions-detail', kwargs={'name': self.position.name}),
+            reverse('positions-detail', kwargs={'pk': self.position.pk}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -246,7 +250,7 @@ class PositionViewSetTest(TestCase):
 
     def test_delete_valid(self):
         # try to delete record
-        response = client.delete(reverse('positions-detail', kwargs={'name': self.position.name}))
+        response = client.delete(reverse('positions-detail', kwargs={'pk': self.position.pk}))
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -278,8 +282,8 @@ class EmployeesViewSetTest(TestCase):
             'first_name': self.first_name_max_len * 'x',
             'last_name': self.last_name_max_len * 'x',
             'abbreviation': self.abbreviation_max_len * 'x',
-            'degree': client.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).data.get('url'),
-            'position': client.get(reverse('positions-detail', kwargs={'name': self.position.name})).data.get('url'),
+            'degree': client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).data.get('url'),
+            'position': client.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).data.get('url'),
             'e_mail': (self.e_mail_max_len - 5) * 'x' + '@x.xx',
             'supervisor': client.get(reverse('employees-detail', kwargs={'abbreviation': 'abb1'})).data.get('url'),
             'year_of_studies': 1,
@@ -290,8 +294,8 @@ class EmployeesViewSetTest(TestCase):
             'first_name': 'a',
             'last_name': 'a',
             'abbreviation': 'a',
-            'degree': client.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).data.get('url'),
-            'position': client.get(reverse('positions-detail', kwargs={'name': self.position.name})).data.get('url'),
+            'degree': client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).data.get('url'),
+            'position': client.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).data.get('url'),
             'e_mail': 'a@a.aa',
             'supervisor': None,
         }
@@ -328,7 +332,10 @@ class EmployeesViewSetTest(TestCase):
                          self.employee.abbreviation,
                          "'abbreviation' field do not match!")
         self.assertEqual(serializer.data['degree'],
-                         factory.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).build_absolute_uri(),
+                         factory.get(reverse(
+                             'degrees-detail',
+                             kwargs={'pk': self.degree.pk}
+                         )).build_absolute_uri(),
                          "'degree' field do not match!")
         self.assertEqual(serializer.data['degree_repr'],
                          self.employee.degree.name,
@@ -336,7 +343,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(serializer.data['position'],
                          factory.get(reverse(
                              'positions-detail',
-                             kwargs={'name': self.position.name})
+                             kwargs={'pk': self.position.pk})
                          ).build_absolute_uri(),
                          "'position' field do not match!")
         self.assertEqual(serializer.data['position_repr'],

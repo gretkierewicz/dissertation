@@ -25,8 +25,6 @@ class DegreeViewSet(mixins.CreateModelMixin,
     # disallow DELETE for that view
     queryset = Degrees.objects.all().order_by('name')
     serializer_class = DegreeSerializer
-    lookup_field = 'name'
-    lookup_value_regex = "[^/]+"
 
     def get_renderer_context(self):
         context = super().get_renderer_context()
@@ -57,8 +55,6 @@ class PositionViewSet(mixins.CreateModelMixin,
                       GenericViewSet):
     queryset = Positions.objects.all().order_by('name')
     serializer_class = PositionSerializer
-    lookup_field = 'name'
-    lookup_value_regex = "[^/]+"
 
     def get_renderer_context(self):
         context = super().get_renderer_context()
@@ -109,14 +105,14 @@ class EmployeeViewSet(ModelViewSet):
                         degree = Degrees.objects.get(name=row.get('degree'))
                         row['degree'] = request.build_absolute_uri(
                             reverse('degrees-detail',
-                                    kwargs={'name': degree.name}))
+                                    kwargs={'pk': degree.pk}))
                     except ObjectDoesNotExist:
                         row['degree'] = None
                     try:
                         position = Positions.objects.get(name=row.get('position'))
                         row['position'] = request.build_absolute_uri(
                             reverse('positions-detail',
-                                    kwargs={'name': position.name}))
+                                    kwargs={'pk': position.pk}))
                     except ObjectDoesNotExist:
                         row['position'] = None
                     try:

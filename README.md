@@ -15,6 +15,7 @@ Local with SQLite DB
 - Changed lookup_field for all views to be more user friendly
 - Making corrections to tests because of lookup_field change and added back-reference
 - FIX to the csv_files_upload
+- FIX - because of polish marks changed back degree and position lookup
 
 To be done:
 
