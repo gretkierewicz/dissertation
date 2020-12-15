@@ -14,12 +14,24 @@ class SerializerLambdaField(SerializerMethodField):
 
 
 class DegreeSerializer(HyperlinkedModelSerializer):
+    employees = HyperlinkedRelatedField(
+        view_name='employees-detail',
+        read_only=True,
+        many=True,
+    )
+
     class Meta:
         model = Degrees
         fields = '__all__'
 
 
 class PositionSerializer(HyperlinkedModelSerializer):
+    employees = HyperlinkedRelatedField(
+        view_name='employees-detail',
+        read_only=True,
+        many=True,
+    )
+
     class Meta:
         model = Positions
         fields = '__all__'
@@ -35,6 +47,11 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     supervisor = HyperlinkedRelatedField(
         view_name='employees-detail', queryset=Employees.objects.all().order_by('abbreviation'), allow_null=True)
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
+    employees = HyperlinkedRelatedField(
+        view_name='employees-detail',
+        read_only=True,
+        many=True,
+    )
 
     def validate_supervisor(self, data):
         if data:
