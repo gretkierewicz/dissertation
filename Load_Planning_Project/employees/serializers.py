@@ -57,7 +57,7 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         lookup_field='abbreviation',
     )
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
-    employees = HyperlinkedRelatedField(
+    subordinates = HyperlinkedRelatedField(
         view_name='employees-detail',
         read_only=True,
         many=True,
