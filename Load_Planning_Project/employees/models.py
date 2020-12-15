@@ -30,3 +30,26 @@ class Employees(models.Model):
 
     def __str__(self):
         return self.abbreviation
+
+
+class Modules(models.Model):
+    EXAM_TYPE_CHOICES = [
+        ('n', 'no exam'),
+        ('o', 'oral'),
+        ('w', 'written'),
+    ]
+
+    SEMESTER_CHOICES = [
+        ('w', 'winter'),
+        ('s', 'summer'),
+    ]
+
+    code = models.CharField(max_length=45, unique=True)
+    name = models.CharField(max_length=45)
+    supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='modules')
+    is_contact_type = models.BooleanField(default=False)
+    semester = models.CharField(max_length=1, choices=SEMESTER_CHOICES, default='w')
+    exam_type = models.CharField(max_length=1, choices=EXAM_TYPE_CHOICES, default='n')
+
+    def __str__(self):
+        return self.code

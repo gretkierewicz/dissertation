@@ -13,8 +13,8 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.status import HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
-from .models import Degrees, Positions, Employees
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer
+from .models import Degrees, Positions, Employees, Modules
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -140,3 +140,9 @@ class EmployeeViewSet(ModelViewSet):
                             serializer.is_valid(raise_exception=True)
                             serializer.save()
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('employees-list')})
+
+
+class ModulesViewSet(ModelViewSet):
+    queryset = Modules.objects.all().order_by('code')
+    serializer_class = ModuleSerializer
+    lookup_field = 'code'

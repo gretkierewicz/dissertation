@@ -1,7 +1,7 @@
 from rest_framework.serializers import HyperlinkedModelSerializer, HyperlinkedRelatedField, SerializerMethodField
 from rest_framework.serializers import ValidationError
 
-from .models import Degrees, Positions, Employees
+from .models import Degrees, Positions, Employees, Modules
 
 
 class SerializerLambdaField(SerializerMethodField):
@@ -63,6 +63,12 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         many=True,
         lookup_field='abbreviation',
     )
+    modules = HyperlinkedRelatedField(
+        view_name='modules-detail',
+        read_only=True,
+        many=True,
+        lookup_field='code'
+    )
 
     def validate_supervisor(self, data):
         if data:
@@ -84,4 +90,20 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'url': {'lookup_field': 'abbreviation'},
+        }
+
+
+class ModuleSerializer(HyperlinkedModelSerializer):
+    supervisor = HyperlinkedRelatedField(
+        view_name='employees-detail',
+        queryset=Employees.objects.all().order_by('abbreviation'),
+        allow_null=True,
+        lookup_field='abbreviation',
+    )
+
+    class Meta:
+        model = Modules
+        fields = '__all__'
+        extra_kwargs = {
+            'url': {'lookup_field': 'code'},
         }
