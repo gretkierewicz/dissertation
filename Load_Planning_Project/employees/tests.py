@@ -30,19 +30,23 @@ class DegreeViewSetTest(TestCase):
 
     def test_get_valid_data(self):
         # try to read one valid record
-        response = client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk}))
+        response = client.get(reverse('degrees-detail', kwargs={'name': self.degree.name}))
         test_degree = Degrees.objects.get(pk=self.degree.pk)
         serializer = DegreeSerializer(test_degree, context={'request': factory.get('/')})
         self.assertEqual(serializer.data, {
-            'url': factory.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).build_absolute_uri(),
-            'name': test_degree.name
+            'url': factory.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).build_absolute_uri(),
+            'name': test_degree.name,
+            'employees': [
+                factory.get(reverse('employees-detail', kwargs={'name': employee.abbreviation})).build_absolute_uri() \
+                for employee in test_degree.employees.all()
+            ]
         }, 'Serialization failed')
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('degrees-detail', kwargs={'pk': 5}))
+        response = client.get(reverse('degrees-detail', kwargs={'name': 'non_existing_name'}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_valid_data(self):
@@ -67,26 +71,26 @@ class DegreeViewSetTest(TestCase):
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['name'][0].code, 'max_length')
 
-    def test_update_valid_data(self):
-        # try to update record with valid data
+    def test_put_valid_data(self):
         response = client.put(
-            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            reverse('degrees-detail', kwargs={'name': self.degree.name}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, 'PUT method')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_patch_valid_data(self):
         response = client.patch(
-            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            reverse('degrees-detail', kwargs={'name': self.degree.name}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, 'PATCH method')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_invalid_data(self):
         # try to update record with invalid data
         response = client.put(
-            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            reverse('degrees-detail', kwargs={'name': self.degree.name}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -95,7 +99,7 @@ class DegreeViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank', 'PUT method')
 
         response = client.patch(
-            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            reverse('degrees-detail', kwargs={'name': self.degree.name}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -104,7 +108,7 @@ class DegreeViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank', 'PATCH method')
 
         response = client.put(
-            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            reverse('degrees-detail', kwargs={'name': self.degree.name}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -113,7 +117,7 @@ class DegreeViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'max_length', 'PUT method')
 
         response = client.patch(
-            reverse('degrees-detail', kwargs={'pk': self.degree.pk}),
+            reverse('degrees-detail', kwargs={'name': self.degree.name}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -123,7 +127,7 @@ class DegreeViewSetTest(TestCase):
 
     def test_delete_valid(self):
         # try to delete record
-        response = client.delete(reverse('degrees-detail', kwargs={'pk': self.degree.pk}))
+        response = client.delete(reverse('degrees-detail', kwargs={'name': self.degree.name}))
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -145,19 +149,23 @@ class PositionViewSetTest(TestCase):
 
     def test_get_valid_data(self):
         # try to read one valid record
-        response = client.get(reverse('positions-detail', kwargs={'pk': self.position.pk}))
+        response = client.get(reverse('positions-detail', kwargs={'name': self.position.name}))
         test_position = Positions.objects.get(pk=self.position.pk)
         serializer = PositionSerializer(test_position, context={'request': factory.get('/')})
         self.assertEqual(serializer.data, {
-            'url': factory.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).build_absolute_uri(),
-            'name': test_position.name
+            'url': factory.get(reverse('positions-detail', kwargs={'name': self.position.name})).build_absolute_uri(),
+            'name': test_position.name,
+            'employees': [
+                factory.get(reverse('employees-detail', kwargs={'name': employee.abbreviation})).build_absolute_uri() \
+                for employee in test_position.employees.all()
+            ]
         }, 'Serialization failed')
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('positions-detail', kwargs={'pk': 5}))
+        response = client.get(reverse('positions-detail', kwargs={'name': 'non_existing_name'}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_valid_data(self):
@@ -182,17 +190,17 @@ class PositionViewSetTest(TestCase):
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['name'][0].code, 'max_length')
 
-    def test_update_valid_data(self):
-        # try to update record with valid data
+    def test_put_valid_data(self):
         response = client.put(
-            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            reverse('positions-detail', kwargs={'name': self.position.name}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_patch_valid_data(self):
         response = client.patch(
-            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            reverse('positions-detail', kwargs={'name': self.position.name}),
             json.dumps(self.valid_data),
             content_type='application/json',
         )
@@ -201,7 +209,7 @@ class PositionViewSetTest(TestCase):
     def test_update_invalid_data(self):
         # try to update record with invalid data
         response = client.put(
-            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            reverse('positions-detail', kwargs={'name': self.position.name}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -210,7 +218,7 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank')
 
         response = client.patch(
-            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            reverse('positions-detail', kwargs={'name': self.position.name}),
             json.dumps({'name': ''}),
             content_type='application/json',
         )
@@ -219,7 +227,7 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'blank')
 
         response = client.put(
-            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            reverse('positions-detail', kwargs={'name': self.position.name}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -228,7 +236,7 @@ class PositionViewSetTest(TestCase):
         self.assertEqual(response.data['name'][0].code, 'max_length')
 
         response = client.patch(
-            reverse('positions-detail', kwargs={'pk': self.position.pk}),
+            reverse('positions-detail', kwargs={'name': self.position.name}),
             json.dumps({'name': self.name_max_len * 'x' + 'x'}),
             content_type='application/json',
         )
@@ -238,7 +246,7 @@ class PositionViewSetTest(TestCase):
 
     def test_delete_valid(self):
         # try to delete record
-        response = client.delete(reverse('positions-detail', kwargs={'pk': self.position.pk}))
+        response = client.delete(reverse('positions-detail', kwargs={'name': self.position.name}))
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -270,10 +278,10 @@ class EmployeesViewSetTest(TestCase):
             'first_name': self.first_name_max_len * 'x',
             'last_name': self.last_name_max_len * 'x',
             'abbreviation': self.abbreviation_max_len * 'x',
-            'degree': client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).data.get('url'),
-            'position': client.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).data.get('url'),
+            'degree': client.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).data.get('url'),
+            'position': client.get(reverse('positions-detail', kwargs={'name': self.position.name})).data.get('url'),
             'e_mail': (self.e_mail_max_len - 5) * 'x' + '@x.xx',
-            'supervisor': client.get(reverse('employees-detail', kwargs={'pk': 1})).data.get('url'),
+            'supervisor': client.get(reverse('employees-detail', kwargs={'abbreviation': 'abb1'})).data.get('url'),
             'year_of_studies': 1,
             'is_procedure_for_a_doctoral_degree_approved': True,
             'has_scholarship': True,
@@ -282,8 +290,8 @@ class EmployeesViewSetTest(TestCase):
             'first_name': 'a',
             'last_name': 'a',
             'abbreviation': 'a',
-            'degree': client.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).data.get('url'),
-            'position': client.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).data.get('url'),
+            'degree': client.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).data.get('url'),
+            'position': client.get(reverse('positions-detail', kwargs={'name': self.position.name})).data.get('url'),
             'e_mail': 'a@a.aa',
             'supervisor': None,
         }
@@ -301,11 +309,14 @@ class EmployeesViewSetTest(TestCase):
 
     def test_get_valid_data(self):
         # try to read one valid record
-        response = client.get(reverse('employees-detail', kwargs={'pk': self.employee.pk}))
+        response = client.get(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}))
         test_employee = Employees.objects.get(pk=self.employee.pk)
         serializer = EmployeeSerializer(test_employee, context={'request': factory.get('/')})
         self.assertEqual(serializer.data['url'],
-                         factory.get(reverse('employees-detail', kwargs={'pk': self.employee.pk})).build_absolute_uri(),
+                         factory.get(reverse(
+                             'employees-detail',
+                             kwargs={'abbreviation': self.employee.abbreviation}
+                         )).build_absolute_uri(),
                          "'url' field do not match!")
         self.assertEqual(serializer.data['first_name'],
                          self.employee.first_name,
@@ -317,13 +328,16 @@ class EmployeesViewSetTest(TestCase):
                          self.employee.abbreviation,
                          "'abbreviation' field do not match!")
         self.assertEqual(serializer.data['degree'],
-                         factory.get(reverse('degrees-detail', kwargs={'pk': self.degree.pk})).build_absolute_uri(),
+                         factory.get(reverse('degrees-detail', kwargs={'name': self.degree.name})).build_absolute_uri(),
                          "'degree' field do not match!")
         self.assertEqual(serializer.data['degree_repr'],
                          self.employee.degree.name,
                          "'degree_repr' field do not match!")
         self.assertEqual(serializer.data['position'],
-                         factory.get(reverse('positions-detail', kwargs={'pk': self.position.pk})).build_absolute_uri(),
+                         factory.get(reverse(
+                             'positions-detail',
+                             kwargs={'name': self.position.name})
+                         ).build_absolute_uri(),
                          "'position' field do not match!")
         self.assertEqual(serializer.data['position_repr'],
                          self.employee.position.name,
@@ -333,7 +347,8 @@ class EmployeesViewSetTest(TestCase):
                          "'e_mail' field do not match!")
         self.assertEqual(serializer.data['supervisor'],
                          factory.get(reverse('employees-detail',
-                                             kwargs={'pk': self.employee.supervisor.pk})).build_absolute_uri(),
+                                             kwargs={'abbreviation': self.employee.supervisor.abbreviation}
+                                             )).build_absolute_uri(),
                          "'supervisor' field do not match!")
         self.assertEqual(serializer.data['year_of_studies'],
                          self.employee.year_of_studies,
@@ -344,12 +359,20 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(serializer.data['has_scholarship'],
                          self.employee.has_scholarship,
                          "'has_scholarship' field do not match!")
+        self.assertEqual(
+            serializer.data['employees'],
+            [factory.get(reverse('employees-detail',
+                                 kwargs={'abbreviation': employee.abbreviation}
+                                 )).build_absolute_uri()
+             for employee in self.employee.employees.all()],
+            "'employees' field do not match!"
+        )
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_invalid_data(self):
         # try to read not existing record
-        response = client.get(reverse('employees-detail', kwargs={'pk': 5}))
+        response = client.get(reverse('employees-detail', kwargs={'abbreviation': 'non_existing_abb'}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_valid_data_full(self):
@@ -397,7 +420,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
 
         invalid_data['first_name'] = None
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
@@ -405,7 +428,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['first_name'][0].code, 'null')
 
         invalid_data['first_name'] = ''
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
@@ -413,7 +436,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['first_name'][0].code, 'blank')
 
         invalid_data['first_name'] = self.first_name_max_len * 'x' + 'x'
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
@@ -421,21 +444,21 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['first_name'][0].code, 'max_length')
 
     def test_patch_invalid_first_name(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'first_name': None}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['first_name'][0].code, 'null')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'first_name': ''}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['first_name'][0].code, 'blank')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'first_name': self.first_name_max_len * 'x' + 'x'}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
@@ -473,7 +496,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
 
         invalid_data['last_name'] = None
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
@@ -481,7 +504,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['last_name'][0].code, 'null')
 
         invalid_data['last_name'] = ''
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
@@ -489,7 +512,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['last_name'][0].code, 'blank')
 
         invalid_data['last_name'] = self.last_name_max_len * 'x' + 'x'
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
@@ -497,21 +520,21 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['last_name'][0].code, 'max_length')
 
     def test_patch_invalid_last_name(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'last_name': None}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['last_name'][0].code, 'null')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'last_name': ''}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['last_name'][0].code, 'blank')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'last_name': self.last_name_max_len * 'x' + 'x'}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
@@ -549,7 +572,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
 
         invalid_data['abbreviation'] = None
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
@@ -557,7 +580,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['abbreviation'][0].code, 'null')
 
         invalid_data['abbreviation'] = ''
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
@@ -565,7 +588,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['abbreviation'][0].code, 'blank')
 
         invalid_data['abbreviation'] = self.abbreviation_max_len * 'x' + 'x'
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
@@ -573,21 +596,21 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['abbreviation'][0].code, 'max_length')
 
     def test_patch_invalid_abbreviation(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'abbreviation': None}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['abbreviation'][0].code, 'null')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'abbreviation': ''}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'blank')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['abbreviation'][0].code, 'blank')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'abbreviation': self.abbreviation_max_len * 'x' + 'x'}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'max_length')
@@ -617,7 +640,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
 
         invalid_data['degree'] = None
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
@@ -625,7 +648,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['degree'][0].code, 'null')
 
         invalid_data['degree'] = 'x'
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
@@ -633,14 +656,14 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['degree'][0].code, 'no_match')
 
     def test_patch_invalid_degree(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'degree': None}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['degree'][0].code, 'null')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'degree': 'x'}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
@@ -670,7 +693,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
 
         invalid_data['position'] = None
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
@@ -678,7 +701,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['position'][0].code, 'null')
 
         invalid_data['position'] = 'x'
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
@@ -686,14 +709,14 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['position'][0].code, 'no_match')
 
     def test_patch_invalid_position(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'position': None}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'null')
         # Check if ErrorDetail's code is returned properly
         self.assertEqual(response.data['position'][0].code, 'null')
 
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'position': 'x'}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
@@ -715,7 +738,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
         for pair in self.e_mail_error_table:
             invalid_data['e_mail'] = pair[0]
-            response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+            response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                   json.dumps(invalid_data),
                                   content_type='application/json')
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, pair[1])
@@ -724,7 +747,7 @@ class EmployeesViewSetTest(TestCase):
 
     def test_patch_invalid_email(self):
         for pair in self.e_mail_error_table:
-            response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+            response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                     json.dumps({'e_mail': pair[0]}),
                                     content_type='application/json')
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, pair[1])
@@ -735,7 +758,7 @@ class EmployeesViewSetTest(TestCase):
         invalid_data = self.valid_data
 
         invalid_data['supervisor'] = 'x'
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'no_match')
@@ -743,8 +766,8 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['supervisor'][0].code, 'no_match')
 
         invalid_data['supervisor'] = client.get(
-            reverse('employees-detail', kwargs={'pk': self.employee.pk})).data.get('url')
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+            reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation})).data.get('url')
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(invalid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, 'invalid')
@@ -762,13 +785,13 @@ class EmployeesViewSetTest(TestCase):
     def test_put_valid_year_of_studies_min(self):
         valid_data = self.valid_data
         valid_data['year_of_studies'] = self.min_year
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(valid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_patch_valid_year_of_studies_min(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'year_of_studies': self.min_year}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -784,13 +807,13 @@ class EmployeesViewSetTest(TestCase):
     def test_put_valid_year_of_studies_max(self):
         valid_data = self.valid_data
         valid_data['year_of_studies'] = self.max_year
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(valid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_patch_valid_year_of_studies_max(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'year_of_studies': self.max_year}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -808,7 +831,7 @@ class EmployeesViewSetTest(TestCase):
     def test_put_invalid_year_of_studies_negative(self):
         valid_data = self.valid_data
         valid_data['year_of_studies'] = -.0001
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(valid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -816,7 +839,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value lower than 0')
 
     def test_patch_invalid_year_of_studies_negative(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'year_of_studies': -0.0001}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -836,7 +859,7 @@ class EmployeesViewSetTest(TestCase):
     def test_put_invalid_year_of_studies_fraction(self):
         valid_data = self.valid_data
         valid_data['year_of_studies'] = 0.3
-        response = client.put(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.put(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                               json.dumps(valid_data),
                               content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -844,7 +867,7 @@ class EmployeesViewSetTest(TestCase):
         self.assertEqual(response.data['year_of_studies'][0].code, 'invalid', 'Value is not integer')
 
     def test_patch_invalid_year_of_studies_fraction(self):
-        response = client.patch(reverse('employees-detail', kwargs={'pk': self.employee.pk}),
+        response = client.patch(reverse('employees-detail', kwargs={'abbreviation': self.employee.abbreviation}),
                                 json.dumps({'year_of_studies': 0.3}),
                                 content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
