@@ -9,16 +9,10 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###13/12/2020
+###15/12/2020
 
-- Corrections after deploying at ct8.pl
-- Running app at http://gret.ct8.pl/ with use of MySQL (possible future tests with PostgreSQL/MongoDB)
-- Tests for Employees model, view and serializer
-- Tests for Positions model, view and serializer - 1 Fail - delete still possible
-- FIX - delete not possible at Position view
-- FIX - sending empty 'year_of_studies' field was causing error because of SQLite correction
-- Major refactoring TESTs, after adding supervisor self relation test - bug was found
-- FIX - employee cannot be it's supervisor anymore - it would be better to exclude employee's abbreviation from form's list too
+- Added links for back-reference fields to all serializers
+- Changed lookup_field for all views to be more user friendly
 
 To be done:
 

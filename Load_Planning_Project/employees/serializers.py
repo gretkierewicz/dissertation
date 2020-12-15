@@ -18,11 +18,15 @@ class DegreeSerializer(HyperlinkedModelSerializer):
         view_name='employees-detail',
         read_only=True,
         many=True,
+        lookup_field='abbreviation',
     )
 
     class Meta:
         model = Degrees
         fields = '__all__'
+        extra_kwargs = {
+            'url': {'lookup_field': 'name'},
+        }
 
 
 class PositionSerializer(HyperlinkedModelSerializer):
@@ -30,27 +34,42 @@ class PositionSerializer(HyperlinkedModelSerializer):
         view_name='employees-detail',
         read_only=True,
         many=True,
+        lookup_field='abbreviation',
     )
 
     class Meta:
         model = Positions
         fields = '__all__'
+        extra_kwargs = {
+            'url': {'lookup_field': 'name'},
+        }
 
 
 class EmployeeSerializer(HyperlinkedModelSerializer):
     degree = HyperlinkedRelatedField(
-        view_name='degrees-detail', queryset=Degrees.objects.all().order_by('name'))
+        view_name='degrees-detail',
+        queryset=Degrees.objects.all().order_by('name'),
+        lookup_field='name',
+    )
     degree_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.degree))
     position = HyperlinkedRelatedField(
-        view_name='positions-detail', queryset=Positions.objects.all().order_by('name'))
+        view_name='positions-detail',
+        queryset=Positions.objects.all().order_by('name'),
+        lookup_field='name',
+    )
     position_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.position))
     supervisor = HyperlinkedRelatedField(
-        view_name='employees-detail', queryset=Employees.objects.all().order_by('abbreviation'), allow_null=True)
+        view_name='employees-detail',
+        queryset=Employees.objects.all().order_by('abbreviation'),
+        allow_null=True,
+        lookup_field='abbreviation',
+    )
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
     employees = HyperlinkedRelatedField(
         view_name='employees-detail',
         read_only=True,
         many=True,
+        lookup_field='abbreviation',
     )
 
     def validate_supervisor(self, data):
@@ -71,3 +90,6 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Employees
         fields = '__all__'
+        extra_kwargs = {
+            'url': {'lookup_field': 'abbreviation'},
+        }

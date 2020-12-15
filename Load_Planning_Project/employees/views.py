@@ -25,6 +25,8 @@ class DegreeViewSet(mixins.CreateModelMixin,
     # disallow DELETE for that view
     queryset = Degrees.objects.all().order_by('name')
     serializer_class = DegreeSerializer
+    lookup_field = 'name'
+    lookup_value_regex = "[^/]+"
 
     def get_renderer_context(self):
         context = super().get_renderer_context()
@@ -55,6 +57,8 @@ class PositionViewSet(mixins.CreateModelMixin,
                       GenericViewSet):
     queryset = Positions.objects.all().order_by('name')
     serializer_class = PositionSerializer
+    lookup_field = 'name'
+    lookup_value_regex = "[^/]+"
 
     def get_renderer_context(self):
         context = super().get_renderer_context()
@@ -92,6 +96,7 @@ class EmployeeViewSet(ModelViewSet):
     queryset = Employees.objects.all().order_by('abbreviation')
     serializer_class = EmployeeSerializer
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, EmployeeRenderer, )
+    lookup_field = 'abbreviation'
 
     @action(detail=False, methods=['PUT', 'POST'])
     def csv_files_upload(self, request):
