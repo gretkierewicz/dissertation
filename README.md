@@ -14,6 +14,7 @@ Local with SQLite DB
 - Added links for back-reference fields to all serializers
 - Changed lookup_field for all views to be more user friendly
 - Making corrections to tests because of lookup_field change and added back-reference
+- FIX to the csv_files_upload
 
 To be done:
 

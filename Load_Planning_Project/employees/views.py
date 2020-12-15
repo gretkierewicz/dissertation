@@ -45,8 +45,8 @@ class DegreeViewSet(mixins.CreateModelMixin,
                         continue
                     except ObjectDoesNotExist:
                         serializer = self.get_serializer(data=row)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save()
+                        serializer.is_valid(raise_exception=True)
+                        serializer.save()
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('degrees-list')})
 
 
@@ -77,8 +77,8 @@ class PositionViewSet(mixins.CreateModelMixin,
                         continue
                     except ObjectDoesNotExist:
                         serializer = self.get_serializer(data=row)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save()
+                        serializer.is_valid(raise_exception=True)
+                        serializer.save()
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('positions-list')})
 
 
@@ -106,18 +106,25 @@ class EmployeeViewSet(ModelViewSet):
                 csv_dict = DictReader(StringIO(request.data.get(key).read().decode('UTF-8')), delimiter=',')
                 for row in csv_dict:
                     try:
-                        degree = Degrees.objects.get(name=row.get('degree')).pk
-                        row['degree'] = request.build_absolute_uri(reverse('degrees-detail', args=[degree]))
+                        degree = Degrees.objects.get(name=row.get('degree'))
+                        row['degree'] = request.build_absolute_uri(
+                            reverse('degrees-detail',
+                                    kwargs={'name': degree.name}))
                     except ObjectDoesNotExist:
                         row['degree'] = None
                     try:
-                        position = Positions.objects.get(name=row.get('position')).pk
-                        row['position'] = request.build_absolute_uri(reverse('positions-detail', args=[position]))
+                        position = Positions.objects.get(name=row.get('position'))
+                        row['position'] = request.build_absolute_uri(
+                            reverse('positions-detail',
+                                    kwargs={'name': position.name}))
                     except ObjectDoesNotExist:
                         row['position'] = None
                     try:
-                        supervisor = Employees.objects.get(abbreviation=row.get('supervisor')).pk
-                        row['supervisor'] = request.build_absolute_uri(reverse('employees-detail', args=[supervisor]))
+                        supervisor = Employees.objects.get(abbreviation=row.get('supervisor'))
+                        row['supervisor'] = request.build_absolute_uri(
+                            reverse('employees-detail',
+                                    kwargs={'abbreviation': supervisor.abbreviation}
+                                    ))
                     except ObjectDoesNotExist:
                         row['supervisor'] = None
 
