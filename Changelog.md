@@ -1,3 +1,14 @@
+###15/12/2020
+
+- Added links for back-reference fields to all serializers
+- Changed lookup_field for all views to be more user friendly
+- Making corrections to tests because of lookup_field change and added back-reference
+- FIX to the csv_files_upload
+- FIX - because of polish marks changed back degree and position lookup
+- Changed supervisors 'employees' field to 'subordinates' for better readability
+- Created Modules model, view and serializer (still needs csv_files_upload action)
+- Deleted 'Exam type' table from MySQL scheme - converted to choices (same for semester field)
+
 ###13/12/2020
 
 - Corrections after deploying at ct8.pl

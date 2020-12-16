@@ -34,22 +34,42 @@ class Employees(models.Model):
 
 class Modules(models.Model):
     EXAM_TYPE_CHOICES = [
-        ('n', 'no exam'),
-        ('o', 'oral'),
-        ('w', 'written'),
+        ('N', 'No exam'),
+        ('O', 'Oral'),
+        ('W', 'Written'),
     ]
 
     SEMESTER_CHOICES = [
-        ('w', 'winter'),
-        ('s', 'summer'),
+        ('W', 'Winter'),
+        ('S', 'Summer'),
     ]
 
     code = models.CharField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='modules')
     is_contact_type = models.BooleanField(default=False)
-    semester = models.CharField(max_length=1, choices=SEMESTER_CHOICES, default='w')
-    exam_type = models.CharField(max_length=1, choices=EXAM_TYPE_CHOICES, default='n')
+    semester = models.CharField(max_length=1, choices=SEMESTER_CHOICES, default='W')
+    exam_type = models.CharField(max_length=1, choices=EXAM_TYPE_CHOICES, default='N')
 
     def __str__(self):
         return self.code
+
+
+class Orders(models.Model):
+    class Meta:
+        unique_together = (('module', 'lesson_type'), )
+
+    LESSON_TYPE_CHOICES = [
+        ('T', 'Lecture'),
+        ('L', 'Laboratory'),
+        ('C', 'Classes'),
+        ('P', 'Project'),
+        ('S', 'Seminar'),
+    ]
+
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='orders')
+    lesson_type = models.CharField(max_length=1, choices=LESSON_TYPE_CHOICES, default='T')
+    hours = models.PositiveIntegerField()
+
+    def __str__(self):
+        return '{}_{}'.format(self.module, self.lesson_type)

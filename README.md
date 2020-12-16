@@ -9,20 +9,14 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###15/12/2020
+###16/12/2020
 
-- Added links for back-reference fields to all serializers
-- Changed lookup_field for all views to be more user friendly
-- Making corrections to tests because of lookup_field change and added back-reference
-- FIX to the csv_files_upload
-- FIX - because of polish marks changed back degree and position lookup
-- Changed supervisors 'employees' field to 'subordinates' for better readability
-- Created Modules model, view and serializer (still needs csv_files_upload action)
-- Deleted 'Exam type' table from MySQL scheme - converted to choices (same for semester field)
+- Reshaping MySQL scheme - deleting 'Lesson Type' - will do it with choices
+- Created Orders model, serializer and view (View for list, post and request one record for now)
 
 To be done:
 
-- Rethink use of 'LessonTypes' table - should be choices instead
+- Create rest of methods for Orders view set
 - Implement additional models
 - Implement filters, sorting or search
 - Add commentary

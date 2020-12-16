@@ -1,7 +1,8 @@
+from rest_framework.reverse import reverse
 from rest_framework.serializers import HyperlinkedModelSerializer, HyperlinkedRelatedField, SerializerMethodField
 from rest_framework.serializers import ValidationError
 
-from .models import Degrees, Positions, Employees, Modules
+from .models import Degrees, Positions, Employees, Modules, Orders
 
 
 class SerializerLambdaField(SerializerMethodField):
@@ -11,6 +12,17 @@ class SerializerLambdaField(SerializerMethodField):
 
     def to_representation(self, data):
         return self.method_name(data)
+
+
+class OrderHyperlink(HyperlinkedRelatedField):
+    view_name = 'orders-detail'
+
+    def get_url(self, obj, view_name, request, format):
+        url_kwargs = {
+            'module': obj.module.code,
+            'lesson_type': obj.lesson_type,
+        }
+        return reverse(view_name, kwargs=url_kwargs, request=request, format=format)
 
 
 class DegreeSerializer(HyperlinkedModelSerializer):
@@ -100,6 +112,10 @@ class ModuleSerializer(HyperlinkedModelSerializer):
         allow_null=True,
         lookup_field='abbreviation',
     )
+    orders = OrderHyperlink(
+        read_only=True,
+        many=True,
+    )
 
     class Meta:
         model = Modules
@@ -107,3 +123,23 @@ class ModuleSerializer(HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'code'},
         }
+
+
+class OrderSerializer(HyperlinkedModelSerializer):
+    url = SerializerMethodField('get_two_key_url')
+    module = HyperlinkedRelatedField(
+        view_name='modules-detail',
+        queryset=Modules.objects.all().order_by('code'),
+        lookup_field='code',
+    )
+
+    class Meta:
+        model = Orders
+        fields = '__all__'
+
+    def get_two_key_url(self, data):
+        return '{base_url}{module}_{lesson_type}'.format(
+            base_url=self.context.get('request').build_absolute_uri(reverse('orders-list')),
+            module=data.module,
+            lesson_type=data.lesson_type,
+        )

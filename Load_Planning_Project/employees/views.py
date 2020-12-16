@@ -4,6 +4,7 @@ from csv import DictReader
 from io import StringIO
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from rest_framework import mixins
 from rest_framework.decorators import action
@@ -13,8 +14,8 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.status import HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
-from .models import Degrees, Positions, Employees, Modules
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer
+from .models import Degrees, Positions, Employees, Modules, Orders
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -146,3 +147,18 @@ class ModulesViewSet(ModelViewSet):
     queryset = Modules.objects.all().order_by('code')
     serializer_class = ModuleSerializer
     lookup_field = 'code'
+
+
+class OrdersViewSet(ModelViewSet):
+    queryset = Orders.objects.all()
+    serializer_class = OrderSerializer
+
+    def retrieve(self, request, module=None, lesson_type=None, *args, **kwargs):
+        order = get_object_or_404(
+            Orders,
+            module=get_object_or_404(Modules, code=module),
+            lesson_type=lesson_type,
+        )
+        serializer = OrderSerializer(order)
+        serializer.context['request'] = request
+        return Response(serializer.data)
