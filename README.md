@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Reshaping MySQL scheme - deleting 'Lesson Type' - will do it with choices
 - Created Orders model, serializer and view (View for list, post and request one record for now)
+- Some fun with nested serializers - for now only for read_only fields
 
 To be done:
 

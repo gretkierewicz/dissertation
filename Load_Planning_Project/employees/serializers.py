@@ -25,13 +25,26 @@ class OrderHyperlink(HyperlinkedRelatedField):
         return reverse(view_name, kwargs=url_kwargs, request=request, format=format)
 
 
+class SubEmployeeSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Employees
+        fields = ['url', 'first_name', 'last_name', 'abbreviation']
+        extra_kwargs = {
+            'url': {'lookup_field': 'abbreviation'},
+        }
+
+
+class SubModuleSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Modules
+        fields = ['url', 'code', 'name']
+        extra_kwargs = {
+            'url': {'lookup_field': 'code'},
+        }
+
+
 class DegreeSerializer(HyperlinkedModelSerializer):
-    employees = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        read_only=True,
-        many=True,
-        lookup_field='abbreviation',
-    )
+    employees = SubEmployeeSerializer(read_only=True, many=True)
 
     class Meta:
         model = Degrees
@@ -39,12 +52,7 @@ class DegreeSerializer(HyperlinkedModelSerializer):
 
 
 class PositionSerializer(HyperlinkedModelSerializer):
-    employees = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        read_only=True,
-        many=True,
-        lookup_field='abbreviation',
-    )
+    employees = SubEmployeeSerializer(read_only=True, many=True)
 
     class Meta:
         model = Positions
@@ -69,18 +77,8 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         lookup_field='abbreviation',
     )
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
-    subordinates = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        read_only=True,
-        many=True,
-        lookup_field='abbreviation',
-    )
-    modules = HyperlinkedRelatedField(
-        view_name='modules-detail',
-        read_only=True,
-        many=True,
-        lookup_field='code'
-    )
+    subordinates = SubEmployeeSerializer(read_only=True, many=True)
+    modules = SubModuleSerializer(read_only=True, many=True)
 
     def validate_supervisor(self, data):
         if data:
@@ -105,26 +103,6 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         }
 
 
-class ModuleSerializer(HyperlinkedModelSerializer):
-    supervisor = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        queryset=Employees.objects.all().order_by('abbreviation'),
-        allow_null=True,
-        lookup_field='abbreviation',
-    )
-    orders = OrderHyperlink(
-        read_only=True,
-        many=True,
-    )
-
-    class Meta:
-        model = Modules
-        fields = '__all__'
-        extra_kwargs = {
-            'url': {'lookup_field': 'code'},
-        }
-
-
 class OrderSerializer(HyperlinkedModelSerializer):
     url = SerializerMethodField('get_two_key_url')
     module = HyperlinkedRelatedField(
@@ -143,3 +121,20 @@ class OrderSerializer(HyperlinkedModelSerializer):
             module=data.module,
             lesson_type=data.lesson_type,
         )
+
+
+class ModuleSerializer(HyperlinkedModelSerializer):
+    supervisor = HyperlinkedRelatedField(
+        view_name='employees-detail',
+        queryset=Employees.objects.all().order_by('abbreviation'),
+        allow_null=True,
+        lookup_field='abbreviation',
+    )
+    orders = OrderSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Modules
+        fields = '__all__'
+        extra_kwargs = {
+            'url': {'lookup_field': 'code'},
+        }
