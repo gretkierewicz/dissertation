@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Customization of Degrees list view by adding new serializer (less information in list - more in detail)
 - Extending customization to Positions and Employees lists
+- Correction to tests for Degrees, Positions, Employees
 
 To be done:
 
@@ -22,3 +23,4 @@ To be done:
 - Add commentary
 - Add messages/errors
 - Implement validator for 'abbreviation' excluding polish marks
+- Create sub-views i.e. employees/GBr/modules/ (https://github.com/alanjds/drf-nested-routers)

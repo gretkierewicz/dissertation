@@ -6,7 +6,8 @@ from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory
 
 from .models import Degrees, Positions, Employees
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, EmployeeSimpleSerializer, \
+    PositionSimpleSerializer, DegreeSimpleSerializer
 
 client = APIClient()
 factory = APIRequestFactory()
@@ -24,7 +25,7 @@ class DegreeViewSetTest(TestCase):
         # try to read all records
         response = client.get(reverse('degrees-list'))
         degrees = Degrees.objects.all()
-        serializer = DegreeSerializer(degrees, context={'request': factory.get('/')}, many=True)
+        serializer = DegreeSimpleSerializer(degrees, context={'request': factory.get('/')}, many=True)
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -145,7 +146,7 @@ class PositionViewSetTest(TestCase):
         # try to read all records
         response = client.get(reverse('positions-list'))
         positions = Positions.objects.all()
-        serializer = PositionSerializer(positions, context={'request': factory.get('/')}, many=True)
+        serializer = PositionSimpleSerializer(positions, context={'request': factory.get('/')}, many=True)
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -307,7 +308,7 @@ class EmployeesViewSetTest(TestCase):
         # try to read all records
         response = client.get(reverse('employees-list'))
         employees = Employees.objects.all()
-        serializer = EmployeeSerializer(employees, context={'request': factory.get('/')}, many=True)
+        serializer = EmployeeSimpleSerializer(employees, context={'request': factory.get('/')}, many=True)
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -367,11 +368,11 @@ class EmployeesViewSetTest(TestCase):
                          self.employee.has_scholarship,
                          "'has_scholarship' field do not match!")
         self.assertEqual(
-            serializer.data['employees'],
+            serializer.data['subordinates'],
             [factory.get(reverse('employees-detail',
                                  kwargs={'abbreviation': employee.abbreviation}
                                  )).build_absolute_uri()
-             for employee in self.employee.employees.all()],
+             for employee in self.employee.subordinates.all()],
             "'employees' field do not match!"
         )
         self.assertEqual(response.data, serializer.data, 'View response differs from serialized data')
