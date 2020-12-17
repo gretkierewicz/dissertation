@@ -1,5 +1,6 @@
+from rest_framework.relations import HyperlinkedRelatedField
 from rest_framework.reverse import reverse
-from rest_framework.serializers import HyperlinkedModelSerializer, HyperlinkedRelatedField, SerializerMethodField
+from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField
 from rest_framework.serializers import ValidationError
 
 from .models import Degrees, Positions, Employees, Modules, Orders
@@ -25,7 +26,19 @@ class OrderHyperlink(HyperlinkedRelatedField):
         return reverse(view_name, kwargs=url_kwargs, request=request, format=format)
 
 
-class EmployeeSimpleSerializer(HyperlinkedModelSerializer):
+class DegreeShortSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Degrees
+        fields = '__all__'
+
+
+class PositionShortSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Positions
+        fields = '__all__'
+
+
+class EmployeeShortSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation']
@@ -34,7 +47,7 @@ class EmployeeSimpleSerializer(HyperlinkedModelSerializer):
         }
 
 
-class SubModuleSerializer(HyperlinkedModelSerializer):
+class ModuleShortSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Modules
         fields = ['url', 'code', 'name']
@@ -43,28 +56,16 @@ class SubModuleSerializer(HyperlinkedModelSerializer):
         }
 
 
-class DegreeSimpleSerializer(HyperlinkedModelSerializer):
-    class Meta:
-        model = Degrees
-        fields = '__all__'
-
-
 class DegreeSerializer(HyperlinkedModelSerializer):
-    employees = EmployeeSimpleSerializer(read_only=True, many=True)
+    employees = EmployeeShortSerializer(read_only=True, many=True)
 
     class Meta:
         model = Degrees
-        fields = '__all__'
-
-
-class PositionSimpleSerializer(HyperlinkedModelSerializer):
-    class Meta:
-        model = Positions
         fields = '__all__'
 
 
 class PositionSerializer(HyperlinkedModelSerializer):
-    employees = EmployeeSimpleSerializer(read_only=True, many=True)
+    employees = EmployeeShortSerializer(read_only=True, many=True)
 
     class Meta:
         model = Positions
@@ -89,8 +90,8 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         lookup_field='abbreviation',
     )
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
-    subordinates = EmployeeSimpleSerializer(read_only=True, many=True)
-    modules = SubModuleSerializer(read_only=True, many=True)
+    subordinates = EmployeeShortSerializer(read_only=True, many=True)
+    modules = ModuleShortSerializer(read_only=True, many=True)
 
     def validate_supervisor(self, data):
         if data:

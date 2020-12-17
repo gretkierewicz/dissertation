@@ -16,7 +16,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
-    DegreeSimpleSerializer, PositionSimpleSerializer, EmployeeSimpleSerializer
+    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -30,7 +30,7 @@ class DegreeViewSet(mixins.CreateModelMixin,
 
     def list(self, request, *args, **kwargs):
         queryset = Degrees.objects.all()
-        serializer = DegreeSimpleSerializer(queryset, many=True, context={'request': request})
+        serializer = DegreeShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     def get_renderer_context(self):
@@ -65,7 +65,7 @@ class PositionViewSet(mixins.CreateModelMixin,
 
     def list(self, request, *args, **kwargs):
         queryset = Positions.objects.all()
-        serializer = PositionSimpleSerializer(queryset, many=True, context={'request': request})
+        serializer = PositionShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     def get_renderer_context(self):
@@ -108,7 +108,7 @@ class EmployeeViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = Employees.objects.all()
-        serializer = EmployeeSimpleSerializer(queryset, many=True, context={'request': request})
+        serializer = EmployeeShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     @action(detail=False, methods=['PUT', 'POST'])
@@ -159,13 +159,13 @@ class EmployeeViewSet(ModelViewSet):
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('employees-list')})
 
 
-class ModulesViewSet(ModelViewSet):
+class ModuleViewSet(ModelViewSet):
     queryset = Modules.objects.all().order_by('code')
     serializer_class = ModuleSerializer
     lookup_field = 'code'
 
 
-class OrdersViewSet(ModelViewSet):
+class OrderViewSet(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = OrderSerializer
 

@@ -15,6 +15,7 @@ Local with SQLite DB
 - Extending customization to Positions and Employees lists
 - Correction to tests for Degrees, Positions, Employees
 - Minor cleanup in urls before using nested routers
+- Changing naming of some serializer for better readability
 
 To be done:
 
