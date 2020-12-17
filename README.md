@@ -9,11 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###16/12/2020
+###17/12/2020
 
-- Reshaping MySQL scheme - deleting 'Lesson Type' - will do it with choices
-- Created Orders model, serializer and view (View for list, post and request one record for now)
-- Some fun with nested serializers - for now only for read_only fields
+- Customization of Degrees list view by adding new serializer (less information in list - more in detail)
 
 To be done:
 

@@ -43,6 +43,12 @@ class SubModuleSerializer(HyperlinkedModelSerializer):
         }
 
 
+class DegreeSimpleSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Degrees
+        fields = '__all__'
+
+
 class DegreeSerializer(HyperlinkedModelSerializer):
     employees = SubEmployeeSerializer(read_only=True, many=True)
 

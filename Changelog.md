@@ -1,3 +1,9 @@
+###16/12/2020
+
+- Reshaping MySQL scheme - deleting 'Lesson Type' - will do it with choices
+- Created Orders model, serializer and view (View for list, post and request one record for now)
+- Some fun with nested serializers - for now only for read_only fields
+
 ###15/12/2020
 
 - Added links for back-reference fields to all serializers

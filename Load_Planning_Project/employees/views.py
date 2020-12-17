@@ -15,7 +15,8 @@ from rest_framework.status import HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
+    DegreeSimpleSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -26,6 +27,11 @@ class DegreeViewSet(mixins.CreateModelMixin,
     # disallow DELETE for that view
     queryset = Degrees.objects.all().order_by('name')
     serializer_class = DegreeSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = Degrees.objects.all()
+        serializer = DegreeSimpleSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
 
     def get_renderer_context(self):
         context = super().get_renderer_context()
