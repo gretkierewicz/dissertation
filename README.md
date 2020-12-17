@@ -17,6 +17,7 @@ Local with SQLite DB
 - Minor cleanup in urls before using nested routers
 - Changing naming of some serializer for better readability
 - Creating first nested hyperlink employee-modules (yet no link for nested module instance, but possible to view it)
+- Moving ordering to list methods for proper display
 
 To be done:
 
@@ -25,5 +26,4 @@ To be done:
 - Implement filters, sorting or search
 - Add commentary
 - Add messages/errors
-- Implement validator for 'abbreviation' excluding polish marks
-- Create sub-views i.e. employees/GBr/modules/ (https://github.com/alanjds/drf-nested-routers)
+- Implement validator for 'abbreviation' excluding polish marks (should be slugfield) - same for code in modules

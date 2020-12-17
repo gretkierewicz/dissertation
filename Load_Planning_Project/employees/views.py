@@ -25,11 +25,11 @@ class DegreeViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     GenericViewSet):
     # disallow DELETE for that view
-    queryset = Degrees.objects.all().order_by('name')
+    queryset = Degrees.objects.all()
     serializer_class = DegreeSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = Degrees.objects.all()
+        queryset = Degrees.objects.all().order_by('name')
         serializer = DegreeShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -60,11 +60,11 @@ class PositionViewSet(mixins.CreateModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.ListModelMixin,
                       GenericViewSet):
-    queryset = Positions.objects.all().order_by('name')
+    queryset = Positions.objects.all()
     serializer_class = PositionSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = Positions.objects.all()
+        queryset = Positions.objects.all().order_by('name')
         serializer = PositionShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -101,13 +101,13 @@ class EmployeeRenderer(CSVRenderer):
 
 
 class EmployeeViewSet(ModelViewSet):
-    queryset = Employees.objects.all().order_by('abbreviation')
+    queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, EmployeeRenderer, )
     lookup_field = 'abbreviation'
 
     def list(self, request, *args, **kwargs):
-        queryset = Employees.objects.all()
+        queryset = Employees.objects.all().order_by('abbreviation')
         serializer = EmployeeShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
