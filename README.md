@@ -14,6 +14,7 @@ Local with SQLite DB
 - Customization of Degrees list view by adding new serializer (less information in list - more in detail)
 - Extending customization to Positions and Employees lists
 - Correction to tests for Degrees, Positions, Employees
+- Minor cleanup in urls before using nested routers
 
 To be done:
 
