@@ -16,7 +16,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
-    DegreeSimpleSerializer
+    DegreeSimpleSerializer, PositionSimpleSerializer, EmployeeSimpleSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -63,6 +63,11 @@ class PositionViewSet(mixins.CreateModelMixin,
     queryset = Positions.objects.all().order_by('name')
     serializer_class = PositionSerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = Positions.objects.all()
+        serializer = PositionSimpleSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
     def get_renderer_context(self):
         context = super().get_renderer_context()
         context['header'] = (['name'])
@@ -100,6 +105,11 @@ class EmployeeViewSet(ModelViewSet):
     serializer_class = EmployeeSerializer
     renderer_classes = (BrowsableAPIRenderer, JSONRenderer, EmployeeRenderer, )
     lookup_field = 'abbreviation'
+
+    def list(self, request, *args, **kwargs):
+        queryset = Employees.objects.all()
+        serializer = EmployeeSimpleSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
 
     @action(detail=False, methods=['PUT', 'POST'])
     def csv_files_upload(self, request):

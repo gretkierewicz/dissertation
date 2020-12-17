@@ -12,6 +12,7 @@ Local with SQLite DB
 ###17/12/2020
 
 - Customization of Degrees list view by adding new serializer (less information in list - more in detail)
+- Extending customization to Positions and Employees lists
 
 To be done:
 
