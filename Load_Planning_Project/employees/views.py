@@ -16,7 +16,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
-    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer
+    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer, ModuleShortSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -157,6 +157,16 @@ class EmployeeViewSet(ModelViewSet):
                             serializer.is_valid(raise_exception=True)
                             serializer.save()
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('employees-list')})
+
+
+class EmployeeModuleViewSet(GenericViewSet,
+                            mixins.ListModelMixin,
+                            mixins.RetrieveModelMixin):
+    serializer_class = ModuleShortSerializer
+    lookup_field = 'code'
+
+    def get_queryset(self):
+        return Modules.objects.all()
 
 
 class ModuleViewSet(ModelViewSet):

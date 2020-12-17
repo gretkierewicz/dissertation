@@ -1,4 +1,4 @@
-from rest_framework.relations import HyperlinkedRelatedField
+from rest_framework.relations import HyperlinkedIdentityField, HyperlinkedRelatedField
 from rest_framework.reverse import reverse
 from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField
 from rest_framework.serializers import ValidationError
@@ -91,7 +91,11 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     )
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
     subordinates = EmployeeShortSerializer(read_only=True, many=True)
-    modules = ModuleShortSerializer(read_only=True, many=True)
+    modules = HyperlinkedIdentityField(
+        view_name='employee-modules-list',
+        lookup_field='abbreviation',
+        lookup_url_kwarg='employee_abbreviation',
+    )
 
     def validate_supervisor(self, data):
         if data:

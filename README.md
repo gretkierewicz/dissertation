@@ -16,6 +16,7 @@ Local with SQLite DB
 - Correction to tests for Degrees, Positions, Employees
 - Minor cleanup in urls before using nested routers
 - Changing naming of some serializer for better readability
+- Creating first nested hyperlink employee-modules (yet no link for nested module instance, but possible to view it)
 
 To be done:
 
