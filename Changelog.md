@@ -1,3 +1,13 @@
+###17/12/2020
+
+- Customization of Degrees list view by adding new serializer (less information in list - more in detail)
+- Extending customization to Positions and Employees lists
+- Correction to tests for Degrees, Positions, Employees
+- Minor cleanup in urls before using nested routers
+- Changing naming of some serializer for better readability
+- Creating first nested hyperlink employee-modules (yet no link for nested module instance, but possible to view it)
+- Moving ordering to list methods for proper display
+
 ###16/12/2020
 
 - Reshaping MySQL scheme - deleting 'Lesson Type' - will do it with choices

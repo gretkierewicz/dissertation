@@ -166,7 +166,7 @@ class EmployeeModuleViewSet(GenericViewSet,
     lookup_field = 'code'
 
     def get_queryset(self):
-        return Modules.objects.all()
+        return Modules.objects.all().filter(supervisor__abbreviation=self.kwargs.get('employee_abbreviation'))
 
 
 class ModuleViewSet(ModelViewSet):
