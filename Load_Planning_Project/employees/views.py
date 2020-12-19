@@ -179,10 +179,10 @@ class OrderViewSet(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = OrderSerializer
 
-    def retrieve(self, request, module=None, lesson_type=None, *args, **kwargs):
+    def retrieve(self, request, module_code=None, lesson_type=None, *args, **kwargs):
         order = get_object_or_404(
             Orders,
-            module=get_object_or_404(Modules, code=module),
+            module=get_object_or_404(Modules, code=module_code),
             lesson_type=lesson_type,
         )
         serializer = OrderSerializer(order)

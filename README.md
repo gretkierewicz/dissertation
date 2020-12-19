@@ -12,6 +12,7 @@ Local with SQLite DB
 ###19/12/2020
 
 - FIX - Forgot about proper filtering of modules nested into employees view
+- Update - url's routers commentary and minor update for Order's retrieve function parameter
 
 To be done:
 
