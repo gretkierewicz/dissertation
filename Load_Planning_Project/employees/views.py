@@ -148,7 +148,11 @@ class EmployeeViewSet(ModelViewSet):
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):
         queryset = Employees.objects.all().order_by('abbreviation')
-        serializer = EmployeeShortSerializer(queryset, many=True, context={'request': request})
+        # list full data of each employee for csv, short version otherwise
+        if request.query_params.get('format') == 'csv':
+            serializer = EmployeeSerializer(queryset, many=True, context={'request': request})
+        else:
+            serializer = EmployeeShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     # Action for uploading data in format of CSV files - match it with EmployeeRenderer

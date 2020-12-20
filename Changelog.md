@@ -1,3 +1,11 @@
+###19/12/2020
+
+- FIX - Forgot about proper filtering of modules nested into employees view
+- Update - url's routers commentary and minor update for Order's retrieve function parameter
+- Deleted OrderHyperlink class - not used 
+- Created some comments for serializers and views
+- Changed Module list view to simple one
+
 ###17/12/2020
 
 - Customization of Degrees list view by adding new serializer (less information in list - more in detail)

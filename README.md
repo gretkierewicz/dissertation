@@ -9,13 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###19/12/2020
+###20/12/2020
 
-- FIX - Forgot about proper filtering of modules nested into employees view
-- Update - url's routers commentary and minor update for Order's retrieve function parameter
-- Deleted OrderHyperlink class - not used 
-- Created some comments for serializers and views
-- Changed Module list view to simple one
+- FIX - Employees list view will now send full data with CSV format
 
 To be done:
 
