@@ -11,7 +11,7 @@ from rest_framework.decorators import action
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from rest_framework.status import HTTP_303_SEE_OTHER
+from rest_framework.status import HTTP_200_OK, HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
@@ -165,10 +165,18 @@ class EmployeeViewSet(ModelViewSet):
         New record will be created with POST method
         Already existing record will be updated with PUT method
         No action will be made in other cases
-        :param request: received CSV files
-        :return: Response with serializer's data, HTTP 303, employees-list
+        :param request: with received CSV files preferably
+        :return: response with messages about serialized data
         """
-        serializer = self.get_serializer()
+        messages = {
+            'Errors': [],
+        }
+        if request.method == 'POST':
+            messages['Created successfully'] = []
+        if request.method == 'PUT':
+            messages['Updated successfully'] = []
+        messages['No action'] = []
+
         if len(request.FILES) != 0:
             for key in request.FILES.keys():
                 csv_dict = DictReader(StringIO(request.data.get(key).read().decode('UTF-8')), delimiter=',')
@@ -206,15 +214,42 @@ class EmployeeViewSet(ModelViewSet):
                         # with PUT method - update existing entry, don't create new one
                         if request.method == 'PUT':
                             serializer = self.get_serializer(employee, data=row)
-                            serializer.is_valid(raise_exception=True)
-                            serializer.save()
+                            if serializer.is_valid(raise_exception=False):
+                                serializer.save()
+                            if serializer.errors:
+                                messages['Errors'].append({
+                                    'e_mail': row.get('e_mail'),
+                                    'errors': serializer.errors,
+                                })
+                            else:
+                                messages['Updated successfully'].append({
+                                    'e_mail': row.get('e_mail'),
+                                })
+                        else:
+                            messages['No action'].append({
+                                    'e_mail': row.get('e_mail'),
+                                })
                     except ObjectDoesNotExist:
                         # with POST method - create new entry, do not update existing one
                         if request.method == 'POST':
                             serializer = self.get_serializer(data=row)
-                            serializer.is_valid(raise_exception=True)
-                            serializer.save()
-        return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('employees-list')})
+                            if serializer.is_valid(raise_exception=False):
+                                serializer.save()
+                            if serializer.errors:
+                                messages['Errors'].append({
+                                    'e_mail': row.get('e_mail'),
+                                    'errors': serializer.errors,
+                                })
+                            else:
+                                messages['Created successfully'].append({
+                                    'e_mail': row.get('e_mail'),
+                                })
+                        else:
+                            messages['No action'].append({
+                                    'e_mail': row.get('e_mail'),
+                                })
+
+        return Response(messages, status=HTTP_200_OK)
 
 
 class EmployeeModuleViewSet(GenericViewSet,
