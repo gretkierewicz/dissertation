@@ -34,7 +34,7 @@ class DegreeViewSet(mixins.CreateModelMixin,
 
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):
-        queryset = Degrees.objects.all().order_by('name')
+        queryset = Degrees.objects.order_by('name')
         serializer = DegreeShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -84,7 +84,7 @@ class PositionViewSet(mixins.CreateModelMixin,
 
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):
-        queryset = Positions.objects.all().order_by('name')
+        queryset = Positions.objects.order_by('name')
         serializer = PositionShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -147,7 +147,7 @@ class EmployeeViewSet(ModelViewSet):
 
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):
-        queryset = Employees.objects.all().order_by('abbreviation')
+        queryset = Employees.objects.order_by('abbreviation')
         # list full data of each employee for csv, short version otherwise
         if request.query_params.get('format') == 'csv':
             serializer = EmployeeSerializer(queryset, many=True, context={'request': request})
@@ -267,7 +267,7 @@ class EmployeeModuleViewSet(GenericViewSet,
     # custom queryset for nested view
     def get_queryset(self):
         # employee_abbreviation needs to be set as 'lookup_url_kwarg' in module's hyperlink's parameters
-        return Modules.objects.all().filter(supervisor__abbreviation=self.kwargs.get('employee_abbreviation'))
+        return Modules.objects.filter(supervisor__abbreviation=self.kwargs.get('employee_abbreviation'))
 
 
 class ModuleViewSet(ModelViewSet):
@@ -275,14 +275,14 @@ class ModuleViewSet(ModelViewSet):
     Modules View Set
     Create, Retrieve, Update, Delete modules
     """
-    queryset = Modules.objects.all().order_by('code')
+    queryset = Modules.objects.order_by('code')
     serializer_class = ModuleSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'code'
 
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):
-        queryset = Modules.objects.all().order_by('code')
+        queryset = Modules.objects.order_by('code')
         serializer = ModuleShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 

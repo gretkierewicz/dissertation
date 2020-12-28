@@ -71,17 +71,17 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     """
     degree = HyperlinkedRelatedField(
         view_name='degrees-detail',
-        queryset=Degrees.objects.all().order_by('name'),
+        queryset=Degrees.objects.order_by('name'),
     )
     degree_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.degree))
     position = HyperlinkedRelatedField(
         view_name='positions-detail',
-        queryset=Positions.objects.all().order_by('name'),
+        queryset=Positions.objects.order_by('name'),
     )
     position_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.position))
     supervisor = HyperlinkedRelatedField(
         view_name='employees-detail',
-        queryset=Employees.objects.all().order_by('abbreviation'),
+        queryset=Employees.objects.order_by('abbreviation'),
         allow_null=True,
         lookup_field='abbreviation',
     )
@@ -143,7 +143,7 @@ class OrderSerializer(OrderShortSerializer):
     """
     module = HyperlinkedRelatedField(
         view_name='modules-detail',
-        queryset=Modules.objects.all().order_by('code'),
+        queryset=Modules.objects.order_by('code'),
         lookup_field='code',
     )
 
@@ -173,7 +173,7 @@ class ModuleSerializer(ModuleShortSerializer):
     """
     supervisor = HyperlinkedRelatedField(
         view_name='employees-detail',
-        queryset=Employees.objects.all().order_by('abbreviation'),
+        queryset=Employees.objects.order_by('abbreviation'),
         allow_null=True,
         lookup_field='abbreviation',
     )
