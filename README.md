@@ -1,7 +1,7 @@
 # Dissertation work
 
 The use of the Django framework for the purpose of supporting the KRIM teaching load planning.\
-Project created with **Python v3.6.7**
+Project developed with **Python v3.8.6** (changed from Python v3.6.7)
 
 ## Test-site
 
@@ -9,11 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###20/12/2020
+###28/12/2020
 
-- FIX - Employees list view will now send full data with CSV format
-- Added output with messages to the employees/csv_files_upload action. 
-Now it displays records' Errors, Updated/Created successfully and No action (by the e_mail) 
+- Employees / Orders list - using short serializer now, added order_by
 
 To be done:
 

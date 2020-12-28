@@ -1,3 +1,9 @@
+###20/12/2020
+
+- FIX - Employees list view will now send full data with CSV format
+- Added output with messages to the employees/csv_files_upload action. 
+Now it displays records' Errors, Updated/Created successfully and No action (by the e_mail) 
+
 ###19/12/2020
 
 - FIX - Forgot about proper filtering of modules nested into employees view

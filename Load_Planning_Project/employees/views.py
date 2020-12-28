@@ -16,7 +16,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
-    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer, ModuleShortSerializer
+    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer, ModuleShortSerializer, OrderShortSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -304,4 +304,10 @@ class OrderViewSet(ModelViewSet):
         )
         serializer = OrderSerializer(order)
         serializer.context['request'] = request
+        return Response(serializer.data)
+
+    # Custom list method with simpler serializer
+    def list(self, request, *args, **kwargs):
+        queryset = Orders.objects.order_by('module', 'lesson_type')
+        serializer = OrderShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
