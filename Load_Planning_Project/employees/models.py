@@ -18,7 +18,7 @@ class Positions(models.Model):
 class Employees(models.Model):
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)
-    abbreviation = models.CharField(max_length=5, unique=True)
+    abbreviation = models.SlugField(max_length=5, unique=True)
     degree = models.ForeignKey(Degrees, on_delete=models.SET_NULL, null=True, related_name='employees')
     position = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True, related_name='employees')
     e_mail = models.EmailField(max_length=45, unique=True)
@@ -44,7 +44,7 @@ class Modules(models.Model):
         ('Written', 'Written'),
     ]
 
-    code = models.CharField(max_length=45, unique=True)
+    code = models.SlugField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='modules')
     is_contact_type = models.BooleanField(default=False)
