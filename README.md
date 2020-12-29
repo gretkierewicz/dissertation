@@ -16,11 +16,10 @@ Local with SQLite DB
 - Orders / Moved query from 'retrieve' method to 'get_object' - it will be common for all detail-view methods
 - URLS / Update of path for OrderViewSet, so it includes all methods
 - MODELS / Update of 'slug' field type: employee.abbreviation and module.code
+- FIX / supervisor validator for csv upload
 
 To be done:
 
 - Implement additional models
 - Implement filters, sorting or search
 - Add messages/errors
-- Supervisor validator needs update - it does not work for csv_files_upload! 
-context's request url is pointing action, not the employee

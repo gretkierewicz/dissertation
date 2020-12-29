@@ -99,6 +99,9 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
             # supervisor's sent field is compared to user's url - cannot match!
             if self.initial_data.get('supervisor') == self.context.get('request').build_absolute_uri():
                 raise ValidationError("Cannot self reference that field!")
+            # fix for uploading csv files
+            if self.initial_data.get('abbreviation') == data.abbreviation:
+                raise ValidationError("Cannot self reference that field!")
         return data
 
     # custom validator: 'year of studies' > 0 - DRF mapping PositiveInteger model Field into Integer serializer Field!
