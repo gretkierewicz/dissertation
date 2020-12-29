@@ -295,16 +295,13 @@ class OrderViewSet(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = OrderSerializer
 
-    # Custom two lookup fields - needs custom url function in serializer to match it
-    def retrieve(self, request, module_code=None, lesson_type=None, *args, **kwargs):
-        order = get_object_or_404(
+    # Custom get_object method choosing object for detail-view actions
+    def get_object(self):
+        return get_object_or_404(
             Orders,
-            module=get_object_or_404(Modules, code=module_code),
-            lesson_type=lesson_type,
+            module=get_object_or_404(Modules, code=self.kwargs.get('module_code')),
+            lesson_type=self.kwargs.get('lesson_type'),
         )
-        serializer = OrderSerializer(order)
-        serializer.context['request'] = request
-        return Response(serializer.data)
 
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):

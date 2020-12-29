@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - FIX / OrderShortSerializer minor update for better readability
 - MODELS / Update of CHOICES fields - for better readability of links
+- Orders / Moved query from 'retrieve' method to 'get_object' - it will be common for all detail-view methods
 
 To be done:
 
