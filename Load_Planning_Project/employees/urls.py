@@ -41,6 +41,9 @@ urlpatterns = [
         'orders/<str:module_code>_<str:lesson_type>/',
         views.OrderViewSet.as_view({
             'get': 'retrieve',
+            'put': 'update',
+            'patch': 'partial_update',
+            'delete': 'destroy',
         }),
         name='orders-detail',
     ),
