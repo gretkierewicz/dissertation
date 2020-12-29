@@ -130,9 +130,9 @@ class OrderShortSerializer(HyperlinkedModelSerializer):
         fields = ['url', 'lesson_type', 'hours']
 
     def get_two_key_url(self, data):
-        return '{base_url}{module}_{lesson_type}'.format(
+        return '{base_url}{module_code}_{lesson_type}'.format(
             base_url=self.context.get('request').build_absolute_uri(reverse('orders-list')),
-            module=data.module,
+            module_code=data.module.code,
             lesson_type=data.lesson_type,
         )
 

@@ -9,10 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###28/12/2020
+###29/12/2020
 
-- Employees / Orders list - using short serializer now, added order_by
-- FIX / order_by() and filter() do not need all() method to be used first
+- FIX / OrderShortSerializer minor update for better readability
 
 To be done:
 

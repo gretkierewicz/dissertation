@@ -1,3 +1,8 @@
+###28/12/2020
+
+- Employees / Orders list - using short serializer now, added order_by
+- FIX / order_by() and filter() do not need all() method to be used first
+
 ###20/12/2020
 
 - FIX - Employees list view will now send full data with CSV format
