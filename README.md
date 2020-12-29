@@ -12,6 +12,7 @@ Local with SQLite DB
 ###29/12/2020
 
 - FIX / OrderShortSerializer minor update for better readability
+- MODELS / Update of CHOICES fields - for better readability of links
 
 To be done:
 

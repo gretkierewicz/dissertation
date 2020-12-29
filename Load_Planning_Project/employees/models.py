@@ -33,23 +33,23 @@ class Employees(models.Model):
 
 
 class Modules(models.Model):
-    EXAM_TYPE_CHOICES = [
-        ('N', 'No exam'),
-        ('O', 'Oral'),
-        ('W', 'Written'),
+    SEMESTER_CHOICES = [
+        ('Winter', 'Winter'),
+        ('Summer', 'Summer'),
     ]
 
-    SEMESTER_CHOICES = [
-        ('W', 'Winter'),
-        ('S', 'Summer'),
+    EXAM_TYPE_CHOICES = [
+        ('None', 'No exam'),
+        ('Oral', 'Oral'),
+        ('Written', 'Written'),
     ]
 
     code = models.CharField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='modules')
     is_contact_type = models.BooleanField(default=False)
-    semester = models.CharField(max_length=1, choices=SEMESTER_CHOICES, default='W')
-    exam_type = models.CharField(max_length=1, choices=EXAM_TYPE_CHOICES, default='N')
+    semester = models.CharField(max_length=6, choices=SEMESTER_CHOICES, default='Winter')
+    exam_type = models.CharField(max_length=7, choices=EXAM_TYPE_CHOICES, default='None')
 
     def __str__(self):
         return self.code
@@ -60,15 +60,15 @@ class Orders(models.Model):
         unique_together = (('module', 'lesson_type'), )
 
     LESSON_TYPE_CHOICES = [
-        ('T', 'Lecture'),
-        ('L', 'Laboratory'),
-        ('C', 'Classes'),
-        ('P', 'Project'),
-        ('S', 'Seminar'),
+        ('Lecture', 'Lecture'),
+        ('Laboratory', 'Laboratory'),
+        ('Classes', 'Classes'),
+        ('Project', 'Project'),
+        ('Seminar', 'Seminar'),
     ]
 
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='orders')
-    lesson_type = models.CharField(max_length=1, choices=LESSON_TYPE_CHOICES, default='T')
+    lesson_type = models.CharField(max_length=10, choices=LESSON_TYPE_CHOICES, default='Lecture')
     hours = models.PositiveIntegerField()
 
     def __str__(self):
