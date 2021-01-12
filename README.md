@@ -15,6 +15,7 @@ Local with SQLite DB
   big update of model, serializer and view (https://syllabuskrk.agh.edu.pl/2017-2018/magnesite/api/faculties/wimir/study_plans/stacjonarne-mechanika-i-budowa-maszyn)
 - Changed '\_\_all__' to list in the serializers Meta fields for better control over API views 
   (control over sequence of fields - Module serializer for now)
+- Order serializer - changed back-ref name in Module model to 'form_of_classes'
 
 Rejected:
 
@@ -23,6 +24,7 @@ Rejected:
 
 ### To be done:
 
+- Update of Orders - no more separated view, will exist only as the sub-serializer of Modules
 - Implement additional models
 - Implement filters, sorting or search
 - Add messages/errors

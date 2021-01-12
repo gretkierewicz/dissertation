@@ -173,11 +173,11 @@ class ModuleSerializer(ModuleShortSerializer):
     Module Serializer - extended short serializer with additional properties:
     orders - nested serializer of module's orders
     """
-    orders = OrderShortSerializer(read_only=True, many=True)
+    form_of_classes = OrderSerializer(read_only=True, many=True)
 
     class Meta:
         model = Modules
-        fields = ['module_code', 'name', 'examination', 'orders']
+        fields = ['module_code', 'name', 'examination', 'form_of_classes']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},

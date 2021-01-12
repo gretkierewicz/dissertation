@@ -53,7 +53,7 @@ class Orders(models.Model):
         ('Seminar', 'Seminar'),
     ]
 
-    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='orders')
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='form_of_classes')
     lesson_type = models.CharField(max_length=10, choices=LESSON_TYPE_CHOICES, default='Lecture')
     hours = models.PositiveIntegerField()
 
