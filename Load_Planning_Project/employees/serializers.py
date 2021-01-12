@@ -134,7 +134,7 @@ class ModuleClassSerializer(HyperlinkedModelSerializer):
 
     def get_two_key_url(self, data):
         # unique url for classes - need to match path in the urls responsible for classes-detail pattern
-        return '{base_url}{module_code}/class/{name}'.format(
+        return '{base_url}{module_code}/classes/{name}'.format(
             base_url=self.context.get('request').build_absolute_uri(reverse('modules-list')),
             module_code=data.module.module_code,
             name=data.name,

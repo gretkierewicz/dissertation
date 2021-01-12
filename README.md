@@ -30,6 +30,7 @@ Local with SQLite DB
 - FIX - Getting back supervisor field for Module model
 - Changed Employees to API url part
 - Update for the MODEL workbench
+- Classes / minor change for url (/class/ -> /classes/)
 
 Rejected:
 

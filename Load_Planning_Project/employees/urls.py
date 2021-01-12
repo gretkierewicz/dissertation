@@ -39,7 +39,7 @@ urlpatterns = [
     # unique path for retrieving one order by it's module's code and class' name - needs implementation of unique url
     # allows: /modules/{module_code}/classes/{order_name}
     path(
-        'modules/<str:module_code>/class/<str:name>/',
+        'modules/<str:module_code>/classes/<str:name>/',
         views.ClassViewSet.as_view({
             'get': 'retrieve',
             'put': 'update',
