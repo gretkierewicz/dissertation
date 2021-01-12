@@ -1,7 +1,9 @@
+from django.shortcuts import get_object_or_404
+
 from rest_framework.relations import HyperlinkedIdentityField, HyperlinkedRelatedField
-from rest_framework.reverse import reverse
 from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField
 from rest_framework.serializers import ValidationError
+from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from .models import Degrees, Positions, Employees, Modules, Classes
 
@@ -121,48 +123,29 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         }
 
 
-class ModuleClassSerializer(HyperlinkedModelSerializer):
+class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
-    Module-Class Serializer - simple serializer with url, classes name and hours
-    Needs custom url generation because of 'unique_together' Classes' property (two primary keys)
+    Class Serializer - only for nesting in the Module Serializer
     """
-    url = SerializerMethodField('get_two_key_url')
+    parent_lookup_kwargs = {
+        'module_module_code': 'module__module_code',
+    }
 
     class Meta:
         model = Classes
         fields = ['url', 'name', 'classes_hours']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {'lookup_field': 'name'},
+        }
 
-    def get_two_key_url(self, data):
-        # unique url for classes - need to match path in the urls responsible for classes-detail pattern
-        return '{base_url}{module_code}/classes/{name}'.format(
-            base_url=self.context.get('request').build_absolute_uri(reverse('modules-list')),
-            module_code=data.module.module_code,
-            name=data.name,
+    def create(self, validated_data):
+        # TODO: unique together case!
+        validated_data['module'] = get_object_or_404(
+            Modules,
+            module_code=self.context.get('view').kwargs.get('module_module_code')
         )
-
-
-class ClassDetailSerializer(ModuleClassSerializer):
-    """
-    Class Detail Serializer - extended serializer with additional module's hyperlink, but with no url in fields
-    """
-    module = HyperlinkedRelatedField(
-        view_name='modules-detail',
-        queryset=Modules.objects.order_by('module_code'),
-        lookup_field='module_code',
-    )
-
-    class Meta:
-        model = Classes
-        fields = ['module', 'name', 'classes_hours']
-
-
-class ClassFullSerializer(ClassDetailSerializer):
-    """
-    Class Full Serializer - serializer with all fields
-    """
-    class Meta:
-        model = Classes
-        fields = '__all__'
+        return Classes.objects.create(**validated_data)
 
 
 class ModuleSerializer(HyperlinkedModelSerializer):
@@ -170,7 +153,12 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     Module Serializer - serializer with url, some of the model's fields and additional properties:
     form_of_classes - nested serializer of module's classes
     """
-    form_of_classes = ModuleClassSerializer(read_only=True, many=True)
+    classes = HyperlinkedIdentityField(
+        view_name='classes-list',
+        lookup_field='module_code',
+        lookup_url_kwarg='module_module_code',
+    )
+    form_of_classes = ClassSerializer(read_only=True, many=True)
     supervisor = HyperlinkedRelatedField(
         view_name='employees-detail',
         queryset=Employees.objects.order_by('abbreviation'),
@@ -180,7 +168,7 @@ class ModuleSerializer(HyperlinkedModelSerializer):
 
     class Meta:
         model = Modules
-        fields = ['url', 'module_code', 'name', 'examination', 'form_of_classes', 'supervisor']
+        fields = ['url', 'module_code', 'name', 'examination', 'classes', 'form_of_classes', 'supervisor']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},

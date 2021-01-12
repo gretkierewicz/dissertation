@@ -4,7 +4,6 @@ from csv import DictReader
 from io import StringIO
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from rest_framework import mixins
 from rest_framework.decorators import action
@@ -16,11 +15,11 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Classes
 from .serializers import \
-    DegreeSerializer, DegreeShortSerializer,\
-    PositionSerializer, PositionShortSerializer,\
-    EmployeeSerializer, EmployeeShortSerializer,\
+    DegreeSerializer, DegreeShortSerializer, \
+    PositionSerializer, PositionShortSerializer, \
+    EmployeeSerializer, EmployeeShortSerializer, \
     ModuleSerializer, \
-    ClassFullSerializer, ClassDetailSerializer
+    ClassSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -290,19 +289,11 @@ class ClassViewSet(ModelViewSet):
     Class View Set
     Create, Retrieve, Update, Delete orders
     """
-    queryset = Classes.objects.all()
-    serializer_class = ClassDetailSerializer
+    serializer_class = ClassSerializer
+    # Custom lookup_field - needs entry in extra_kwargs of serializer!
+    lookup_field = 'name'
 
-    # Custom get_object method choosing object for detail-view actions
-    def get_object(self):
-        return get_object_or_404(
-            Classes,
-            module=get_object_or_404(Modules, module_code=self.kwargs.get('module_code')),
-            name=self.kwargs.get('name'),
-        )
-
-    # Custom list method with simpler serializer
-    def list(self, request, *args, **kwargs):
-        queryset = Classes.objects.order_by('module', 'name')
-        serializer = ClassFullSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
+    # custom queryset for nested view
+    def get_queryset(self):
+        # module_module_code needs to be set as 'lookup_url_kwarg' in classes' hyperlink's parameters
+        return Classes.objects.filter(module__module_code=self.kwargs.get('module_module_code'))

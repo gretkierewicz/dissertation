@@ -29,25 +29,14 @@ router.register(r'modules', views.ModuleViewSet)
 ## generates:
 # /modules/
 # /modules/{module_code}
-
-router.register(r'classes', views.ClassViewSet)
+modules_router = NestedDefaultRouter(router, r'modules', lookup='module')
+modules_router.register(r'classes', views.ClassViewSet, basename='classes')
 ## generates:
-# /orders/
-# /orders/{module_code/order's name'}
+# /modules/{module_code}/classes/
+# /modules/{module_code}/classes/{class_name}
 
 urlpatterns = [
-    # unique path for retrieving one order by it's module's code and class' name - needs implementation of unique url
-    # allows: /modules/{module_code}/classes/{order_name}
-    path(
-        'modules/<str:module_code>/classes/<str:name>/',
-        views.ClassViewSet.as_view({
-            'get': 'retrieve',
-            'put': 'update',
-            'patch': 'partial_update',
-            'delete': 'destroy',
-        }),
-        name='classes-detail',
-    ),
     path('', include(router.urls)),
     path('', include(employees_router.urls)),
+    path('', include(modules_router.urls)),
 ]

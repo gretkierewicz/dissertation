@@ -59,4 +59,4 @@ class Classes(models.Model):
     classes_hours = models.PositiveIntegerField()
 
     def __str__(self):
-        return '{}_{}'.format(self.module, self.name)
+        return '{}/{}'.format(self.module, self.name)

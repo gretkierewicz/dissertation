@@ -31,6 +31,7 @@ Local with SQLite DB
 - Changed Employees to API url part
 - Update for the MODEL workbench
 - Classes / minor change for url (/class/ -> /classes/)
+- Classes big update - now accessed only from Module view
 
 Rejected:
 
