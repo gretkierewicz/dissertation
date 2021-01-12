@@ -171,10 +171,16 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     form_of_classes - nested serializer of module's classes
     """
     form_of_classes = ModuleClassSerializer(read_only=True, many=True)
+    supervisor = HyperlinkedRelatedField(
+        view_name='employees-detail',
+        queryset=Employees.objects.order_by('abbreviation'),
+        allow_null=True,
+        lookup_field='abbreviation',
+    )
 
     class Meta:
         model = Modules
-        fields = ['url', 'module_code', 'name', 'examination', 'form_of_classes']
+        fields = ['url', 'module_code', 'name', 'examination', 'form_of_classes', 'supervisor']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},

@@ -27,6 +27,7 @@ Local with SQLite DB
 - Orders serializers/view update - now properly reached from Module's nested serializer
   (allows use of /modules/{module_code}/classes/{order_name})
 - Renaming 'Orders' model to 'Classes' and cleaning comments
+- FIX - Getting back supervisor field for Module model
 
 Rejected:
 
