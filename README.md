@@ -29,6 +29,7 @@ Local with SQLite DB
 - Renaming 'Orders' model to 'Classes' and cleaning comments
 - FIX - Getting back supervisor field for Module model
 - Changed Employees to API url part
+- Update for the MODEL workbench
 
 Rejected:
 
