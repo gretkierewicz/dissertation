@@ -30,22 +30,23 @@ router.register(r'modules', views.ModuleViewSet)
 # /modules/
 # /modules/{module_code}
 
-router.register(r'orders', views.OrderViewSet)
+router.register(r'classes', views.ClassViewSet)
 ## generates:
 # /orders/
 # /orders/{module_code/order's name'}
 
 urlpatterns = [
-    # unique path for retrieving one order by it's module's code and order's name
+    # unique path for retrieving one order by it's module's code and class' name - needs implementation of unique url
+    # allows: /modules/{module_code}/classes/{order_name}
     path(
-        'orders/<str:module_code>/<str:name>/',
-        views.OrderViewSet.as_view({
+        'modules/<str:module_code>/class/<str:name>/',
+        views.ClassViewSet.as_view({
             'get': 'retrieve',
             'put': 'update',
             'patch': 'partial_update',
             'delete': 'destroy',
         }),
-        name='orders-detail',
+        name='classes-detail',
     ),
     path('', include(router.urls)),
     path('', include(employees_router.urls)),

@@ -3,7 +3,7 @@ from rest_framework.reverse import reverse
 from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField
 from rest_framework.serializers import ValidationError
 
-from .models import Degrees, Positions, Employees, Modules, Orders
+from .models import Degrees, Positions, Employees, Modules, Classes
 
 
 class SerializerLambdaField(SerializerMethodField):
@@ -121,28 +121,29 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         }
 
 
-class OrderShortSerializer(HyperlinkedModelSerializer):
+class ModuleClassSerializer(HyperlinkedModelSerializer):
     """
-    Order Short Serializer - simple serializer with url and some of the model's fields
-    Needs custom url generation because of 'unique_together' model's property (two primary keys)
+    Module-Class Serializer - simple serializer with url, classes name and hours
+    Needs custom url generation because of 'unique_together' Classes' property (two primary keys)
     """
     url = SerializerMethodField('get_two_key_url')
 
     class Meta:
-        model = Orders
-        fields = ['url', 'module', 'name', 'classes_hours']
+        model = Classes
+        fields = ['url', 'name', 'classes_hours']
 
     def get_two_key_url(self, data):
-        return '{base_url}{module_code}/{name}'.format(
-            base_url=self.context.get('request').build_absolute_uri(reverse('orders-list')),
+        # unique url for classes - need to match path in the urls responsible for classes-detail pattern
+        return '{base_url}{module_code}/class/{name}'.format(
+            base_url=self.context.get('request').build_absolute_uri(reverse('modules-list')),
             module_code=data.module.module_code,
             name=data.name,
         )
 
 
-class OrderSerializer(OrderShortSerializer):
+class ClassDetailSerializer(ModuleClassSerializer):
     """
-    Order Serializer - extended short serializer with additional module's hyperlink
+    Class Detail Serializer - extended serializer with additional module's hyperlink, but with no url in fields
     """
     module = HyperlinkedRelatedField(
         view_name='modules-detail',
@@ -151,16 +152,25 @@ class OrderSerializer(OrderShortSerializer):
     )
 
     class Meta:
-        model = Orders
+        model = Classes
+        fields = ['module', 'name', 'classes_hours']
+
+
+class ClassFullSerializer(ClassDetailSerializer):
+    """
+    Class Full Serializer - serializer with all fields
+    """
+    class Meta:
+        model = Classes
         fields = '__all__'
 
 
 class ModuleSerializer(HyperlinkedModelSerializer):
     """
     Module Serializer - serializer with url, some of the model's fields and additional properties:
-    orders - nested serializer of module's orders
+    form_of_classes - nested serializer of module's classes
     """
-    form_of_classes = OrderSerializer(read_only=True, many=True)
+    form_of_classes = ModuleClassSerializer(read_only=True, many=True)
 
     class Meta:
         model = Modules

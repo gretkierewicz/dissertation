@@ -41,7 +41,7 @@ class Modules(models.Model):
         return self.module_code
 
 
-class Orders(models.Model):
+class Classes(models.Model):
     class Meta:
         unique_together = (('module', 'name'), )
 

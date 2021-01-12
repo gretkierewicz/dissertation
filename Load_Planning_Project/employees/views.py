@@ -14,9 +14,13 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.status import HTTP_200_OK, HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
-from .models import Degrees, Positions, Employees, Modules, Orders
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
-    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer, OrderShortSerializer
+from .models import Degrees, Positions, Employees, Modules, Classes
+from .serializers import \
+    DegreeSerializer, DegreeShortSerializer,\
+    PositionSerializer, PositionShortSerializer,\
+    EmployeeSerializer, EmployeeShortSerializer,\
+    ModuleSerializer, \
+    ClassFullSerializer, ClassDetailSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -281,18 +285,24 @@ class ModuleViewSet(ModelViewSet):
     lookup_field = 'module_code'
 
 
-class OrderViewSet(ModelViewSet):
+class ClassViewSet(ModelViewSet):
     """
-    Orders View Set
+    Class View Set
     Create, Retrieve, Update, Delete orders
     """
-    queryset = Orders.objects.all()
-    serializer_class = OrderSerializer
+    queryset = Classes.objects.all()
+    serializer_class = ClassDetailSerializer
 
     # Custom get_object method choosing object for detail-view actions
     def get_object(self):
         return get_object_or_404(
-            Orders,
+            Classes,
             module=get_object_or_404(Modules, module_code=self.kwargs.get('module_code')),
             name=self.kwargs.get('name'),
         )
+
+    # Custom list method with simpler serializer
+    def list(self, request, *args, **kwargs):
+        queryset = Classes.objects.order_by('module', 'name')
+        serializer = ClassFullSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)

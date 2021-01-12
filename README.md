@@ -24,6 +24,9 @@ Local with SQLite DB
   >   old_name='lesson_type',\
   >   new_name='name',\
   >),
+- Orders serializers/view update - now properly reached from Module's nested serializer
+  (allows use of /modules/{module_code}/classes/{order_name})
+- Renaming 'Orders' model to 'Classes' and cleaning comments
 
 Rejected:
 
@@ -38,3 +41,5 @@ Rejected:
 - Add messages/errors
 - Custom query-sets for forms (if possible)
 - Change upload CSV files method for employees - it should first create employees without supervisors, and then save supervisors to it (so employees added from list could be set as supervisors for previously added employees)
+- Create static function for try/except reuse (employees csv upload)
+- Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
