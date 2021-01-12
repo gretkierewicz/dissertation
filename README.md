@@ -16,6 +16,7 @@ Local with SQLite DB
 - Changed '\_\_all__' to list in the serializers Meta fields for better control over API views 
   (control over sequence of fields - Module serializer for now)
 - Order serializer - changed back-ref name in Module model to 'form_of_classes'
+- Module serializer/view - simplified: only one serializer with full data and orders' list
 
 Rejected:
 

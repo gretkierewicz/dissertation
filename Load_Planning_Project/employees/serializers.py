@@ -155,29 +155,16 @@ class OrderSerializer(OrderShortSerializer):
         fields = '__all__'
 
 
-class ModuleShortSerializer(HyperlinkedModelSerializer):
+class ModuleSerializer(HyperlinkedModelSerializer):
     """
-    Module Short Serializer - simple serializer with url and some of the model's fields
-    """
-    class Meta:
-        model = Modules
-        fields = ['url', 'module_code', 'name']
-        extra_kwargs = {
-            # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'module_code'},
-        }
-
-
-class ModuleSerializer(ModuleShortSerializer):
-    """
-    Module Serializer - extended short serializer with additional properties:
+    Module Serializer - serializer with url, some of the model's fields and additional properties:
     orders - nested serializer of module's orders
     """
     form_of_classes = OrderSerializer(read_only=True, many=True)
 
     class Meta:
         model = Modules
-        fields = ['module_code', 'name', 'examination', 'form_of_classes']
+        fields = ['url', 'module_code', 'name', 'examination', 'form_of_classes']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},

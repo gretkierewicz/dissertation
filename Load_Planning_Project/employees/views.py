@@ -16,7 +16,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Modules, Orders
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, ModuleSerializer, OrderSerializer, \
-    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer, ModuleShortSerializer, OrderShortSerializer
+    DegreeShortSerializer, PositionShortSerializer, EmployeeShortSerializer, OrderShortSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -260,9 +260,9 @@ class EmployeeModuleViewSet(GenericViewSet,
     Nested View Set to display employee's modules
     Only Retrieve allowed (read only)
     """
-    serializer_class = ModuleShortSerializer
+    serializer_class = ModuleSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
-    lookup_field = 'code'
+    lookup_field = 'module_code'
 
     # custom queryset for nested view
     def get_queryset(self):
@@ -279,12 +279,6 @@ class ModuleViewSet(ModelViewSet):
     serializer_class = ModuleSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'module_code'
-
-    # Custom list method with simpler serializer
-    def list(self, request, *args, **kwargs):
-        queryset = Modules.objects.order_by('module_code')
-        serializer = ModuleShortSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
 
 
 class OrderViewSet(ModelViewSet):
