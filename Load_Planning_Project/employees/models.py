@@ -43,19 +43,19 @@ class Modules(models.Model):
 
 class Orders(models.Model):
     class Meta:
-        unique_together = (('module', 'lesson_type'), )
+        unique_together = (('module', 'name'), )
 
-    LESSON_TYPE_CHOICES = [
-        ('Lecture', 'Lecture'),
-        ('Laboratory', 'Laboratory'),
-        ('Classes', 'Classes'),
-        ('Project', 'Project'),
-        ('Seminar', 'Seminar'),
+    NAME_CHOICES = [
+        ('Lectures', 'Lectures'),
+        ('Laboratory_classes', 'Laboratory classes'),
+        ('Auditorium_classes', 'Auditorium classes'),
+        ('Project_classes', 'Project classes'),
+        ('Seminar_classes', 'Seminar classes'),
     ]
 
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='form_of_classes')
-    lesson_type = models.CharField(max_length=10, choices=LESSON_TYPE_CHOICES, default='Lecture')
-    hours = models.PositiveIntegerField()
+    name = models.CharField(max_length=18, choices=NAME_CHOICES, default='Lectures')
+    classes_hours = models.PositiveIntegerField()
 
     def __str__(self):
-        return '{}_{}'.format(self.module, self.lesson_type)
+        return '{}_{}'.format(self.module, self.name)

@@ -33,12 +33,12 @@ router.register(r'modules', views.ModuleViewSet)
 router.register(r'orders', views.OrderViewSet)
 ## generates:
 # /orders/
-# /orders/{module_code_order_lesson_type}
+# /orders/{module_code/order's name'}
 
 urlpatterns = [
-    # unique path for retrieving one order by it's module's code and order's lesson type
+    # unique path for retrieving one order by it's module's code and order's name
     path(
-        'orders/<str:module_code>_<str:lesson_type>/',
+        'orders/<str:module_code>/<str:name>/',
         views.OrderViewSet.as_view({
             'get': 'retrieve',
             'put': 'update',

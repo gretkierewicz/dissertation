@@ -294,11 +294,5 @@ class OrderViewSet(ModelViewSet):
         return get_object_or_404(
             Orders,
             module=get_object_or_404(Modules, module_code=self.kwargs.get('module_code')),
-            lesson_type=self.kwargs.get('lesson_type'),
+            name=self.kwargs.get('name'),
         )
-
-    # Custom list method with simpler serializer
-    def list(self, request, *args, **kwargs):
-        queryset = Orders.objects.order_by('module', 'lesson_type')
-        serializer = OrderShortSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)

@@ -17,6 +17,13 @@ Local with SQLite DB
   (control over sequence of fields - Module serializer for now)
 - Order serializer - changed back-ref name in Module model to 'form_of_classes'
 - Module serializer/view - simplified: only one serializer with full data and orders' list
+- Orders model - altering names of fields: 'lesson_type' and 'hours' to 'name' and 'classes_hours' respectively
+  Need of manual corrections to migration file. Changed to:
+  >migrations.RenameField(\
+  >   model_name='orders',\
+  >   old_name='lesson_type',\
+  >   new_name='name',\
+  >),
 
 Rejected:
 
