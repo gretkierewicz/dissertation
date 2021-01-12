@@ -28,6 +28,7 @@ Local with SQLite DB
   (allows use of /modules/{module_code}/classes/{order_name})
 - Renaming 'Orders' model to 'Classes' and cleaning comments
 - FIX - Getting back supervisor field for Module model
+- Changed Employees to API url part
 
 Rejected:
 
