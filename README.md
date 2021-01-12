@@ -13,6 +13,8 @@ Local with SQLite DB
 
 - Change Module table to be compatible with Syllabus
   big update of model, serializer and view (https://syllabuskrk.agh.edu.pl/2017-2018/magnesite/api/faculties/wimir/study_plans/stacjonarne-mechanika-i-budowa-maszyn)
+- Changed '\_\_all__' to list in the serializers Meta fields for better control over API views 
+  (control over sequence of fields - Module serializer for now)
 
 Rejected:
 

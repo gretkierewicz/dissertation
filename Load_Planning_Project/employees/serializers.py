@@ -130,7 +130,7 @@ class OrderShortSerializer(HyperlinkedModelSerializer):
 
     class Meta:
         model = Orders
-        fields = ['url', 'lesson_type', 'hours']
+        fields = ['url', 'module', 'lesson_type', 'hours']
 
     def get_two_key_url(self, data):
         return '{base_url}{module_code}_{lesson_type}'.format(
@@ -177,7 +177,7 @@ class ModuleSerializer(ModuleShortSerializer):
 
     class Meta:
         model = Modules
-        fields = '__all__'
+        fields = ['module_code', 'name', 'examination', 'orders']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},
