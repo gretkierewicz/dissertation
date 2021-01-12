@@ -33,26 +33,12 @@ class Employees(models.Model):
 
 
 class Modules(models.Model):
-    SEMESTER_CHOICES = [
-        ('Winter', 'Winter'),
-        ('Summer', 'Summer'),
-    ]
-
-    EXAM_TYPE_CHOICES = [
-        ('None', 'No exam'),
-        ('Oral', 'Oral'),
-        ('Written', 'Written'),
-    ]
-
-    code = models.SlugField(max_length=45, unique=True)
+    module_code = models.SlugField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
-    supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='modules')
-    is_contact_type = models.BooleanField(default=False)
-    semester = models.CharField(max_length=6, choices=SEMESTER_CHOICES, default='Winter')
-    exam_type = models.CharField(max_length=7, choices=EXAM_TYPE_CHOICES, default='None')
+    examination = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.code
+        return self.module_code
 
 
 class Orders(models.Model):

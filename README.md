@@ -9,17 +9,20 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###29/12/2020
+###11/01/2020
 
-- FIX / OrderShortSerializer minor update for better readability
-- MODELS / Update of CHOICES fields - for better readability of links
-- Orders / Moved query from 'retrieve' method to 'get_object' - it will be common for all detail-view methods
-- URLS / Update of path for OrderViewSet, so it includes all methods
-- MODELS / Update of 'slug' field type: employee.abbreviation and module.code
-- FIX / supervisor validator for csv upload
+- Change Module table to be compatible with Syllabus
+  big update of model, serializer and view (https://syllabuskrk.agh.edu.pl/2017-2018/magnesite/api/faculties/wimir/study_plans/stacjonarne-mechanika-i-budowa-maszyn)
 
-To be done:
+Rejected:
+
+- Due to https://www.django-rest-framework.org/api-guide/fields/ check possibility of Integer Field and min_value
+  **(it is same as created validator)**
+
+### To be done:
 
 - Implement additional models
 - Implement filters, sorting or search
 - Add messages/errors
+- Custom query-sets for forms (if possible)
+- Change upload CSV files method for employees - it should first create employees without supervisors, and then save supervisors to it (so employees added from list could be set as supervisors for previously added employees)

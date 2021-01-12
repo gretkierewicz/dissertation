@@ -275,14 +275,14 @@ class ModuleViewSet(ModelViewSet):
     Modules View Set
     Create, Retrieve, Update, Delete modules
     """
-    queryset = Modules.objects.order_by('code')
+    queryset = Modules.objects.order_by('module_code')
     serializer_class = ModuleSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
-    lookup_field = 'code'
+    lookup_field = 'module_code'
 
     # Custom list method with simpler serializer
     def list(self, request, *args, **kwargs):
-        queryset = Modules.objects.order_by('code')
+        queryset = Modules.objects.order_by('module_code')
         serializer = ModuleShortSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -299,7 +299,7 @@ class OrderViewSet(ModelViewSet):
     def get_object(self):
         return get_object_or_404(
             Orders,
-            module=get_object_or_404(Modules, code=self.kwargs.get('module_code')),
+            module=get_object_or_404(Modules, module_code=self.kwargs.get('module_code')),
             lesson_type=self.kwargs.get('lesson_type'),
         )
 

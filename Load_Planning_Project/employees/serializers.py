@@ -135,7 +135,7 @@ class OrderShortSerializer(HyperlinkedModelSerializer):
     def get_two_key_url(self, data):
         return '{base_url}{module_code}_{lesson_type}'.format(
             base_url=self.context.get('request').build_absolute_uri(reverse('orders-list')),
-            module_code=data.module.code,
+            module_code=data.module.module_code,
             lesson_type=data.lesson_type,
         )
 
@@ -146,8 +146,8 @@ class OrderSerializer(OrderShortSerializer):
     """
     module = HyperlinkedRelatedField(
         view_name='modules-detail',
-        queryset=Modules.objects.order_by('code'),
-        lookup_field='code',
+        queryset=Modules.objects.order_by('module_code'),
+        lookup_field='module_code',
     )
 
     class Meta:
@@ -161,25 +161,18 @@ class ModuleShortSerializer(HyperlinkedModelSerializer):
     """
     class Meta:
         model = Modules
-        fields = ['url', 'code', 'name']
+        fields = ['url', 'module_code', 'name']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'code'},
+            'url': {'lookup_field': 'module_code'},
         }
 
 
 class ModuleSerializer(ModuleShortSerializer):
     """
     Module Serializer - extended short serializer with additional properties:
-    supervisor - hyperlink to module's supervisor
     orders - nested serializer of module's orders
     """
-    supervisor = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        queryset=Employees.objects.order_by('abbreviation'),
-        allow_null=True,
-        lookup_field='abbreviation',
-    )
     orders = OrderShortSerializer(read_only=True, many=True)
 
     class Meta:
@@ -187,5 +180,5 @@ class ModuleSerializer(ModuleShortSerializer):
         fields = '__all__'
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'code'},
+            'url': {'lookup_field': 'module_code'},
         }

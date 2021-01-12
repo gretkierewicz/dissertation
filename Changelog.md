@@ -1,3 +1,12 @@
+###29/12/2020
+
+- FIX / OrderShortSerializer minor update for better readability
+- MODELS / Update of CHOICES fields - for better readability of links
+- Orders / Moved query from 'retrieve' method to 'get_object' - it will be common for all detail-view methods
+- URLS / Update of path for OrderViewSet, so it includes all methods
+- MODELS / Update of 'slug' field type: employee.abbreviation and module.code
+- FIX / supervisor validator for csv upload
+
 ###28/12/2020
 
 - Employees / Orders list - using short serializer now, added order_by
