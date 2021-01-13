@@ -9,6 +9,14 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from .models import Degrees, Positions, Employees, Modules, Classes
 
 
+def validate_if_positive(value):
+    if value is None:
+        return value
+    if value < 0:
+        raise ValidationError("Value must be positive.")
+    return value
+
+
 class ParentFromURLHiddenField(HiddenField):
     """
     ParentFromURLHiddenField - Hidden Field that doesn't take value from user, but return searched object
@@ -143,11 +151,7 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
 
     # custom validator: 'year of studies' > 0 - DRF mapping PositiveInteger model Field into Integer serializer Field!
     def validate_year_of_studies(self, data):
-        if data is None:
-            return data
-        if data < 0:
-            raise ValidationError("Only positive numbers!")
-        return data
+        return validate_if_positive(data)
 
     class Meta:
         model = Employees
@@ -173,6 +177,10 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         # it should match object by the request's URL: */modules/code_slug/*
         matches={'modules': 'module_code'},
     )
+
+    # mapping PositiveInteger model Field into Integer serializer Field issue
+    def validate_classes_hours(self, data):
+        return validate_if_positive(data)
 
     class Meta:
         model = Classes

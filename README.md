@@ -12,6 +12,7 @@ Local with SQLite DB
 ###12/01/2020
 
 - Classes / Serializer - validation of the unique_together option with new type of HiddenField
+- FIX / validation of positive values
 
 ### To be done:
 
