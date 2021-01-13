@@ -69,7 +69,8 @@ class EmployeeShortSerializer(HyperlinkedModelSerializer):
     """
     class Meta:
         model = Employees
-        fields = ['url', 'first_name', 'last_name', 'abbreviation']
+        fields = ['url',
+                  'first_name', 'last_name', 'abbreviation']
         extra_kwargs = {
             'url': {'lookup_field': 'abbreviation'},
         }
@@ -113,7 +114,9 @@ class PensumSerializer(ModelSerializer):
     """
     class Meta:
         model = Pensum
-        fields = ['url', 'pensum', 'limit', 'degrees', 'positions']
+        fields = ['url',
+                  'pensum', 'limit',
+                  'degrees', 'positions']
 
     url = HyperlinkedIdentityField(view_name='pensum-detail', read_only=True)
 
@@ -138,23 +141,25 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     subordinates - nested serializer of employee's subordinates
     modules - hyperlink to nested view of employee's modules
     """
-    degree = HyperlinkedRelatedField(
-        view_name='degrees-detail',
-        queryset=Degrees.objects.order_by('name'),
-    )
+    class Meta:
+        model = Employees
+        fields = ['url',
+                  'first_name', 'last_name', 'abbreviation', 'e_mail',
+                  'degree_repr', 'degree',
+                  'position_repr', 'position',
+                  'supervisor_repr', 'supervisor',
+                  'subordinates', 'modules',
+                  'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {'lookup_field': 'abbreviation'},
+            'supervisor': {'lookup_field': 'abbreviation', 'allow_null': True}
+        }
+
     degree_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.degree))
-    position = HyperlinkedRelatedField(
-        view_name='positions-detail',
-        queryset=Positions.objects.order_by('name'),
-    )
     position_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.position))
-    supervisor = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        queryset=Employees.objects.order_by('abbreviation'),
-        allow_null=True,
-        lookup_field='abbreviation',
-    )
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
+
     subordinates = EmployeeShortSerializer(read_only=True, many=True)
     modules = HyperlinkedIdentityField(
         view_name='employee-modules-list',
@@ -177,19 +182,21 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
     def validate_year_of_studies(self, data):
         return validate_if_positive(data)
 
-    class Meta:
-        model = Employees
-        fields = '__all__'
-        extra_kwargs = {
-            # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'abbreviation'},
-        }
-
 
 class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     Class Serializer - only for nesting in the Module Serializer
     """
+    class Meta:
+        model = Classes
+        fields = ['url',
+                  'name', 'classes_hours',
+                  'module']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {'lookup_field': 'name'},
+        }
+
     parent_lookup_kwargs = {
         'module_module_code': 'module__module_code',
     }
@@ -206,37 +213,27 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     def validate_classes_hours(self, data):
         return validate_if_positive(data)
 
-    class Meta:
-        model = Classes
-        fields = ['url', 'name', 'module', 'classes_hours']
-        extra_kwargs = {
-            # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'name'},
-        }
-
 
 class ModuleSerializer(HyperlinkedModelSerializer):
     """
     Module Serializer - serializer with url, some of the model's fields and additional properties:
     form_of_classes - nested serializer of module's classes
     """
+    class Meta:
+        model = Modules
+        fields = ['url',
+                  'module_code', 'name', 'examination',
+                  'classes', 'form_of_classes',
+                  'supervisor']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {'lookup_field': 'module_code'},
+            'supervisor': {'lookup_field': 'abbreviation', 'allow_null': True}
+        }
+
     classes = HyperlinkedIdentityField(
         view_name='classes-list',
         lookup_field='module_code',
         lookup_url_kwarg='module_module_code',
     )
     form_of_classes = ClassSerializer(read_only=True, many=True)
-    supervisor = HyperlinkedRelatedField(
-        view_name='employees-detail',
-        queryset=Employees.objects.order_by('abbreviation'),
-        allow_null=True,
-        lookup_field='abbreviation',
-    )
-
-    class Meta:
-        model = Modules
-        fields = ['url', 'module_code', 'name', 'examination', 'classes', 'form_of_classes', 'supervisor']
-        extra_kwargs = {
-            # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'module_code'},
-        }

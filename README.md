@@ -15,6 +15,7 @@ Local with SQLite DB
 - FIX / validation of positive values
 - Pensum - creating basic model, view and serializer
 - Pensum - adding limit field + some corrections
+- Serializers - cleanup
 
 ### To be done:
 
