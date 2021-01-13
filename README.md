@@ -16,6 +16,7 @@ Local with SQLite DB
 - Pensum - creating basic model, view and serializer
 - Pensum - adding limit field + some corrections
 - Serializers - cleanup
+- ParentFromURLHiddenField - changing how lookup kwarg is acquired
 
 ### To be done:
 

@@ -20,18 +20,18 @@ def validate_if_positive(value):
 class ParentFromURLHiddenField(HiddenField):
     """
     ParentFromURLHiddenField - Hidden Field that doesn't take value from user, but return searched object
-    It will create filter kwargs with help of provided dictionary (matches) and context's request path.
-    Be sure that URL is composed by */url_lookup/slug/* pairs.
+    It will create filter kwargs with help of provided dictionary (matches) and resolved URL's matches.
+    Be sure that parent lookup kwarg's name matches the one configured with serializer and view.
     If you give more matches, all will be considered as filter kwargs.
     params:
     queryset - object to filter by
-    matches - dictionary of url lookups (keys) and field's names (values)
+    matches - dictionary of parent's lookup kwarg's name (keys) and field's names (values)
     returns:
      - model's instance filtered from the queryset (first occurrence - slug should be unique by default!)
     """
-    def __init__(self, queryset, matches, **kwargs):
+    def __init__(self, queryset, match, **kwargs):
         self.queryset = queryset
-        self.matches = matches
+        self.match = match
         kwargs['write_only'] = True
         kwargs['default'] = None
         super().__init__(**kwargs)
@@ -39,11 +39,9 @@ class ParentFromURLHiddenField(HiddenField):
     def get_value(self, dictionary):
         # change data forwarded to the to_internal_value()
         filter_kwargs = {}
-        for lookup, field in self.matches.items():
-            filter_kwargs[field] = re.search(
-                r'{lookup}/(?P<slug>[\w\-_]+)/'.format(lookup=lookup),
-                self.context['request'].path
-            ).group('slug')
+        for key, value in self.match.items():
+            # getting slug from URL resolver - needs to match parent_lookup_kwarg's name!
+            filter_kwargs[value] = self.context.get('request').resolver_match.kwargs[key]
         return self.queryset.filter(**filter_kwargs).first()
 
     def to_internal_value(self, data):
@@ -203,10 +201,10 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     # New type of Field made - module should be never provided by the user!
     # Requested URL should point one parent object - in this case module's code
     module = ParentFromURLHiddenField(
-        # queryset that will be filtered with {module_code: code_slug} filter
+        # queryset that will be filtered
         queryset=Modules.objects.all(),
-        # it should match object by the request's URL: */modules/code_slug/*
-        matches={'modules': 'module_code'},
+        # key is a parent_lookup_kwarg, value - a field to filter by
+        match={'module_module_code': 'module_code'},
     )
 
     # mapping PositiveInteger model Field into Integer serializer Field issue
