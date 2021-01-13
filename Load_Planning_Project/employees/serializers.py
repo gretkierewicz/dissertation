@@ -2,11 +2,11 @@ import re
 
 from rest_framework.fields import HiddenField
 from rest_framework.relations import HyperlinkedIdentityField, HyperlinkedRelatedField
-from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField
+from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField, ModelSerializer
 from rest_framework.serializers import ValidationError
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from .models import Degrees, Positions, Employees, Modules, Classes
+from .models import Degrees, Positions, Employees, Modules, Classes, Pensum
 
 
 def validate_if_positive(value):
@@ -105,6 +105,24 @@ class PositionSerializer(PositionShortSerializer):
     Position Serializer - extended short serializer with nested employees short serializer
     """
     employees = EmployeeShortSerializer(read_only=True, many=True)
+
+
+class PensumSerializer(ModelSerializer):
+    class Meta:
+        model = Pensum
+        fields = ['url', 'value', 'degrees', 'positions']
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        tmp = []
+        for pk in ret['degrees']:
+            tmp.append(Degrees.objects.get(pk=pk).name)
+        ret['degrees'] = tmp
+        tmp = []
+        for pk in ret['positions']:
+            tmp.append(Positions.objects.get(pk=pk).name)
+        ret['positions'] = tmp
+        return ret
 
 
 class EmployeeSerializer(HyperlinkedModelSerializer):

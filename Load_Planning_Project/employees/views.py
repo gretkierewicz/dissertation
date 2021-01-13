@@ -13,13 +13,13 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.status import HTTP_200_OK, HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
-from .models import Degrees, Positions, Employees, Modules, Classes
+from .models import Degrees, Positions, Employees, Modules, Classes, Pensum
 from .serializers import \
     DegreeSerializer, DegreeShortSerializer, \
     PositionSerializer, PositionShortSerializer, \
     EmployeeSerializer, EmployeeShortSerializer, \
     ModuleSerializer, \
-    ClassSerializer
+    ClassSerializer, PensumSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -120,6 +120,11 @@ class PositionViewSet(mixins.CreateModelMixin,
                         serializer.is_valid(raise_exception=True)
                         serializer.save()
         return Response(serializer.data, status=HTTP_303_SEE_OTHER, headers={'Location': reverse('positions-list')})
+
+
+class PensumViewSet(ModelViewSet):
+    queryset = Pensum.objects.all()
+    serializer_class = PensumSerializer
 
 
 class EmployeeRenderer(CSVRenderer):

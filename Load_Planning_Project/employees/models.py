@@ -15,6 +15,12 @@ class Positions(models.Model):
         return self.name
 
 
+class Pensum(models.Model):
+    value = models.PositiveIntegerField()
+    degrees = models.ManyToManyField(Degrees, null=True, related_name='pensum')
+    positions = models.ManyToManyField(Positions, null=True, related_name='pensum')
+
+
 class Employees(models.Model):
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)

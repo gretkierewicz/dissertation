@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Classes / Serializer - validation of the unique_together option with new type of HiddenField
 - FIX / validation of positive values
+- Pensum - creating basic model, view and serializer
 
 ### To be done:
 

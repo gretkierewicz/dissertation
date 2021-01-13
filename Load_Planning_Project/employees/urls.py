@@ -15,6 +15,11 @@ router.register(r'positions', views.PositionViewSet)
 # /positions/
 # /positions/{position_pk}
 
+router.register(r'pensum', views.PensumViewSet)
+## generates
+# /pensum/
+# /pensum/{pensum_pk}
+
 router.register(r'employees', views.EmployeeViewSet)
 ## generates:
 # /employees/
