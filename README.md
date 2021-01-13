@@ -9,34 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###11/01/2020
+###12/01/2020
 
-- Change Module table to be compatible with Syllabus
-  big update of model, serializer and view (https://syllabuskrk.agh.edu.pl/2017-2018/magnesite/api/faculties/wimir/study_plans/stacjonarne-mechanika-i-budowa-maszyn)
-- Changed '\_\_all__' to list in the serializers Meta fields for better control over API views 
-  (control over sequence of fields - Module serializer for now)
-- Order serializer - changed back-ref name in Module model to 'form_of_classes'
-- Module serializer/view - simplified: only one serializer with full data and orders' list
-- Orders model - altering names of fields: 'lesson_type' and 'hours' to 'name' and 'classes_hours' respectively
-  Need of manual corrections to migration file. Changed to:
-  >migrations.RenameField(\
-  >   model_name='orders',\
-  >   old_name='lesson_type',\
-  >   new_name='name',\
-  >),
-- Orders serializers/view update - now properly reached from Module's nested serializer
-  (allows use of /modules/{module_code}/classes/{order_name})
-- Renaming 'Orders' model to 'Classes' and cleaning comments
-- FIX - Getting back supervisor field for Module model
-- Changed Employees to API url part
-- Update for the MODEL workbench
-- Classes / minor change for url (/class/ -> /classes/)
-- Classes big update - now accessed only from Module view
-
-Rejected:
-
-- Due to https://www.django-rest-framework.org/api-guide/fields/ check possibility of Integer Field and min_value
-  **(it is same as created validator)**
+- 
 
 ### To be done:
 
