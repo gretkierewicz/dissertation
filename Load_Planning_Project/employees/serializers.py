@@ -1,11 +1,46 @@
-from django.shortcuts import get_object_or_404
+import re
 
+from rest_framework.fields import HiddenField
 from rest_framework.relations import HyperlinkedIdentityField, HyperlinkedRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField
 from rest_framework.serializers import ValidationError
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from .models import Degrees, Positions, Employees, Modules, Classes
+
+
+class ParentFromURLHiddenField(HiddenField):
+    """
+    ParentFromURLHiddenField - Hidden Field that doesn't take value from user, but return searched object
+    It will create filter kwargs with help of provided dictionary (matches) and context's request path.
+    Be sure that URL is composed by */url_lookup/slug/* pairs.
+    If you give more matches, all will be considered as filter kwargs.
+    params:
+    queryset - object to filter by
+    matches - dictionary of url lookups (keys) and field's names (values)
+    returns:
+     - model's instance filtered from the queryset (first occurrence - slug should be unique by default!)
+    """
+    def __init__(self, queryset, matches, **kwargs):
+        self.queryset = queryset
+        self.matches = matches
+        kwargs['write_only'] = True
+        kwargs['default'] = None
+        super().__init__(**kwargs)
+
+    def get_value(self, dictionary):
+        # change data forwarded to the to_internal_value()
+        filter_kwargs = {}
+        for lookup, field in self.matches.items():
+            filter_kwargs[field] = re.search(
+                r'{lookup}/(?P<slug>[\w\-_]+)/'.format(lookup=lookup),
+                self.context['request'].path
+            ).group('slug')
+        return self.queryset.filter(**filter_kwargs).first()
+
+    def to_internal_value(self, data):
+        # return model's instance, no conversion needed
+        return data
 
 
 class SerializerLambdaField(SerializerMethodField):
@@ -130,22 +165,22 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     parent_lookup_kwargs = {
         'module_module_code': 'module__module_code',
     }
+    # New type of Field made - module should be never provided by the user!
+    # Requested URL should point one parent object - in this case module's code
+    module = ParentFromURLHiddenField(
+        # queryset that will be filtered with {module_code: code_slug} filter
+        queryset=Modules.objects.all(),
+        # it should match object by the request's URL: */modules/code_slug/*
+        matches={'modules': 'module_code'},
+    )
 
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours']
+        fields = ['url', 'name', 'module', 'classes_hours']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'name'},
         }
-
-    def create(self, validated_data):
-        # TODO: unique together case!
-        validated_data['module'] = get_object_or_404(
-            Modules,
-            module_code=self.context.get('view').kwargs.get('module_module_code')
-        )
-        return Classes.objects.create(**validated_data)
 
 
 class ModuleSerializer(HyperlinkedModelSerializer):
