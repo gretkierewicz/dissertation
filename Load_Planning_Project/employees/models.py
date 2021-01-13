@@ -16,7 +16,8 @@ class Positions(models.Model):
 
 
 class Pensum(models.Model):
-    value = models.PositiveIntegerField()
+    pensum = models.PositiveIntegerField()
+    limit = models.PositiveIntegerField(default=0, null=True)
     degrees = models.ManyToManyField(Degrees, null=True, related_name='pensum')
     positions = models.ManyToManyField(Positions, null=True, related_name='pensum')
 

@@ -108,11 +108,17 @@ class PositionSerializer(PositionShortSerializer):
 
 
 class PensumSerializer(ModelSerializer):
+    """
+    Pensum Serializer - for covering min and max number of hours for each employee by his/her degree and position
+    """
     class Meta:
         model = Pensum
-        fields = ['url', 'value', 'degrees', 'positions']
+        fields = ['url', 'pensum', 'limit', 'degrees', 'positions']
+
+    url = HyperlinkedIdentityField(view_name='pensum-detail', read_only=True)
 
     def to_representation(self, instance):
+        # changes output representation from primary keys to more readable names
         ret = super().to_representation(instance)
         tmp = []
         for pk in ret['degrees']:

@@ -14,10 +14,10 @@ Local with SQLite DB
 - Classes / Serializer - validation of the unique_together option with new type of HiddenField
 - FIX / validation of positive values
 - Pensum - creating basic model, view and serializer
+- Pensum - adding limit field + some corrections
 
 ### To be done:
 
-- Update of Orders - no more separated view, will exist only as the sub-serializer of Modules
 - Implement additional models
 - Implement filters, sorting or search
 - Add messages/errors
