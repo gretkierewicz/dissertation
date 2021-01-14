@@ -1,4 +1,4 @@
-from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.relations import HyperlinkedIdentityField, HyperlinkedRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 from rest_framework.serializers import ValidationError
 
@@ -89,11 +89,20 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         extra_kwargs = {
             # url's custom lookup - needs to matches lookup set in the view set
             'url': {'lookup_field': 'abbreviation'},
-            'degree': {},
             'supervisor': {'lookup_field': 'abbreviation', 'allow_null': True}
         }
 
+    # ensures that in forms, there cannot be None option
+    degree = HyperlinkedRelatedField(
+        view_name='degrees-detail',
+        queryset=Degrees.objects.order_by('name'),
+    )
     degree_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.degree))
+    # ensures that in forms, there cannot be None option
+    position = HyperlinkedRelatedField(
+        view_name='positions-detail',
+        queryset=Positions.objects.order_by('name'),
+    )
     position_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.position))
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
 
@@ -104,6 +113,7 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         lookup_field='abbreviation',
         lookup_url_kwarg='employee_abbreviation',
     )
+    # TODO: needs custom serializer!
     #modules = ModuleSerializer(read_only=True, many=True)
 
     # custom validator for supervisor field - not allowing setting employee as it's supervisor

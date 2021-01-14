@@ -15,6 +15,7 @@ Local with SQLite DB
 - Implementing Plans model, view and serializer - nested view in Classes (and Classes is a nested view in Modules)
 - Code cleanup
 - Creating new app: Modules - moved modules related elements into
+- FIX / test's failure fix: employees degree and position hyperlinks custom config
 
 ### To be done:
 
