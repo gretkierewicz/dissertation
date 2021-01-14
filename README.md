@@ -9,14 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###12/01/2020
+###14/01/2020
 
-- Classes / Serializer - validation of the unique_together option with new type of HiddenField
-- FIX / validation of positive values
-- Pensum - creating basic model, view and serializer
-- Pensum - adding limit field + some corrections
-- Serializers - cleanup
-- ParentFromURLHiddenField - changing how lookup kwarg is acquired
+- 
 
 ### To be done:
 
