@@ -14,6 +14,7 @@ Local with SQLite DB
 - Update on the ct8 server
 - Implementing Plans model, view and serializer - nested view in Classes (and Classes is a nested view in Modules)
 - Code cleanup
+- Creating new app: Modules - moved modules related elements into
 
 ### To be done:
 
