@@ -16,6 +16,7 @@ Local with SQLite DB
 - Code cleanup
 - Creating new app: Modules - moved modules related elements into
 - FIX / test's failure fix: employees degree and position hyperlinks custom config
+- Minor view name change for better readability
 
 ### To be done:
 

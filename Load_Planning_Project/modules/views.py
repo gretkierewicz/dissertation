@@ -5,9 +5,9 @@ from .models import Modules, Classes, Plans
 from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer
 
 
-class EmployeeModuleViewSet(GenericViewSet,
-                            mixins.ListModelMixin,
-                            mixins.RetrieveModelMixin):
+class ModulesByEmployeeViewSet(GenericViewSet,
+                               mixins.ListModelMixin,
+                               mixins.RetrieveModelMixin):
     """
     Employee/Module View Set
     Nested View Set to display employee's modules
