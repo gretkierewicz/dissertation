@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Update on the ct8 server
 - Implementing Plans model, view and serializer - nested view in Classes (and Classes is a nested view in Modules)
+- Code cleanup
 
 ### To be done:
 
@@ -24,3 +25,4 @@ Local with SQLite DB
 - Create static function for try/except reuse (employees csv upload)
 - Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
 - Move importing data from csv files to the to_internal_value methods of serializers
+- Validation on the Pensum serializer - don't allow same match-ups of degree and position

@@ -319,5 +319,4 @@ class PlanViewSet(ModelViewSet):
 
     # custom object for nested view
     def get_object(self):
-        print('')
         return self.get_queryset().get(employee__abbreviation=self.kwargs.get(self.lookup_field))

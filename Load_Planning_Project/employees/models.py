@@ -61,18 +61,21 @@ class Classes(models.Model):
         ('Seminar_classes', 'Seminar classes'),
     ]
 
-    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='form_of_classes')
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='classes')
     name = models.CharField(max_length=18, choices=NAME_CHOICES, default='Lectures')
     classes_hours = models.PositiveIntegerField()
 
     def __str__(self):
-        return '{}/{}'.format(self.module, self.name)
+        return self.name
+
+    def __repr__(self):
+        return "{class_name} (Module's code: {module})".format(module=self.module, class_name=self.name)
 
 
 class Plans(models.Model):
     class Meta:
         unique_together = (('employee', 'classes'), )
 
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')
-    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plans')
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plan')
+    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plan')
     plan_hours = models.PositiveIntegerField()
