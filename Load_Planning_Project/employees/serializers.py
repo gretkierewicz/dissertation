@@ -4,9 +4,10 @@ from rest_framework.fields import HiddenField
 from rest_framework.relations import HyperlinkedIdentityField, HyperlinkedRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, SerializerMethodField, ModelSerializer
 from rest_framework.serializers import ValidationError
+from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from .models import Degrees, Positions, Employees, Modules, Classes, Pensum
+from .models import Degrees, Positions, Employees, Modules, Classes, Pensum, Plans
 
 
 def validate_if_positive(value):
@@ -181,20 +182,48 @@ class EmployeeSerializer(HyperlinkedModelSerializer):
         return validate_if_positive(data)
 
 
+class PlanSerializer(NestedHyperlinkedModelSerializer):
+    class Meta:
+        model = Plans
+        fields = ['url',
+                  'employee', 'plan_hours',
+                  # hidden fields:
+                  'classes']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {'lookup_field': 'employee'},
+            'employee': {'lookup_field': 'abbreviation'},
+        }
+    # for nesting serializer - dict of URL lookups and queryset kwarg keys
+    parent_lookup_kwargs = {
+        'module_module_code': 'classes__module__module_code',
+        'class_name': 'classes__name',
+    }
+    # hidden classes field - pointing parent's object
+    classes = ParentFromURLHiddenField(
+        queryset=Classes.objects.all(),
+        match={
+            'module_module_code': 'module__module_code',
+            'class_name': 'name'
+        }
+    )
+
+
 class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     Class Serializer - only for nesting in the Module Serializer
     """
     class Meta:
         model = Classes
-        fields = ['url',
-                  'name', 'classes_hours',
+        fields = ['url', 'plans_url',
+                  'name', 'classes_hours', 'plans',
+                  # hidden fields:
                   'module']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'name'},
         }
-
+    # for nesting serializer - dict of URL lookups and queryset kwarg keys
     parent_lookup_kwargs = {
         'module_module_code': 'module__module_code',
     }
@@ -206,6 +235,17 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         # key is a parent_lookup_kwarg, value - a field to filter by
         match={'module_module_code': 'module_code'},
     )
+    # url of plan: parent's lookup_field (ClassesView); lookup_url_kwarg - lookup from URL that points lookup_field;
+    # parent_lookup_kwargs - URL lookup and queryset key (parent_lookup_kwargs of this serializer)
+    plans_url = NestedHyperlinkedIdentityField(
+        view_name='plans-list',
+        lookup_field='name',
+        lookup_url_kwarg='class_name',
+        parent_lookup_kwargs={
+            'module_module_code': 'module__module_code',
+        },
+    )
+    plans = PlanSerializer(read_only=True, many=True)
 
     # mapping PositiveInteger model Field into Integer serializer Field issue
     def validate_classes_hours(self, data):

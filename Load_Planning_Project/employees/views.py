@@ -13,13 +13,13 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.status import HTTP_200_OK, HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
-from .models import Degrees, Positions, Employees, Modules, Classes, Pensum
+from .models import Degrees, Positions, Employees, Modules, Classes, Pensum, Plans
 from .serializers import \
     DegreeSerializer, DegreeShortSerializer, \
     PositionSerializer, PositionShortSerializer, \
     EmployeeSerializer, EmployeeShortSerializer, \
     ModuleSerializer, \
-    ClassSerializer, PensumSerializer
+    ClassSerializer, PensumSerializer, PlanSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -300,5 +300,24 @@ class ClassViewSet(ModelViewSet):
 
     # custom queryset for nested view
     def get_queryset(self):
-        # module_module_code needs to be set as 'lookup_url_kwarg' in classes' hyperlink's parameters
+        # kwarg needs to match url kwarg (router lookup + field name)
         return Classes.objects.filter(module__module_code=self.kwargs.get('module_module_code'))
+
+
+class PlanViewSet(ModelViewSet):
+    serializer_class = PlanSerializer
+    lookup_field = 'employee'
+
+    # custom queryset for nested view
+    def get_queryset(self):
+        print(self.kwargs)
+        # kwargs need to match url lookups (router lookups + field names)
+        return Plans.objects.filter(
+            classes__name=self.kwargs.get('class_name'),
+            classes__module__module_code=self.kwargs.get('module_module_code'),
+        )
+
+    # custom object for nested view
+    def get_object(self):
+        print('')
+        return self.get_queryset().get(employee__abbreviation=self.kwargs.get(self.lookup_field))

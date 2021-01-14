@@ -67,3 +67,12 @@ class Classes(models.Model):
 
     def __str__(self):
         return '{}/{}'.format(self.module, self.name)
+
+
+class Plans(models.Model):
+    class Meta:
+        unique_together = (('employee', 'classes'), )
+
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')
+    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plans')
+    plan_hours = models.PositiveIntegerField()
