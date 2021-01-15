@@ -14,6 +14,7 @@ Local with SQLite DB
 - Cleanup - minor changes in serializers/views
 - Created conv_pk_to_str function for easy to_representation config
 - Validation on the Pensum serializer - don't allow double match-ups of degree and position
+- Model changes - employee's degree and position cannot be null; Pensum.pensum changed to Pensum.value
 
 ### To be done:
 
