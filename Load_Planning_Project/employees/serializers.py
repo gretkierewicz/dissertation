@@ -60,6 +60,13 @@ class PensumSerializer(ModelSerializer):
             'degrees': Degrees, 'positions': Positions
         }) if self.context.get('request').method == 'GET' else ret
 
+    def validate(self, attrs):
+        # don't allow double match-ups of degree and position
+        query = Pensum.objects.filter(degrees__in=attrs.get('degrees'), positions__in=attrs.get('positions')).distinct()
+        if len(query) == 0 or (len(query) == 1 and self.instance in query):
+            return attrs
+        raise ValidationError('Given combination of degree and position exists in another pensum record(s).')
+
 
 class EmployeeSerializer(ModelSerializer):
     """
