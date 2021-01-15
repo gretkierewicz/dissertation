@@ -11,7 +11,8 @@ Local with SQLite DB
 ## Last changes
 ###15/01/2020
 
-- 
+- Cleanup - minor changes in serializers/views
+- Created conv_pk_to_str function for easy to_representation config
 
 ### To be done:
 
@@ -24,3 +25,4 @@ Local with SQLite DB
 - Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
 - Move importing data from csv files to the to_internal_value methods of serializers
 - Validation on the Pensum serializer - don't allow same match-ups of degree and position
+- Validation for Plans

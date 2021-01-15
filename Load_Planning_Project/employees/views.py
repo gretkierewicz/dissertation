@@ -14,9 +14,8 @@ from rest_framework.status import HTTP_200_OK, HTTP_303_SEE_OTHER
 from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Pensum
-from .serializers import \
-    DegreeSerializer, DegreeShortSerializer, PositionSerializer, PositionShortSerializer, \
-    EmployeeSerializer, EmployeeShortSerializer, PensumSerializer
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeListSerializer, EmployeeSerializer, \
+    PensumSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -31,12 +30,6 @@ class DegreeViewSet(mixins.CreateModelMixin,
     """
     queryset = Degrees.objects.all()
     serializer_class = DegreeSerializer
-
-    # Custom list method with simpler serializer
-    def list(self, request, *args, **kwargs):
-        queryset = Degrees.objects.order_by('name')
-        serializer = DegreeShortSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
 
     # Customizing header for CSV format
     def get_renderer_context(self):
@@ -81,12 +74,6 @@ class PositionViewSet(mixins.CreateModelMixin,
     """
     queryset = Positions.objects.all()
     serializer_class = PositionSerializer
-
-    # Custom list method with simpler serializer
-    def list(self, request, *args, **kwargs):
-        queryset = Positions.objects.order_by('name')
-        serializer = PositionShortSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
 
     # Customizing header for CSV format
     def get_renderer_context(self):
@@ -157,7 +144,7 @@ class EmployeeViewSet(ModelViewSet):
         if request.query_params.get('format') == 'csv':
             serializer = EmployeeSerializer(queryset, many=True, context={'request': request})
         else:
-            serializer = EmployeeShortSerializer(queryset, many=True, context={'request': request})
+            serializer = EmployeeListSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     # Action for uploading data in format of CSV files - match it with EmployeeRenderer
