@@ -9,14 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###14/01/2020
+###15/01/2020
 
-- Update on the ct8 server
-- Implementing Plans model, view and serializer - nested view in Classes (and Classes is a nested view in Modules)
-- Code cleanup
-- Creating new app: Modules - moved modules related elements into
-- FIX / test's failure fix: employees degree and position hyperlinks custom config
-- Minor view name change for better readability
+- 
 
 ### To be done:
 

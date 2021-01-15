@@ -1,3 +1,12 @@
+###14/01/2020
+
+- Update on the ct8 server
+- Implementing Plans model, view and serializer - nested view in Classes (and Classes is a nested view in Modules)
+- Code cleanup
+- Creating new app: Modules - moved modules related elements into
+- FIX / test's failure fix: employees degree and position hyperlinks custom config
+- Minor view name change for better readability
+
 ###12/01/2020
 
 - Classes / Serializer - validation of the unique_together option with new type of HiddenField
