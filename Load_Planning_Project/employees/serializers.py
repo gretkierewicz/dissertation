@@ -1,3 +1,4 @@
+from django.db.models import F
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 from rest_framework.serializers import ValidationError
@@ -49,7 +50,11 @@ class PensumSerializer(ModelSerializer):
     """
     class Meta:
         model = Pensum
-        fields = ['url', 'pensum', 'limit', 'degrees', 'positions']
+        fields = ['url', 'value', 'limit', 'degrees', 'positions']
+        extra_kwargs = {
+            'degrees': {'queryset': Degrees.objects.order_by('name')},
+            'positions': {'queryset': Positions.objects.order_by('name')},
+        }
 
     url = HyperlinkedIdentityField(view_name='pensum-detail')
 
@@ -80,6 +85,11 @@ class EmployeeSerializer(ModelSerializer):
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
                   'degree', 'position', 'supervisor', 'supervisor_url', 'subordinates', 'modules_url',# 'modules',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
+        extra_kwargs = {
+            'degree': {'queryset': Degrees.objects.order_by('name')},
+            'position': {'queryset': Positions.objects.order_by('name')},
+            'supervisor': {'queryset': Employees.objects.order_by('abbreviation')},
+        }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
     supervisor_url = HyperlinkedIdentityField(
