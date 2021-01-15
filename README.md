@@ -17,6 +17,8 @@ Local with SQLite DB
 - Model changes - employee's degree and position cannot be null; Pensum.pensum changed to Pensum.value
 - Serializers (employee and pensum) update - ordering and field name
 - Created validator for plan's hours field - value > 0 and sum of all plans cannot exceed classes hours
+- Classes serializer - new field: hours_to_set
+- New methods in Classes model. Update for Plan's validator and Classes field
 
 ### To be done:
 

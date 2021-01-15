@@ -35,6 +35,14 @@ class Classes(models.Model):
     def __repr__(self):
         return "{class_name} (Module's code: {module})".format(module=self.module, class_name=self.name)
 
+    # simple method to count hours included in classes' plans
+    def get_set_hours(self):
+        return sum([plan.plan_hours for plan in self.plan.all()])
+
+    # simple method to count hours not included in classes' plans
+    def get_unset_hours(self):
+        return self.classes_hours - self.get_set_hours()
+
 
 class Plans(models.Model):
     class Meta:

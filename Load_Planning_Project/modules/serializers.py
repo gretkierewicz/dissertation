@@ -46,13 +46,11 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
         url_kwargs = self.context['request'].resolver_match.kwargs
         filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
         classes = Classes.objects.filter(**filter_kwargs).first()
-        hours_set = sum([plan.plan_hours for plan in classes.plan.all()])
-        hours_to_set = hours_set - (self.instance.plan_hours if self.instance else 0) + data
-        if hours_to_set > classes.classes_hours:
+        if classes.get_set_hours() - (self.instance.plan_hours if self.instance else 0) + data > classes.classes_hours:
             raise ValidationError(
-                f"Number of hours to set ({hours_to_set}) exceeds classes' hours ({classes.classes_hours}). "
-                f"Maximum allowed value: "
-                f"{classes.classes_hours - hours_set + (self.instance.plan_hours if self.instance else 0)}"
+                f"Classes' hours number cannot be exceeded by summary number of it's plans hours. "
+                f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
+                f"{classes.classes_hours-classes.get_set_hours()+(self.instance.plan_hours if self.instance else 0)}"
             )
         return data
 
@@ -63,8 +61,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url',
-                  'name', 'classes_hours', 'plan_url', 'plan',
+        fields = ['url', 'name', 'classes_hours', 'classes_hours_to_set', 'plan_url', 'plan',
                   # hidden fields:
                   'module']
         extra_kwargs = {
@@ -97,6 +94,9 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     )
     # needs parent_lookup_kwargs configured in nested serializer!
     plan = PlanSerializer(read_only=True, many=True)
+
+    # additional field with count of unset hours
+    classes_hours_to_set = SerializerLambdaField(lambda obj: obj.get_unset_hours())
 
     # mapping PositiveInteger model Field into Integer serializer Field issue
     def validate_classes_hours(self, data):
