@@ -1,3 +1,4 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
@@ -20,6 +21,7 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'employee'},
             'employee': {'lookup_field': 'abbreviation'},
+            'plan_hours': {'min_value': 1}
         }
     # for nesting serializer - dict of URL lookups and queryset kwarg keys
     parent_lookup_kwargs = {
@@ -37,6 +39,22 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
             'class_name': 'name'
         }
     )
+
+    def validate_plan_hours(self, data):
+        # validation of plan hours that summary classes' hours are not exceeded
+        # retrieve parent classes from request url
+        url_kwargs = self.context['request'].resolver_match.kwargs
+        filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
+        classes = Classes.objects.filter(**filter_kwargs).first()
+        hours_set = sum([plan.plan_hours for plan in classes.plan.all()])
+        hours_to_set = hours_set - (self.instance.plan_hours if self.instance else 0) + data
+        if hours_to_set > classes.classes_hours:
+            raise ValidationError(
+                f"Number of hours to set ({hours_to_set}) exceeds classes' hours ({classes.classes_hours}). "
+                f"Maximum allowed value: "
+                f"{classes.classes_hours - hours_set + (self.instance.plan_hours if self.instance else 0)}"
+            )
+        return data
 
 
 class ClassSerializer(NestedHyperlinkedModelSerializer):

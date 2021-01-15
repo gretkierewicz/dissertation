@@ -16,6 +16,7 @@ Local with SQLite DB
 - Validation on the Pensum serializer - don't allow double match-ups of degree and position
 - Model changes - employee's degree and position cannot be null; Pensum.pensum changed to Pensum.value
 - Serializers (employee and pensum) update - ordering and field name
+- Created validator for plan's hours field - value > 0 and sum of all plans cannot exceed classes hours
 
 ### To be done:
 
@@ -27,5 +28,4 @@ Local with SQLite DB
 - Create static function for try/except reuse (employees csv upload)
 - Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
 - Move importing data from csv files to the to_internal_value methods of serializers
-- Validation for Plans
 - Tests!
