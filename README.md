@@ -21,6 +21,7 @@ Local with SQLite DB
 - Validation for plan's hours checking if employee's pensum limit would be exceeded
 - FIX / Plan ViewSet - get_object method uses get_object_or_404 now
 - Validator for pensum limit - should be always greater than pensum value
+- Minor update - ordering in models, changing filter method to get_object_or_404 function
 
 ### To be done:
 

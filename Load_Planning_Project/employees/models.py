@@ -4,6 +4,9 @@ import modules.models
 
 
 class Degrees(models.Model):
+    class Meta:
+        ordering = ['name']
+
     name = models.CharField(max_length=45, unique=True)
 
     def __str__(self):
@@ -11,6 +14,9 @@ class Degrees(models.Model):
 
 
 class Positions(models.Model):
+    class Meta:
+        ordering = ['name']
+
     name = models.CharField(max_length=45, unique=True)
 
     def __str__(self):
@@ -25,6 +31,9 @@ class Pensum(models.Model):
 
 
 class Employees(models.Model):
+    class Meta:
+        ordering = ['abbreviation']
+
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)
     abbreviation = models.SlugField(max_length=5, unique=True)

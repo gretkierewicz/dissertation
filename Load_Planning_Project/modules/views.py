@@ -11,7 +11,7 @@ class ModuleViewSet(ModelViewSet):
     Modules View Set
     Create, Retrieve, Update, Delete modules
     """
-    queryset = Modules.objects.order_by('module_code')
+    queryset = Modules.objects.all()
     serializer_class = ModuleSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'module_code'
@@ -52,10 +52,8 @@ class PlanViewSet(ModelViewSet):
     # custom queryset for nested view
     def get_queryset(self):
         # kwargs need to match url lookups (router lookups + field names)
-        return Plans.objects.filter(
-            classes__name=self.kwargs.get('class_name'),
-            classes__module__module_code=self.kwargs.get('module_module_code'),
-        )
+        return Plans.objects.filter(classes__name=self.kwargs.get('class_name'),
+                                    classes__module__module_code=self.kwargs.get('module_module_code'))
 
     # custom object for nested view
     def get_object(self):
@@ -71,4 +69,4 @@ class EmployeePlanViewSet(GenericViewSet,
         # kwargs need to match url lookups (router lookups + field names)
         return Modules.objects.filter(
             classes__plans__employee__abbreviation=self.kwargs.get('employee_abbreviation')
-        ).distinct().order_by('module_code')
+        ).distinct()

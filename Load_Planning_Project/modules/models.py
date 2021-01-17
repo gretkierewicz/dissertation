@@ -4,6 +4,9 @@ from employees.models import Employees
 
 
 class Modules(models.Model):
+    class Meta:
+        ordering = ['module_code']
+
     module_code = models.SlugField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
     examination = models.BooleanField(default=False)
@@ -15,6 +18,7 @@ class Modules(models.Model):
 
 class Classes(models.Model):
     class Meta:
+        ordering = ['name']
         unique_together = (('module', 'name'), )
 
     NAME_CHOICES = [
@@ -48,6 +52,7 @@ class Classes(models.Model):
 
 class Plans(models.Model):
     class Meta:
+        ordering = ['employee', 'classes']
         unique_together = (('employee', 'classes'), )
 
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')

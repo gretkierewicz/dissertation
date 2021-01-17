@@ -1,5 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
+from rest_framework.generics import get_object_or_404
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
@@ -50,10 +51,8 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
         # retrieve parent classes from request url
         url_kwargs = self.context['request'].resolver_match.kwargs
         filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
-        classes = Classes.objects.filter(**filter_kwargs).first()
-        if classes.classes_hours_set - (
-                self.instance.plan_hours if self.instance else 0
-        ) + data > classes.classes_hours:
+        classes = get_object_or_404(Classes, **filter_kwargs)
+        if classes.classes_hours_set - (self.instance.plan_hours if self.instance else 0)+data > classes.classes_hours:
             raise ValidationError(
                 f"Classes' hours number cannot be exceeded by summary number of it's plans hours. "
                 f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
@@ -183,13 +182,13 @@ class EmployeePlanClassSerializer(ClassSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['name', 'employee_plan_hours', 'classes_hours']
+        fields = ['name', 'classes_hours', 'employee_plan_hours']
 
     # for Classes instance it is enough to only get one plan_hours as only one Employee is given
     employee_plan_hours = SerializerMethodField('get_plan_hours')
 
     def get_plan_hours(self, obj):
-        # in Classes instance find plan related to the Employee
+        # in Classes instance find plan related to the Employee (cannot use get_object_or_404 here because of 404 error)
         plan = obj.plans.filter(
             # logical OR needed because of URL kwargs naming differences:
             # 'employee-detail' vs 'employee-plans-list' url patterns

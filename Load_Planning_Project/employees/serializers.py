@@ -52,8 +52,8 @@ class PensumSerializer(ModelSerializer):
         model = Pensum
         fields = ['url', 'value', 'limit', 'degrees', 'positions']
         extra_kwargs = {
-            'degrees': {'queryset': Degrees.objects.order_by('name')},
-            'positions': {'queryset': Positions.objects.order_by('name')},
+            'degrees': {'queryset': Degrees.objects.all()},
+            'positions': {'queryset': Positions.objects.all()},
         }
 
     url = HyperlinkedIdentityField(view_name='pensum-detail')
@@ -97,9 +97,9 @@ class EmployeeSerializer(ModelSerializer):
                   'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
-            'degree': {'queryset': Degrees.objects.order_by('name')},
-            'position': {'queryset': Positions.objects.order_by('name')},
-            'supervisor': {'queryset': Employees.objects.order_by('abbreviation')},
+            'degree': {'queryset': Degrees.objects.all()},
+            'position': {'queryset': Positions.objects.all()},
+            'supervisor': {'queryset': Employees.objects.all()},
         }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
