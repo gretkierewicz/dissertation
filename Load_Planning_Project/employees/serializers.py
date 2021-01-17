@@ -80,9 +80,9 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
-                  'degree', 'position', 'plan_modules_url', 'plan_modules',
-                  'supervised_modules_url', 'supervised_modules',
-                  'supervisor_url', 'supervisor', 'subordinates',
+                  'degree', 'position', 'pensum_value', 'pensum_limit',
+                  'plan_hours_sum', 'plan_modules_url', 'plan_modules',
+                  'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
             'degree': {'queryset': Degrees.objects.order_by('name')},

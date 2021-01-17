@@ -17,6 +17,7 @@ Local with SQLite DB
 - Plan model - changed methods to properties, so these can be easily used in serializers
 - Employee's Plans - implemented View and Serializers (read-only)
 - FIX / For Plan Serializer's validation after changing model's methods to props
+- Added to Employee: pensum, limit and sum of plan_hours
 
 ### To be done:
 

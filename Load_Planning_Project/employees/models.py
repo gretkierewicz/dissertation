@@ -45,3 +45,17 @@ class Employees(models.Model):
     def plan_modules(self):
         return modules.models.Modules.objects.filter(classes__plans__in=self.plans.all()
                                                      ).distinct().order_by('module_code')
+
+    @property
+    def pensum_value(self):
+        pensum = Pensum.objects.filter(degrees=self.degree, positions=self.position).first()
+        return pensum.value if pensum else 0
+
+    @property
+    def pensum_limit(self):
+        pensum = Pensum.objects.filter(degrees=self.degree, positions=self.position).first()
+        return pensum.limit if pensum else 0
+
+    @property
+    def plan_hours_sum(self):
+        return sum([plan.plan_hours for plan in modules.models.Plans.objects.filter(employee=self)])
