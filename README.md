@@ -9,16 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###15/01/2020
+###17/01/2020
 
-- Cleanup - minor changes in serializers/views
-- Created conv_pk_to_str function for easy to_representation config
-- Validation on the Pensum serializer - don't allow double match-ups of degree and position
-- Model changes - employee's degree and position cannot be null; Pensum.pensum changed to Pensum.value
-- Serializers (employee and pensum) update - ordering and field name
-- Created validator for plan's hours field - value > 0 and sum of all plans cannot exceed classes hours
-- Classes serializer - new field: hours_to_set
-- New methods in Classes model. Update for Plan's validator and Classes field
+- Implementing the latest project version to the http://gret.ct8.pl
 
 ### To be done:
 
