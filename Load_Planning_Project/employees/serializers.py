@@ -72,6 +72,18 @@ class PensumSerializer(ModelSerializer):
             return attrs
         raise ValidationError('Given combination of degree and position exists in another pensum record(s).')
 
+    def validate_limit(self, data):
+        # validation for proper setting pensum's limit (cannot be lower than value)
+        init_value = int(self.initial_data['value'] or 0)
+        init_limit = int(self.initial_data['limit'] or 0)
+        if not self.instance:
+            if init_limit <= init_value:
+                raise ValidationError(f"Limit ({init_limit}) cannot be lower or equal than value ({init_value}).")
+        elif (data or 0) <= max(self.instance.value, init_value):
+            raise ValidationError(
+                f"Limit ({data or 0}) cannot be lower or equal than value ({max(self.instance.value, init_value)}).")
+        return data
+
 
 class EmployeeSerializer(ModelSerializer):
     """

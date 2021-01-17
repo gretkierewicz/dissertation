@@ -20,6 +20,7 @@ Local with SQLite DB
 - Added to Employee: pensum, limit and sum of plan_hours
 - Validation for plan's hours checking if employee's pensum limit would be exceeded
 - FIX / Plan ViewSet - get_object method uses get_object_or_404 now
+- Validator for pensum limit - should be always greater than pensum value
 
 ### To be done:
 
@@ -33,3 +34,5 @@ Local with SQLite DB
 - Move importing data from csv files to the to_internal_value methods of serializers
 - Tests!
 - New general view: Modules with missing plans
+- Additional views with no nesting (could be problematic with a huge amount of plans or modules)
+- Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
