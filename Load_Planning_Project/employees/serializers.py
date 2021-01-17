@@ -1,4 +1,3 @@
-from django.db.models import F
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 from rest_framework.serializers import ValidationError
@@ -7,6 +6,7 @@ from utils.serializers import conv_pk_to_str
 from utils.validators import validate_if_positive
 
 from .models import Degrees, Positions, Employees, Pensum
+from modules.serializers import EmployeeModuleSerializer
 
 
 class EmployeeListSerializer(HyperlinkedModelSerializer):
@@ -83,7 +83,7 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
-                  'degree', 'position', 'supervisor', 'supervisor_url', 'subordinates', 'modules_url',# 'modules',
+                  'degree', 'position', 'modules_url', 'modules', 'supervisor', 'supervisor_url', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
             'degree': {'queryset': Degrees.objects.order_by('name')},
@@ -92,15 +92,14 @@ class EmployeeSerializer(ModelSerializer):
         }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
-    supervisor_url = HyperlinkedIdentityField(
-        view_name='employees-detail', lookup_field='supervisor', lookup_url_kwarg='abbreviation')
+
     modules_url = HyperlinkedIdentityField(
         view_name='employee-modules-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
+    modules = EmployeeModuleSerializer(read_only=True, many=True)
 
+    supervisor_url = HyperlinkedIdentityField(
+        view_name='employees-detail', lookup_field='supervisor', lookup_url_kwarg='abbreviation')
     subordinates = EmployeeListSerializer(read_only=True, many=True)
-
-    # TODO: needs custom serializer!
-    #modules = ModuleSerializer(read_only=True, many=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

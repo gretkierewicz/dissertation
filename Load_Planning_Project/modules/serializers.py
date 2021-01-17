@@ -8,6 +8,7 @@ from utils.serializers import ParentFromURLHiddenField, SerializerLambdaField
 from utils.validators import validate_if_positive
 
 from .models import Modules, Classes, Plans
+from employees.models import Employees
 
 
 class PlanSerializer(NestedHyperlinkedModelSerializer):
@@ -119,9 +120,6 @@ class ModuleSerializer(HyperlinkedModelSerializer):
             'url': {'lookup_field': 'module_code'},
             'supervisor': {'lookup_field': 'abbreviation', 'allow_null': True}
         }
-    parent_lookup_kwargs = {
-        'employee_abbreviation': 'supervisor__abbreviation',
-    }
 
     supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
 
@@ -132,3 +130,29 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     )
     # needs parent_lookup_kwargs configured in nested serializer!
     classes = ClassSerializer(read_only=True, many=True)
+
+
+class EmployeeModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerializer):
+    class Meta:
+        model = Modules
+        fields = ['url',
+                  'module_code', 'name', 'examination',
+                  'classes_url', 'classes',
+                  # hidden fields:
+                  'supervisor']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {
+                'view_name': 'employee-modules-detail',
+                'lookup_field': 'module_code',
+                'parent_lookup_kwargs': {
+                    'employee_abbreviation': 'supervisor__abbreviation',
+                },
+            },
+        }
+
+    # Requested URL should point one parent object - in this case supervisor
+    supervisor = ParentFromURLHiddenField(
+        queryset=Employees.objects.all(),
+        matches={'employee_abbreviation': 'abbreviation'},
+    )

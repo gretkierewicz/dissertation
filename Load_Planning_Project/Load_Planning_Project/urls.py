@@ -43,7 +43,7 @@ router.register(r'employees', e_views.EmployeeViewSet)
 # /employees/
 # /employees/{employee_abbreviation}
 employees_router = NestedDefaultRouter(router, r'employees', lookup='employee')
-employees_router.register(r'modules', m_views.ModulesByEmployeeViewSet, basename='employee-modules')
+employees_router.register(r'modules', m_views.EmployeeModuleViewSet, basename='employee-modules')
 ## generates:
 # /employees/{employee_abbreviation}/modules/
 # /employees/{employee_abbreviation}/modules/{module_code}/

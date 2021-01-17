@@ -12,6 +12,7 @@ Local with SQLite DB
 ###17/01/2020
 
 - Implementing the latest project version to the http://gret.ct8.pl
+- Implementing Employee's nested Modules view and serializer properly
 
 ### To be done:
 
