@@ -137,7 +137,6 @@ class EmployeeModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerialize
         model = Modules
         fields = ['url',
                   'module_code', 'name', 'examination',
-                  'classes_url', 'classes',
                   # hidden fields:
                   'supervisor']
         extra_kwargs = {

@@ -7,7 +7,7 @@ class Modules(models.Model):
     module_code = models.SlugField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
     examination = models.BooleanField(default=False)
-    supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='modules')
+    supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
 
     def __str__(self):
         return self.module_code

@@ -58,7 +58,7 @@ modules_router.register(r'classes', m_views.ClassViewSet, basename='classes')
 # /modules/{module_code}/classes/
 # /modules/{module_code}/classes/{class_name}
 classes_router = NestedDefaultRouter(modules_router, r'classes', lookup='class')
-classes_router.register(r'plans', m_views.PlanViewSet, basename='plans')
+classes_router.register(r'employees', m_views.PlanViewSet, basename='plans')
 ## generates:
 # /modules/{module_code}/classes/{class_name}/plans/
 # /modules/{module_code}/classes/{class_name}/plans/{employee}

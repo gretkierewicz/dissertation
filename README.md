@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Implementing the latest project version to the http://gret.ct8.pl
 - Implementing Employee's nested Modules view and serializer properly
+- Modules / Employee-Module Serializer - minor corrections (changed related name to supervised_modules)
 
 ### To be done:
 
@@ -25,3 +26,6 @@ Local with SQLite DB
 - Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
 - Move importing data from csv files to the to_internal_value methods of serializers
 - Tests!
+- New general view: Modules with missing plans
+- Validation: pensum and limits
+- Employee's plans - read only
