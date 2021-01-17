@@ -63,8 +63,8 @@ modules_router.register(r'classes', m_views.ClassViewSet, basename='classes')
 classes_router = NestedDefaultRouter(modules_router, r'classes', lookup='class')
 classes_router.register(r'employees', m_views.PlanViewSet, basename='plans')
 ## generates:
-# /modules/{module_code}/classes/{class_name}/plans/
-# /modules/{module_code}/classes/{class_name}/plans/{employee}
+# /modules/{module_code}/classes/{class_name}/employees/
+# /modules/{module_code}/classes/{class_name}/employees/{employee}
 
 urlpatterns = [
     path('API/', include(router.urls)),

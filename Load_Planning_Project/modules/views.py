@@ -1,3 +1,4 @@
+from rest_framework.generics import get_object_or_404
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
 
 from .models import Modules, Classes, Plans
@@ -58,7 +59,7 @@ class PlanViewSet(ModelViewSet):
 
     # custom object for nested view
     def get_object(self):
-        return self.get_queryset().get(employee__abbreviation=self.kwargs.get(self.lookup_field))
+        return get_object_or_404(self.get_queryset(), employee__abbreviation=self.kwargs.get(self.lookup_field))
 
 
 class EmployeePlanViewSet(GenericViewSet,

@@ -19,6 +19,7 @@ Local with SQLite DB
 - FIX / For Plan Serializer's validation after changing model's methods to props
 - Added to Employee: pensum, limit and sum of plan_hours
 - Validation for plan's hours checking if employee's pensum limit would be exceeded
+- FIX / Plan ViewSet - get_object method uses get_object_or_404 now
 
 ### To be done:
 
