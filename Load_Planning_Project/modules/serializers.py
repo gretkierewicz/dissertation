@@ -13,6 +13,9 @@ from employees.models import Employees
 
 
 class PlanSerializer(NestedHyperlinkedModelSerializer):
+    """
+    Plan Serializer - Main Plan Serializer with implemented validation
+    """
     class Meta:
         model = Plans
         fields = ['url',
@@ -57,6 +60,20 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
                 f"{classes.classes_hours-classes.classes_hours_set+(self.instance.plan_hours if self.instance else 0)}"
             )
         return data
+
+    def validate(self, attrs):
+        # validation of employee's sum of overall plan's hours
+        employee = attrs['employee']
+        set_plan_hours = attrs['plan_hours']
+        if self.instance and self.instance.employee == employee:
+            set_plan_hours -= self.instance.plan_hours
+        # not allowing exceeding employee's pensum limit provided by degree and position
+        if employee.plan_hours_sum + set_plan_hours > employee.pensum_limit:
+            raise ValidationError(
+                f"Provided value will exceed employee's pensum limit ({employee.pensum_limit}). Maximum value to set "
+                f"for {employee.first_name} ({employee.abbreviation}) with {'this' if self.instance else 'new'} plan: "
+                f"{employee.pensum_limit-employee.plan_hours_sum+(self.instance.plan_hours if self.instance else 0)}")
+        return attrs
 
 
 class ClassSerializer(NestedHyperlinkedModelSerializer):

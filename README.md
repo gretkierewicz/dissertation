@@ -18,6 +18,7 @@ Local with SQLite DB
 - Employee's Plans - implemented View and Serializers (read-only)
 - FIX / For Plan Serializer's validation after changing model's methods to props
 - Added to Employee: pensum, limit and sum of plan_hours
+- Validation for plan's hours checking if employee's pensum limit would be exceeded
 
 ### To be done:
 
@@ -31,4 +32,3 @@ Local with SQLite DB
 - Move importing data from csv files to the to_internal_value methods of serializers
 - Tests!
 - New general view: Modules with missing plans
-- Validation: pensum and limits
