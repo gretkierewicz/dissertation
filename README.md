@@ -16,6 +16,7 @@ Local with SQLite DB
 - Modules / Employee-Module Serializer - minor corrections (changed related name to supervised_modules)
 - Plan model - changed methods to properties, so these can be easily used in serializers
 - Employee's Plans - implemented View and Serializers (read-only)
+- FIX / For Plan Serializer's validation after changing model's methods to props
 
 ### To be done:
 

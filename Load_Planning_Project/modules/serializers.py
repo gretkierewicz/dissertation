@@ -48,11 +48,13 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
         url_kwargs = self.context['request'].resolver_match.kwargs
         filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
         classes = Classes.objects.filter(**filter_kwargs).first()
-        if classes.get_set_hours() - (self.instance.plan_hours if self.instance else 0) + data > classes.classes_hours:
+        if classes.classes_hours_set - (
+                self.instance.plan_hours if self.instance else 0
+        ) + data > classes.classes_hours:
             raise ValidationError(
                 f"Classes' hours number cannot be exceeded by summary number of it's plans hours. "
                 f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
-                f"{classes.classes_hours-classes.get_set_hours()+(self.instance.plan_hours if self.instance else 0)}"
+                f"{classes.classes_hours-classes.classes_hours_set+(self.instance.plan_hours if self.instance else 0)}"
             )
         return data
 
