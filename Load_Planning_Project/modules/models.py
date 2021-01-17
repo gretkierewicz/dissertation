@@ -35,19 +35,21 @@ class Classes(models.Model):
     def __repr__(self):
         return "{class_name} (Module's code: {module})".format(module=self.module, class_name=self.name)
 
-    # simple method to count hours included in classes' plans
-    def get_set_hours(self):
-        return sum([plan.plan_hours for plan in self.plan.all()])
+    # property to check classes' already set hours
+    @property
+    def classes_hours_set(self):
+        return sum([plan.plan_hours for plan in self.plans.all()])
 
-    # simple method to count hours not included in classes' plans
-    def get_unset_hours(self):
-        return self.classes_hours - self.get_set_hours()
+    # property to check classes' hour waiting to be set
+    @property
+    def classes_hours_not_set(self):
+        return self.classes_hours - self.classes_hours_set
 
 
 class Plans(models.Model):
     class Meta:
         unique_together = (('employee', 'classes'), )
 
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plan')
-    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plan')
+    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')
+    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plans')
     plan_hours = models.PositiveIntegerField()

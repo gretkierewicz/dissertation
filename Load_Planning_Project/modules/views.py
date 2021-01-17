@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Modules, Classes, Plans
-from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer, EmployeeModuleSerializer
+from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer, SupervisedModuleSerializer
 
 
 class ModuleViewSet(ModelViewSet):
@@ -20,7 +20,7 @@ class EmployeeModuleViewSet(ModuleViewSet):
     Employee/Module View Set
     Create, Retrieve, Update, Delete Employee's modules
     """
-    serializer_class = EmployeeModuleSerializer
+    serializer_class = SupervisedModuleSerializer
 
     # custom queryset for nested view
     def get_queryset(self):

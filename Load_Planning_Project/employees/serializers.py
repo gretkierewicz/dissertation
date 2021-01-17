@@ -6,7 +6,7 @@ from utils.serializers import conv_pk_to_str
 from utils.validators import validate_if_positive
 
 from .models import Degrees, Positions, Employees, Pensum
-from modules.serializers import EmployeeModuleSerializer
+from modules.serializers import SupervisedModuleSerializer
 
 
 class EmployeeListSerializer(HyperlinkedModelSerializer):
@@ -97,7 +97,7 @@ class EmployeeSerializer(ModelSerializer):
 
     supervised_modules_url = HyperlinkedIdentityField(
         view_name='employee-modules-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
-    supervised_modules = EmployeeModuleSerializer(read_only=True, many=True)
+    supervised_modules = SupervisedModuleSerializer(read_only=True, many=True)
 
     supervisor_url = HyperlinkedIdentityField(
         view_name='employees-detail', lookup_field='supervisor', lookup_url_kwarg='abbreviation')

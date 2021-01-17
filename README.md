@@ -14,6 +14,7 @@ Local with SQLite DB
 - Implementing the latest project version to the http://gret.ct8.pl
 - Implementing Employee's nested Modules view and serializer properly
 - Modules / Employee-Module Serializer - minor corrections (changed related name to supervised_modules)
+- Plan model - changed methods to properties, so these can be easily used in serializers 
 
 ### To be done:
 
@@ -29,3 +30,4 @@ Local with SQLite DB
 - New general view: Modules with missing plans
 - Validation: pensum and limits
 - Employee's plans - read only
+- Change EmployeeModule Serializer and View to proper names: SupervisedModule

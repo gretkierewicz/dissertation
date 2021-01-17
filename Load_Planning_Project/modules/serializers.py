@@ -42,7 +42,7 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
     )
 
     def validate_plan_hours(self, data):
-        # validation of plan hours that summary classes' hours are not exceeded
+        # validation of plan's hours if summary classes' hours are not exceeded
         # retrieve parent classes from request url
         url_kwargs = self.context['request'].resolver_match.kwargs
         filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
@@ -62,7 +62,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours', 'classes_hours_to_set', 'plan_url', 'plan',
+        fields = ['url', 'name', 'classes_hours', 'classes_hours_not_set', 'plans_url', 'plans',
                   # hidden fields:
                   'module']
         extra_kwargs = {
@@ -83,9 +83,9 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         matches={'module_module_code': 'module_code'},
     )
 
-    # url of plan: parent's lookup_field (ClassesView); lookup_url_kwarg - lookup from URL that points lookup_field;
+    # url for plans: parent's lookup_field (ClassesView); lookup_url_kwarg - lookup from URL that points lookup_field;
     # parent_lookup_kwargs - URL lookup and queryset key (parent_lookup_kwargs of this serializer)
-    plan_url = NestedHyperlinkedIdentityField(
+    plans_url = NestedHyperlinkedIdentityField(
         view_name='plans-list',
         lookup_field='name',
         lookup_url_kwarg='class_name',
@@ -94,10 +94,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         },
     )
     # needs parent_lookup_kwargs configured in nested serializer!
-    plan = PlanSerializer(read_only=True, many=True)
-
-    # additional field with count of unset hours
-    classes_hours_to_set = SerializerLambdaField(lambda obj: obj.get_unset_hours())
+    plans = PlanSerializer(read_only=True, many=True)
 
     # mapping PositiveInteger model Field into Integer serializer Field issue
     def validate_classes_hours(self, data):
@@ -132,7 +129,7 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     classes = ClassSerializer(read_only=True, many=True)
 
 
-class EmployeeModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerializer):
+class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerializer):
     class Meta:
         model = Modules
         fields = ['url',
