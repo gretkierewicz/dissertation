@@ -1,7 +1,8 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
 
 from .models import Modules, Classes, Plans
-from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer, SupervisedModuleSerializer
+from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer, SupervisedModuleSerializer, \
+    EmployeePlanSerializer
 
 
 class ModuleViewSet(ModelViewSet):
@@ -58,3 +59,15 @@ class PlanViewSet(ModelViewSet):
     # custom object for nested view
     def get_object(self):
         return self.get_queryset().get(employee__abbreviation=self.kwargs.get(self.lookup_field))
+
+
+class EmployeePlanViewSet(GenericViewSet,
+                          mixins.ListModelMixin):
+    serializer_class = EmployeePlanSerializer
+
+    # custom queryset for nested view
+    def get_queryset(self):
+        # kwargs need to match url lookups (router lookups + field names)
+        return Modules.objects.filter(
+            classes__plans__employee__abbreviation=self.kwargs.get('employee_abbreviation')
+        ).distinct().order_by('module_code')

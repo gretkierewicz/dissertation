@@ -6,7 +6,7 @@ from utils.serializers import conv_pk_to_str
 from utils.validators import validate_if_positive
 
 from .models import Degrees, Positions, Employees, Pensum
-from modules.serializers import SupervisedModuleSerializer
+from modules.serializers import SupervisedModuleSerializer, EmployeePlanSerializer
 
 
 class EmployeeListSerializer(HyperlinkedModelSerializer):
@@ -75,17 +75,14 @@ class PensumSerializer(ModelSerializer):
 
 class EmployeeSerializer(ModelSerializer):
     """
-    Employee Serializer - extended short serializer with additional properties:
-    *_repr - string representation of hyperlinked field
-    subordinates - nested serializer of employee's subordinates
-    modules - hyperlink to nested view of employee's modules
+    Employee Serializer - Extended Employee Serializer with additional urls and nested serializers
     """
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
-                  'degree', 'position',
+                  'degree', 'position', 'plan_modules_url', 'plan_modules',
                   'supervised_modules_url', 'supervised_modules',
-                  'supervisor', 'supervisor_url', 'subordinates',
+                  'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
             'degree': {'queryset': Degrees.objects.order_by('name')},
@@ -94,6 +91,11 @@ class EmployeeSerializer(ModelSerializer):
         }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
+
+    plan_modules_url = HyperlinkedIdentityField(
+        view_name='employee-plans-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
+    # queryset given by model's property is transferred to the proper serializer
+    plan_modules = EmployeePlanSerializer(read_only=True, many=True)
 
     supervised_modules_url = HyperlinkedIdentityField(
         view_name='employee-modules-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')

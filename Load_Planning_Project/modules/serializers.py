@@ -1,4 +1,5 @@
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
@@ -93,7 +94,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
             'module_module_code': 'module__module_code',
         },
     )
-    # needs parent_lookup_kwargs configured in nested serializer!
+    # needs parent_lookup_kwargs configured in nested serializer (only for auto-hyperlinking)
     plans = PlanSerializer(read_only=True, many=True)
 
     # mapping PositiveInteger model Field into Integer serializer Field issue
@@ -130,6 +131,9 @@ class ModuleSerializer(HyperlinkedModelSerializer):
 
 
 class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerializer):
+    """
+    Supervised Module Serializer - helper Serializer for nesting in the Employee Serializer
+    """
     class Meta:
         model = Modules
         fields = ['url',
@@ -152,3 +156,56 @@ class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSeriali
         queryset=Employees.objects.all(),
         matches={'employee_abbreviation': 'abbreviation'},
     )
+
+
+class EmployeePlanClassSerializer(ClassSerializer):
+    """
+    Employee Plan Class Serializer - helper Serializer for nesting in the Employee Plan Serializer
+    """
+    class Meta:
+        model = Classes
+        fields = ['name', 'employee_plan_hours', 'classes_hours']
+
+    # for Classes instance it is enough to only get one plan_hours as only one Employee is given
+    employee_plan_hours = SerializerMethodField('get_plan_hours')
+
+    def get_plan_hours(self, obj):
+        # in Classes instance find plan related to the Employee
+        plan = obj.plans.filter(
+            # logical OR needed because of URL kwargs naming differences:
+            # 'employee-detail' vs 'employee-plans-list' url patterns
+            employee__abbreviation=(self.context['request'].resolver_match.kwargs.get('abbreviation') or
+                                    self.context['request'].resolver_match.kwargs.get('employee_abbreviation'))
+            # with given Employee, for each Classes instance, there should be always exactly 1 plan filtered!
+        ).first()
+        # there should be not even one Classes instance with no plan for given Employee thanks to overwriting
+        # 'to_representation' method in parent's Serializer (EmployeePlanSerializer)
+        # But in case if no plan found - return 0
+        return plan.plan_hours if plan else 0
+
+
+class EmployeePlanSerializer(ModuleSerializer):
+    """
+    Employee Plan Serializer - helper Plan Serializer that includes only Classes with setup hours for specific Employee
+    To be nested into the Employee Serializer
+    """
+    class Meta:
+        model = Modules
+        fields = ['url', 'module_code', 'name',
+                  'classes', 'examination',
+                  'supervisor', 'supervisor_repr']
+        extra_kwargs = {
+            # url's custom lookup - needs to match lookup set in the view set
+            'url': {'lookup_field': 'module_code'},
+            'supervisor': {'lookup_field': 'abbreviation'}
+        }
+
+    classes = EmployeePlanClassSerializer(read_only=True, many=True)
+
+    def to_representation(self, instance):
+        odict_obj = super().to_representation(instance)
+        # remove Classes instances with no plan hours for given Employee
+        odict_obj['classes'] = [
+            classes_obj for classes_obj in odict_obj['classes'] if classes_obj.get('employee_plan_hours') > 0
+        ]
+        return odict_obj

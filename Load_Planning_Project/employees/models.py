@@ -1,5 +1,7 @@
 from django.db import models
 
+import modules.models
+
 
 class Degrees(models.Model):
     name = models.CharField(max_length=45, unique=True)
@@ -37,3 +39,9 @@ class Employees(models.Model):
 
     def __str__(self):
         return self.abbreviation
+
+    @property
+    # gets only modules with plans included in it for Employee instance
+    def plan_modules(self):
+        return modules.models.Modules.objects.filter(classes__plans__in=self.plans.all()
+                                                     ).distinct().order_by('module_code')

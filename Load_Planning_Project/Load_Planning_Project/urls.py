@@ -47,6 +47,9 @@ employees_router.register(r'modules', m_views.EmployeeModuleViewSet, basename='e
 ## generates:
 # /employees/{employee_abbreviation}/modules/
 # /employees/{employee_abbreviation}/modules/{module_code}/
+employees_router.register(r'plans', m_views.EmployeePlanViewSet, basename='employee-plans')
+## generates:
+# /employees/{employee_abbreviation}/plans/
 
 router.register(r'modules', m_views.ModuleViewSet)
 ## generates:
