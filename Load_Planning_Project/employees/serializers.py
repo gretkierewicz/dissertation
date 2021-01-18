@@ -66,27 +66,27 @@ class PensumSerializer(ModelSerializer):
 
     def validate(self, attrs):
         # don't allow double match-ups of degree and position
-        # TODO: implement fix for PATCH method (now it fails in cases of missing 'degrees' or 'positions' lists
-        # object should be taken from instance or URL kwarg, not from attrs!
-        # self.context['request'].resolver_match.kwargs
-        query = Pensum.objects.filter(degrees__in=attrs.get('degrees'), positions__in=attrs.get('positions')).distinct()
+        degrees = attrs.get('degrees') or (self.instance.degrees.all() if self.instance else None)
+        positions = attrs.get('positions') or (self.instance.positions.all() if self.instance else None)
+        query = Pensum.objects.filter(degrees__in=degrees, positions__in=positions).distinct()
         if len(query) == 0 or (len(query) == 1 and self.instance in query):
             return attrs
         raise ValidationError('Given combination of degree and position exists in another pensum record(s).')
 
     def validate_limit(self, data):
-        # validation for proper setting of pensum's limit (cannot be lower than given value)
-        # TODO: validation fails for PATCH method
-        init_value = int(self.initial_data['value'] or 0)
-        init_limit = int(self.initial_data['limit'] or 0)
-        if not self.instance:
-            if init_limit <= init_value:
-                raise ValidationError(f"Limit ({init_limit}) cannot be lower or equal than value ({init_value}).")
-        # 0 if no limit provided (empty limit field)
-        # instance's 'value' field taken into account only when 'value' field value missing or equal 0
-        elif (data or 0) <= (init_value or self.instance.value):
-            raise ValidationError(
-                f"Limit ({data or 0}) cannot be lower or equal than value ({init_value or self.instance.value}).")
+        # validation for proper setting of pensum's limit
+        value = int(self.initial_data.get('value') or (self.instance.value if self.instance else 0))
+        limit = int(data or (self.instance.limit if self.instance else 0))
+        if limit <= value:
+            raise ValidationError(f"Limit ({limit}) cannot be lower or equal to value ({value}).")
+        return data
+
+    def validate_value(self, data):
+        # validation for proper setting of pensum's value
+        value = int(data or (self.instance.value if self.instance else 0))
+        limit = int(self.initial_data.get('limit') or (self.instance.limit if self.instance else 0))
+        if limit <= value:
+            raise ValidationError(f"Limit ({limit}) cannot be lower or equal to value ({value}).")
         return data
 
 

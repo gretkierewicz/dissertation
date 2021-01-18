@@ -15,6 +15,8 @@ Local with SQLite DB
 - Small fix for pensum validation (still needs correction for PATCH method)
 - TESTS / employees app test re-written (all pass for now)
 - TESTS / Pensum basic tests
+- FIX / Pensum validation of unique degrees and positions entries
+- FIX / Pensum validation of value < limit
 
 ### To be done:
 
@@ -30,6 +32,4 @@ Local with SQLite DB
 - New general view: Modules with missing plans
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
-- FIX - pensum validation: providing new limit and value gives bug (limit is not compared with provided value)
-- FIX - pensum validation: PATCH is not working
 - Unique and Validation tests
