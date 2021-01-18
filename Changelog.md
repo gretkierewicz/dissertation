@@ -1,3 +1,17 @@
+###17/01/2020
+
+- Implementing the latest project version to the http://gret.ct8.pl
+- Implementing Employee's nested Modules view and serializer properly
+- Modules / Employee-Module Serializer - minor corrections (changed related name to supervised_modules)
+- Plan model - changed methods to properties, so these can be easily used in serializers
+- Employee's Plans - implemented View and Serializers (read-only)
+- FIX / For Plan Serializer's validation after changing model's methods to props
+- Added to Employee: pensum, limit and sum of plan_hours
+- Validation for plan's hours checking if employee's pensum limit would be exceeded
+- FIX / Plan ViewSet - get_object method uses get_object_or_404 now
+- Validator for pensum limit - should be always greater than pensum value
+- Minor update - ordering in models, changing filter method to get_object_or_404 function
+
 ###15/01/2020
 
 - Cleanup - minor changes in serializers/views
