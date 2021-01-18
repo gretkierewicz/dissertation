@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Correction to value validation - removed custom validator, min value set with extra_kwargs
 - Small fix for pensum validation (still needs correction for PATCH method)
+- TESTS / employees app test re-written (all pass for now)
 
 ### To be done:
 
