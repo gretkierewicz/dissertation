@@ -2,8 +2,8 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory
 
-from .models import Degrees, Positions, Employees
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer
+from .models import Degrees, Positions, Employees, Pensum
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer
 from utils.tests import BasicMethodsTests, basic_degree, basic_position, basic_employee, basic_supervisor
 
 client = APIClient()
@@ -116,3 +116,45 @@ class EmployeesTests(BasicMethodsTests, TestCase):
                 degree=basic_degree(),
                 position=basic_position(),
                 e_mail=f'e.mail.{i}@x.xx')
+
+
+class PensumTests(BasicMethodsTests, TestCase):
+    def setUp(self):
+        self.basename = 'pensum'
+        self.model = Pensum
+        self.serializer = PensumSerializer
+        self.basic_element = Pensum.objects.create(value=10, limit=100)
+        self.basic_element.degrees.add(basic_degree().pk)
+        self.basic_element.degrees.add(basic_position().pk)
+
+        self.valid_lookup_kwargs = {'pk': self.basic_element.pk}
+        self.valid_post_data = {'Valid data': {'value': 5, 'limit': 10,
+                                               'degrees': [basic_degree('valid degree').pk],
+                                               'positions': [basic_position('valid position').pk]}}
+        self.valid_put_data = self.valid_post_data
+        self.valid_patch_data = {'Valid value': {'value': self.basic_element.limit - 1},
+                                 'Valid limit': {'limit': self.basic_element.value + 1},
+                                 'Valid degrees': {'degrees': [basic_degree('valid degree').pk]},
+                                 'Valid positions': {'positions': [basic_position('valid position').pk]}}
+
+        self.invalid_lookup_kwargs = {'pk': 1000}
+        self.another_element = Pensum.objects.create(value=10, limit=100)
+        self.another_element.degrees.add(basic_degree('another_degree').pk)
+        self.another_element.degrees.add(basic_position('another_position').pk)
+        self.invalid_post_data = {
+            'Existing degree and position match': {'value': 10, 'limit': 20,
+                                                   'degrees': [basic_degree('another_degree').pk],
+                                                   'position': [basic_position('another_position').pk]}}
+        self.invalid_put_data = {
+            'Existing degree and position match': {'value': 10, 'limit': 20,
+                                                   'degrees': [basic_degree('another_degree').pk],
+                                                   'position': [basic_position('another_position').pk]},
+            'Value greater than limit': {'value': 11, 'limit': 10,
+                                         'degrees': [basic_degree('valid degree').pk],
+                                         'positions': [basic_position('valid position').pk]},
+            'Value equal to limit': {'value': 10, 'limit': 10,
+                                     'degrees': [basic_degree('valid degree').pk],
+                                     'positions': [basic_position('valid position').pk]}
+        }
+        self.invalid_patch_data = {'Value greater than limit': {'value': self.basic_element.limit + 1},
+                                   'Value equal to limit': {'value': self.basic_element.limit}}

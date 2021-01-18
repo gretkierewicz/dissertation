@@ -14,6 +14,7 @@ Local with SQLite DB
 - Correction to value validation - removed custom validator, min value set with extra_kwargs
 - Small fix for pensum validation (still needs correction for PATCH method)
 - TESTS / employees app test re-written (all pass for now)
+- TESTS / Pensum basic tests
 
 ### To be done:
 
@@ -31,3 +32,4 @@ Local with SQLite DB
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
 - FIX - pensum validation: providing new limit and value gives bug (limit is not compared with provided value)
 - FIX - pensum validation: PATCH is not working
+- Unique and Validation tests

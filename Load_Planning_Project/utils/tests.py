@@ -11,25 +11,21 @@ client = APIClient()
 factory = APIRequestFactory()
 
 
-def basic_degree():
-    name = 'basic_degree'
+def basic_degree(name='basic_degree'):
     try:
         return Degrees.objects.get(name=name)
     except ObjectDoesNotExist:
         return Degrees.objects.create(name=name)
 
 
-def basic_position():
-    name = 'basic_position'
+def basic_position(name='basic_position'):
     try:
         return Positions.objects.get(name=name)
     except ObjectDoesNotExist:
         return Positions.objects.create(name=name)
 
 
-def basic_supervisor():
-    abbreviation = 'SUPER'
-    name = 'supervisor'
+def basic_supervisor(name='supervisor', abbreviation='SUPER'):
     try:
         return Employees.objects.get(abbreviation=abbreviation)
     except ObjectDoesNotExist:
@@ -42,9 +38,7 @@ def basic_supervisor():
             position=basic_position())
 
 
-def basic_employee():
-    abbreviation = 'BASIC'
-    name = 'employee'
+def basic_employee(name='employee', abbreviation='BASIC'):
     try:
         return Employees.objects.get(abbreviation=abbreviation)
     except ObjectDoesNotExist:
