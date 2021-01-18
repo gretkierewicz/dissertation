@@ -90,7 +90,7 @@ class BasicMethodsTests:
 
     def test_delete_valid_data(self):
         self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.valid_lookup_kwargs,
-                                status_code=status.HTTP_200_OK)
+                                status_code=status.HTTP_204_NO_CONTENT)
 
     def test_delete_invalid_data(self):
         self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.invalid_lookup_kwargs,

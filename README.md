@@ -17,6 +17,7 @@ Local with SQLite DB
 - TESTS / Pensum basic tests
 - FIX / Pensum validation of unique degrees and positions entries
 - FIX / Pensum validation of value < limit
+- TESTS / Minor update - permanently delete resource request should return HTTP 204
 
 ### To be done:
 
