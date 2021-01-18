@@ -7,7 +7,6 @@ from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from utils.serializers import ParentFromURLHiddenField, SerializerLambdaField
-from utils.validators import validate_if_positive
 
 from .models import Modules, Classes, Plans
 from employees.models import Employees
@@ -87,6 +86,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'name'},
+            'classes_hours': {'min_value': 0}
         }
     # for nesting serializer - dict of URL lookups and queryset kwarg keys
     parent_lookup_kwargs = {
@@ -114,10 +114,6 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     )
     # needs parent_lookup_kwargs configured in nested serializer (only for auto-hyperlinking)
     plans = PlanSerializer(read_only=True, many=True)
-
-    # mapping PositiveInteger model Field into Integer serializer Field issue
-    def validate_classes_hours(self, data):
-        return validate_if_positive(data)
 
 
 class ModuleSerializer(HyperlinkedModelSerializer):

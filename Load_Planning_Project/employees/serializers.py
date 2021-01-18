@@ -3,7 +3,6 @@ from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializ
 from rest_framework.serializers import ValidationError
 
 from utils.serializers import conv_pk_to_str
-from utils.validators import validate_if_positive
 
 from .models import Degrees, Positions, Employees, Pensum
 from modules.serializers import SupervisedModuleSerializer, EmployeePlanSerializer
@@ -67,21 +66,27 @@ class PensumSerializer(ModelSerializer):
 
     def validate(self, attrs):
         # don't allow double match-ups of degree and position
+        # TODO: implement fix for PATCH method (now it fails in cases of missing 'degrees' or 'positions' lists
+        # object should be taken from instance or URL kwarg, not from attrs!
+        # self.context['request'].resolver_match.kwargs
         query = Pensum.objects.filter(degrees__in=attrs.get('degrees'), positions__in=attrs.get('positions')).distinct()
         if len(query) == 0 or (len(query) == 1 and self.instance in query):
             return attrs
         raise ValidationError('Given combination of degree and position exists in another pensum record(s).')
 
     def validate_limit(self, data):
-        # validation for proper setting pensum's limit (cannot be lower than value)
+        # validation for proper setting of pensum's limit (cannot be lower than given value)
+        # TODO: validation fails for PATCH method
         init_value = int(self.initial_data['value'] or 0)
         init_limit = int(self.initial_data['limit'] or 0)
         if not self.instance:
             if init_limit <= init_value:
                 raise ValidationError(f"Limit ({init_limit}) cannot be lower or equal than value ({init_value}).")
-        elif (data or 0) <= max(self.instance.value, init_value):
+        # 0 if no limit provided (empty limit field)
+        # instance's 'value' field taken into account only when 'value' field value missing or equal 0
+        elif (data or 0) <= (init_value or self.instance.value):
             raise ValidationError(
-                f"Limit ({data or 0}) cannot be lower or equal than value ({max(self.instance.value, init_value)}).")
+                f"Limit ({data or 0}) cannot be lower or equal than value ({init_value or self.instance.value}).")
         return data
 
 
@@ -100,6 +105,7 @@ class EmployeeSerializer(ModelSerializer):
             'degree': {'queryset': Degrees.objects.all()},
             'position': {'queryset': Positions.objects.all()},
             'supervisor': {'queryset': Employees.objects.all()},
+            'year_of_studies': {'min_value': 0}
         }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
@@ -133,8 +139,3 @@ class EmployeeSerializer(ModelSerializer):
             if self.initial_data.get('abbreviation') == data.abbreviation:
                 raise ValidationError("Cannot self reference that field!")
         return data
-
-    # custom validator: 'year of studies' > 0 - DRF mapping PositiveInteger model Field into Integer serializer Field!
-    def validate_year_of_studies(self, data):
-        return validate_if_positive(data)
-

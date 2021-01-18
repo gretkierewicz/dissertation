@@ -9,9 +9,10 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###x/01/2020
+###18/01/2020
 
--
+- Correction to value validation - removed custom validator, min value set with extra_kwargs
+- Small fix for pensum validation (still needs correction for PATCH method)
 
 ### To be done:
 
@@ -28,3 +29,4 @@ Local with SQLite DB
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
 - FIX - pensum validation: providing new limit and value gives bug (limit is not compared with provided value)
+- FIX - pensum validation: PATCH is not working
