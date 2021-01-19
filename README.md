@@ -9,15 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###18/01/2020
+###19/01/2020
 
-- Correction to value validation - removed custom validator, min value set with extra_kwargs
-- Small fix for pensum validation (still needs correction for PATCH method)
-- TESTS / employees app test re-written (all pass for now)
-- TESTS / Pensum basic tests
-- FIX / Pensum validation of unique degrees and positions entries
-- FIX / Pensum validation of value < limit
-- TESTS / Minor update - permanently delete resource request should return HTTP 204
+- 
 
 ### To be done:
 

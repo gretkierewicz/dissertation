@@ -1,3 +1,13 @@
+###18/01/2020
+
+- Correction to value validation - removed custom validator, min value set with extra_kwargs
+- Small fix for pensum validation (still needs correction for PATCH method)
+- TESTS / employees app test re-written (all pass for now)
+- TESTS / Pensum basic tests
+- FIX / Pensum validation of unique degrees and positions entries
+- FIX / Pensum validation of value < limit
+- TESTS / Minor update - permanently delete resource request should return HTTP 204
+
 ###17/01/2020
 
 - Implementing the latest project version to the http://gret.ct8.pl
