@@ -2,9 +2,11 @@ from django.test import TestCase
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory
 
-from .models import Modules, Classes
-from .serializers import ModuleSerializer, ClassSerializer
-from utils.tests import StatusCodeTests, basic_supervisor, basic_module, basic_classes
+from employees.models import Pensum
+from .models import Modules, Classes, Plans
+from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer
+from utils.tests import StatusCodeTests, basic_supervisor, basic_module, basic_classes, basic_plans, basic_degree, \
+    basic_position
 
 client = APIClient()
 factory = APIRequestFactory()
@@ -91,4 +93,63 @@ class ClassesTests(StatusCodeTests, TestCase):
         self.invalid_patch_data = {
             'Not unique name': {'name': self.another_element.name},
             'Negative hours': {'classes_hours': -1}
+        }
+
+
+class PlansTests(StatusCodeTests, TestCase):
+    def setUp(self):
+        self.basename = 'plans'
+        self.model = Plans
+        self.serializer = PlanSerializer
+        self.basic_element = basic_plans(employee=basic_supervisor(),
+                                         classes=basic_classes(name=Classes.NAME_CHOICES[0][0]))
+        self.another_element = basic_plans(employee=basic_supervisor('sup'),
+                                           classes=basic_classes(name=Classes.NAME_CHOICES[-1][0]))
+        self.basic_pensum = Pensum.objects.create(value=20, limit=80)
+        self.basic_pensum.degrees.add(self.basic_element.employee.degree.pk)
+        self.basic_pensum.positions.add(self.basic_element.employee.position.pk)
+
+        valid_data = {
+            'employee': factory.get(reverse('employees-detail', kwargs={
+                'abbreviation': basic_supervisor('diff').abbreviation})).build_absolute_uri(),
+            'classes': factory.get(reverse('classes-detail', kwargs={
+                'module_module_code': self.basic_element.classes.module.module_code,
+                'name': self.basic_element.classes.name})).build_absolute_uri(),
+            'plan_hours': 11
+        }
+
+        self.valid_list_kwargs = {
+            'module_module_code': self.basic_element.classes.module.module_code,
+            'class_name': self.basic_element.classes.name
+        }
+        self.valid_detail_kwargs = self.valid_list_kwargs.copy()
+        self.valid_detail_kwargs['employee'] = self.basic_element.employee.abbreviation
+        self.invalid_detail_kwargs = {
+            'module_module_code': self.basic_element.classes.module.module_code,
+            'class_name': self.basic_element.classes.name,
+            'employee': 'not_existing'
+        }
+
+        self.valid_post_data = {'Valid data': valid_data}
+        self.valid_put_data = self.valid_post_data
+        self.valid_patch_data = {
+            'Min plan hours': {'plan_hours': 1},
+            'Max plan hours': {'plan_hours': min(self.basic_element.classes.classes_hours, self.basic_pensum.limit)},
+            'Valid employee': {'employee': valid_data['employee']},
+        }
+
+        self.invalid_post_data = {
+            'No employee': {'employee': None, 'plan_hours': valid_data['plan_hours']},
+            'Zero plan hours': {'employee': valid_data['employee'], 'plan_hours': 0},
+            'Negative plan hours': {'employee': valid_data['employee'], 'plan_hours': -1},
+            'Plan hours extending classes horus': {
+                'employee': valid_data['employee'],
+                'plan_hours': self.basic_element.classes.classes_hours + 1}
+        }
+        self.invalid_put_data = self.invalid_post_data
+        self.invalid_patch_data = {
+            'No employee': {'employee': None},
+            'Zero plan hours': {'plan_hours': 0},
+            'Negative plan hours': {'plan_hours': -1},
+            'Plan hours extending classes horus': {'plan_hours': self.basic_element.classes.classes_hours + 1}
         }

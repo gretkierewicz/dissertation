@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from employees.models import Degrees, Positions, Employees
-from modules.models import Modules, Classes
+from modules.models import Modules, Classes, Plans
 
 client = APIClient()
 
@@ -25,7 +25,8 @@ def basic_position(name='basic_position'):
         return Positions.objects.create(name=name)
 
 
-def basic_supervisor(name='supervisor', abbreviation='SUPER'):
+def basic_supervisor(abbreviation='SUPER'):
+    name = abbreviation + '_employee'
     try:
         return Employees.objects.get(abbreviation=abbreviation)
     except ObjectDoesNotExist:
@@ -38,7 +39,8 @@ def basic_supervisor(name='supervisor', abbreviation='SUPER'):
             position=basic_position())
 
 
-def basic_employee(name='employee', abbreviation='BASIC'):
+def basic_employee(abbreviation='BASIC'):
+    name = abbreviation + '_employee'
     try:
         return Employees.objects.get(abbreviation=abbreviation)
     except ObjectDoesNotExist:
@@ -52,19 +54,25 @@ def basic_employee(name='employee', abbreviation='BASIC'):
             supervisor=basic_supervisor())
 
 
-def basic_module(name='module'):
+def basic_module(name='basic_module'):
     try:
         return Modules.objects.get(module_code=name)
     except ObjectDoesNotExist:
         return Modules.objects.create(name=name, module_code=name)
 
 
-def basic_classes(classes_hours=10, name=Classes.NAME_CHOICES[0][0]):
+def basic_classes(classes_hours=100, name=Classes.NAME_CHOICES[0][0]):
     try:
         return Classes.objects.get(module=basic_module(), name=name)
     except ObjectDoesNotExist:
         return Classes.objects.create(module=basic_module(), name=name, classes_hours=classes_hours)
 
+
+def basic_plans(employee, classes=basic_classes(), plan_hours=10):
+    try:
+        return Plans.objects.get(employee=employee, classes=classes)
+    except ObjectDoesNotExist:
+        return Plans.objects.create(employee=employee, classes=classes, plan_hours=plan_hours)
 
 
 class StatusCodeTests:

@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - TESTS / Modules basic tests
 - TESTS / Classes basic tests + some minor update
+- TESTS / Plans basic tests
 
 ### To be done:
 
