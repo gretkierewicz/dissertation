@@ -19,12 +19,14 @@ class DegreesTests(StatusCodeTests, TestCase):
 
         self.name_max_len = 45
 
-        self.valid_lookup_kwargs = {'pk': self.basic_element.pk}
+        self.valid_list_kwargs = {}
+        self.valid_detail_kwargs = {'pk': self.basic_element.pk}
+        self.invalid_detail_kwargs = {'pk': 1000}
+
         self.valid_post_data = {'Valid name': {'name': self.name_max_len * 'x'}}
         self.valid_put_data = self.valid_post_data
         self.valid_patch_data = self.valid_put_data
 
-        self.invalid_lookup_kwargs = {'pk': 1000}
         self.invalid_post_data = {'Blank name': {'name': ''}, 'Too long name': {'name': self.name_max_len*'x'+'x'}}
         self.invalid_put_data = self.invalid_post_data
         self.invalid_patch_data = self.invalid_put_data
@@ -33,11 +35,11 @@ class DegreesTests(StatusCodeTests, TestCase):
             Degrees.objects.create(name=f'degree {i}')
 
     def test_delete_valid_data(self):
-        self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.valid_lookup_kwargs,
+        self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.valid_detail_kwargs,
                                 status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_delete_invalid_data(self):
-        self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.invalid_lookup_kwargs,
+        self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.invalid_detail_kwargs,
                                 status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -50,12 +52,14 @@ class PositionsTests(DegreesTests, TestCase):
 
         self.name_max_len = 45
 
-        self.valid_lookup_kwargs = {'pk': self.basic_element.pk}
+        self.valid_list_kwargs = {}
+        self.valid_detail_kwargs = {'pk': self.basic_element.pk}
+        self.invalid_detail_kwargs = {'pk': 1000}
+
         self.valid_post_data = {'Valid name': {'name': self.name_max_len * 'x'}}
         self.valid_put_data = self.valid_post_data
         self.valid_patch_data = self.valid_put_data
 
-        self.invalid_lookup_kwargs = {'pk': 1000}
         self.invalid_post_data = {'Blank name': {'name': ''}, 'Too long name': {'name': self.name_max_len*'x'+'x'}}
         self.invalid_put_data = self.invalid_post_data
         self.invalid_patch_data = self.invalid_put_data
@@ -80,10 +84,12 @@ class EmployeesTests(StatusCodeTests, TestCase):
                       'position': basic_position().pk,
                       'e_mail': 'x@x.xx'}
 
-        self.valid_lookup_kwargs = {'abbreviation': self.basic_element.abbreviation}
+        self.valid_list_kwargs = {}
+        self.valid_detail_kwargs = {'abbreviation': self.basic_element.abbreviation}
+        self.invalid_detail_kwargs = {'abbreviation': 'some_random_slag'}
+
         self.valid_post_data = {'Valid data': valid_data}
         self.valid_put_data = self.valid_post_data
-
         self.valid_patch_data = {}
         for field, length in max_len.items():
             self.valid_patch_data['Max length ' + field] = {field: length * 'a'}
@@ -92,20 +98,17 @@ class EmployeesTests(StatusCodeTests, TestCase):
                                  'Min year_of_studies': {'year_of_studies': 0},
                                  'High year_of_studies': {'year_of_studies': 100}}
 
-        self.invalid_lookup_kwargs = {'abbreviation': 'some_random_slag'}
         self.invalid_post_data = {'No degree': valid_data.copy()}
         self.invalid_post_data['No degree']['degree'] = None
         self.invalid_post_data = {'No position': valid_data.copy()}
         self.invalid_post_data['No position']['position'] = None
         self.invalid_patch_data = {'No degree': {'degree': None},
                                    'No position': {'position': None}}
-
         for field in no_null_fields:
             self.invalid_post_data['Blank ' + field] = valid_data.copy()
             self.invalid_post_data['Blank ' + field][field] = ''
             self.invalid_patch_data['Blank ' + field] = {field: ''}
             self.invalid_patch_data['None ' + field] = {field: None}
-
         self.invalid_put_data = self.invalid_post_data
 
         for i in range(3):
@@ -126,8 +129,14 @@ class PensumTests(StatusCodeTests, TestCase):
         self.basic_element = Pensum.objects.create(value=15, limit=95)
         self.basic_element.degrees.add(basic_degree().pk)
         self.basic_element.positions.add(basic_position().pk)
+        self.another_element = Pensum.objects.create(value=30, limit=40)
+        self.another_element.degrees.add(basic_degree('another_degree').pk)
+        self.another_element.positions.add(basic_position('another_position').pk)
 
-        self.valid_lookup_kwargs = {'pk': self.basic_element.pk}
+        self.valid_list_kwargs = {}
+        self.valid_detail_kwargs = {'pk': self.basic_element.pk}
+        self.invalid_detail_kwargs = {'pk': 1000}
+
         self.valid_post_data = {'Valid data': {'value': 10, 'limit': 20,
                                                'degrees': [basic_degree('valid degree').pk],
                                                'positions': [basic_position('valid position').pk]}}
@@ -137,10 +146,6 @@ class PensumTests(StatusCodeTests, TestCase):
                                  'Valid degrees': {'degrees': [basic_degree('valid degree').pk]},
                                  'Valid positions': {'positions': [basic_position('valid position').pk]}}
 
-        self.invalid_lookup_kwargs = {'pk': 1000}
-        self.another_element = Pensum.objects.create(value=30, limit=40)
-        self.another_element.degrees.add(basic_degree('another_degree').pk)
-        self.another_element.positions.add(basic_position('another_position').pk)
         self.invalid_post_data = {
             'Existing degree and position match': {'value': 50, 'limit': 60,
                                                    'degrees': [basic_degree('another_degree').pk],
