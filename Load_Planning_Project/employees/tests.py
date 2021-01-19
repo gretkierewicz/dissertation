@@ -4,13 +4,13 @@ from rest_framework.test import APIClient, APIRequestFactory
 
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer
-from utils.tests import BasicMethodsTests, basic_degree, basic_position, basic_employee, basic_supervisor
+from utils.tests import StatusCodeTests, basic_degree, basic_position, basic_employee, basic_supervisor
 
 client = APIClient()
 factory = APIRequestFactory()
 
 
-class DegreesTests(BasicMethodsTests, TestCase):
+class DegreesTests(StatusCodeTests, TestCase):
     def setUp(self):
         self.basename = 'degrees'
         self.model = Degrees
@@ -64,7 +64,7 @@ class PositionsTests(DegreesTests, TestCase):
             Positions.objects.create(name=f'position {i}')
 
 
-class EmployeesTests(BasicMethodsTests, TestCase):
+class EmployeesTests(StatusCodeTests, TestCase):
     def setUp(self):
         self.basename = 'employees'
         self.model = Employees
@@ -72,6 +72,7 @@ class EmployeesTests(BasicMethodsTests, TestCase):
         self.basic_element = basic_employee()
 
         max_len = {'first_name': 45, 'last_name': 45, 'abbreviation': 5, 'e_mail': 45}
+        no_null_fields = ['first_name', 'last_name', 'abbreviation', 'e_mail']
         valid_data = {'first_name': 'x',
                       'last_name': 'x',
                       'abbreviation': 'x',
@@ -84,15 +85,14 @@ class EmployeesTests(BasicMethodsTests, TestCase):
         self.valid_put_data = self.valid_post_data
 
         self.valid_patch_data = {}
-        for field in ['first_name', 'last_name', 'abbreviation', 'e_mail']:
-            self.valid_patch_data['Max length ' + field] = {field: max_len[field] * 'asdax'}
+        for field, length in max_len.items():
+            self.valid_patch_data['Max length ' + field] = {field: length * 'a'}
         self.valid_patch_data = {'Basic supervisor ': {'supervisor': basic_supervisor().pk},
                                  'No supervisor ': {'supervisor': None},
                                  'Min year_of_studies': {'year_of_studies': 0},
                                  'High year_of_studies': {'year_of_studies': 100}}
 
         self.invalid_lookup_kwargs = {'abbreviation': 'some_random_slag'}
-
         self.invalid_post_data = {'No degree': valid_data.copy()}
         self.invalid_post_data['No degree']['degree'] = None
         self.invalid_post_data = {'No position': valid_data.copy()}
@@ -100,7 +100,7 @@ class EmployeesTests(BasicMethodsTests, TestCase):
         self.invalid_patch_data = {'No degree': {'degree': None},
                                    'No position': {'position': None}}
 
-        for field in ['first_name', 'last_name', 'abbreviation', 'e_mail']:
+        for field in no_null_fields:
             self.invalid_post_data['Blank ' + field] = valid_data.copy()
             self.invalid_post_data['Blank ' + field][field] = ''
             self.invalid_patch_data['Blank ' + field] = {field: ''}
@@ -118,7 +118,7 @@ class EmployeesTests(BasicMethodsTests, TestCase):
                 e_mail=f'e.mail.{i}@x.xx')
 
 
-class PensumTests(BasicMethodsTests, TestCase):
+class PensumTests(StatusCodeTests, TestCase):
     def setUp(self):
         self.basename = 'pensum'
         self.model = Pensum

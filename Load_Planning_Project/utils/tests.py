@@ -3,12 +3,12 @@ import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient, APIRequestFactory
+from rest_framework.test import APIClient
 
 from employees.models import Degrees, Positions, Employees
+from modules.models import Modules
 
 client = APIClient()
-factory = APIRequestFactory()
 
 
 def basic_degree(name='basic_degree'):
@@ -52,7 +52,14 @@ def basic_employee(name='employee', abbreviation='BASIC'):
             supervisor=basic_supervisor())
 
 
-class BasicMethodsTests:
+def basic_module(name='module'):
+    try:
+        return Modules.objects.get(module_code=name)
+    except ObjectDoesNotExist:
+        return Modules.objects.create(name=name, module_code=name)
+
+
+class StatusCodeTests:
     def setUp(self):
         self.basename = None
         self.model = None

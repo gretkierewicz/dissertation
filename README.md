@@ -11,7 +11,7 @@ Local with SQLite DB
 ## Last changes
 ###19/01/2020
 
-- 
+- TESTS / Modules basic tests
 
 ### To be done:
 
