@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 
 from csv import DictReader
 from io import StringIO
@@ -11,6 +12,7 @@ from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.status import HTTP_200_OK, HTTP_303_SEE_OTHER
+from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Degrees, Positions, Employees, Pensum
@@ -146,94 +148,27 @@ class EmployeeViewSet(ModelViewSet):
     @action(detail=False, methods=['PUT', 'POST'])
     def csv_files_upload(self, request):
         """
-        csv_files_upload method - looks for CSV files in the request and tries to create/update records with it
-        Data needs to match format of the EmployeeRenderer class
-        Already existing records are matched by the 'e_mail' field
-        New record will be created with POST method
-        Already existing record will be updated with PUT method
-        No action will be made in other cases
-        :param request: with received CSV files preferably
-        :return: response with messages about serialized data
+        Action to upload CSV file(s).
+        POST method will try to create new records.
+        PUT method will update existing or create new records.
         """
-        messages = {
-            'Errors': [],
-        }
-        if request.method == 'POST':
-            messages['Created successfully'] = []
-        if request.method == 'PUT':
-            messages['Updated successfully'] = []
-        messages['No action'] = []
-
-        if len(request.FILES) != 0:
-            for key in request.FILES.keys():
-                csv_dict = DictReader(StringIO(request.data.get(key).read().decode('UTF-8')), delimiter=',')
-                for row in csv_dict:
-                    try:
-                        degree = Degrees.objects.get(name=row.get('degree'))
-                        row['degree'] = request.build_absolute_uri(
-                            reverse('degrees-detail',
-                                    kwargs={'pk': degree.pk}))
-                    except ObjectDoesNotExist:
-                        row['degree'] = None
-                    try:
-                        position = Positions.objects.get(name=row.get('position'))
-                        row['position'] = request.build_absolute_uri(
-                            reverse('positions-detail',
-                                    kwargs={'pk': position.pk}))
-                    except ObjectDoesNotExist:
-                        row['position'] = None
-                    try:
-                        supervisor = Employees.objects.get(abbreviation=row.get('supervisor'))
-                        row['supervisor'] = request.build_absolute_uri(
-                            reverse('employees-detail',
-                                    kwargs={'abbreviation': supervisor.abbreviation}
-                                    ))
-                    except ObjectDoesNotExist:
-                        row['supervisor'] = None
-
-                    # matching first number in year_of_studies field with help of regex
-                    year_of_studies = re.match(r'\d+', row.get('year_of_studies'))
-                    row['year_of_studies'] = year_of_studies.group() if year_of_studies else None
-
-                    try:
-                        # check if object exists by unique e_mail field
-                        employee = Employees.objects.get(e_mail=row.get('e_mail'))
-                        # with PUT method - update existing entry, don't create new one
-                        if request.method == 'PUT':
-                            serializer = self.get_serializer(employee, data=row)
-                            if serializer.is_valid(raise_exception=False):
-                                serializer.save()
-                            if serializer.errors:
-                                messages['Errors'].append({
-                                    'e_mail': row.get('e_mail'),
-                                    'errors': serializer.errors,
-                                })
-                            else:
-                                messages['Updated successfully'].append({
-                                    'e_mail': row.get('e_mail'),
-                                })
-                        else:
-                            messages['No action'].append({
-                                    'e_mail': row.get('e_mail'),
-                                })
-                    except ObjectDoesNotExist:
-                        # with POST method - create new entry, do not update existing one
-                        if request.method == 'POST':
-                            serializer = self.get_serializer(data=row)
-                            if serializer.is_valid(raise_exception=False):
-                                serializer.save()
-                            if serializer.errors:
-                                messages['Errors'].append({
-                                    'e_mail': row.get('e_mail'),
-                                    'errors': serializer.errors,
-                                })
-                            else:
-                                messages['Created successfully'].append({
-                                    'e_mail': row.get('e_mail'),
-                                })
-                        else:
-                            messages['No action'].append({
-                                    'e_mail': row.get('e_mail'),
-                                })
-
-        return Response(messages, status=HTTP_200_OK)
+        if request.FILES:
+            data = {}
+            for file in request.FILES:
+                data[file + ' file'] = {}
+                for file_data in CSVParser.parse(self, stream=request.data.get(file)):
+                    for key, value in file_data.items():
+                        # convert empty strings into None
+                        file_data[key] = value if value else None
+                    partial_data = OrderedDict(file_data)
+                    if request.method == 'PUT':
+                        employee = Employees.objects.filter(**{'e_mail': partial_data['e_mail']}).first()
+                        serializer = self.get_serializer(employee, data=partial_data)
+                    else:
+                        serializer = self.get_serializer(data=partial_data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        data[file + ' file'][partial_data.get('e_mail')] = [serializer.data]
+                    if serializer.errors:
+                        data[file + ' file'][partial_data.get('e_mail')] = [serializer.errors]
+            return Response(data)

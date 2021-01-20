@@ -99,7 +99,7 @@ class EmployeeSerializer(ModelSerializer):
 
     degree = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all())
     position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
-    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all())
+    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
 
     plan_modules_url = HyperlinkedIdentityField(
         view_name='employee-plans-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
