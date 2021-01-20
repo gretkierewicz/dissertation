@@ -9,11 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###19/01/2020
+###20/01/2020
 
-- TESTS / Modules basic tests
-- TESTS / Classes basic tests + some minor update
-- TESTS / Plans basic tests
+- 
 
 ### To be done:
 

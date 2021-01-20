@@ -1,3 +1,9 @@
+###19/01/2020
+
+- TESTS / Modules basic tests
+- TESTS / Classes basic tests + some minor update
+- TESTS / Plans basic tests
+
 ###18/01/2020
 
 - Correction to value validation - removed custom validator, min value set with extra_kwargs
