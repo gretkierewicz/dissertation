@@ -11,7 +11,7 @@ Local with SQLite DB
 ## Last changes
 ###20/01/2020
 
-- 
+- FIX / Plans Serializer validation for employee's pensum limit will now work with PATCH method correctly
 
 ### To be done:
 

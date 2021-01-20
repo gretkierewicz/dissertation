@@ -61,9 +61,10 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
 
     def validate(self, attrs):
         # validation of employee's sum of overall plan's hours
-        employee = attrs['employee']
-        set_plan_hours = attrs['plan_hours']
+        employee = attrs.get('employee') or (self.instance.employee if self.instance else None)
+        set_plan_hours = attrs.get('plan_hours') or (self.instance.plan_hours if self.instance else None)
         if self.instance and self.instance.employee == employee:
+            # correct to the relative set value (from actually set one)
             set_plan_hours -= self.instance.plan_hours
         # not allowing exceeding employee's pensum limit provided by degree and position
         if employee.plan_hours_sum + set_plan_hours > employee.pensum_limit:
