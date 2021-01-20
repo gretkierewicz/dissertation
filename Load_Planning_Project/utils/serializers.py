@@ -1,23 +1,6 @@
 from rest_framework.fields import SerializerMethodField, HiddenField
 
 
-def conv_pk_to_str(obj, key_to_model_dict):
-    """
-    conv_pk_to_str function: converts obj's given values from pk repr to string
-    params:
-    obj - dictionary of elements: key: pk or list of pks
-    key_to_model_dict - dictionary of elements: key: model for pks to search for
-    returns: modified obj
-    """
-    if obj and key_to_model_dict:
-        for key, model in key_to_model_dict.items():
-            if hasattr(obj[key], '__iter__'):
-                obj[key] = [model.objects.get(pk=pk).__str__() for pk in obj[key]]
-            else:
-                obj[key] = model.objects.get(pk=obj[key]).__str__()
-    return obj
-
-
 class ParentFromURLHiddenField(HiddenField):
     """
     ParentFromURLHiddenField - Hidden Field that doesn't take value from user, but returns parent object

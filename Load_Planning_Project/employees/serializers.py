@@ -1,8 +1,6 @@
-from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 from rest_framework.serializers import ValidationError
-
-from utils.serializers import conv_pk_to_str
 
 from .models import Degrees, Positions, Employees, Pensum
 from modules.serializers import SupervisedModuleSerializer, EmployeePlanSerializer
@@ -50,19 +48,11 @@ class PensumSerializer(ModelSerializer):
     class Meta:
         model = Pensum
         fields = ['url', 'value', 'limit', 'degrees', 'positions']
-        extra_kwargs = {
-            'degrees': {'queryset': Degrees.objects.all()},
-            'positions': {'queryset': Positions.objects.all()},
-        }
 
     url = HyperlinkedIdentityField(view_name='pensum-detail')
 
-    def to_representation(self, instance):
-        # changes output representation from primary keys to more readable strings
-        ret = super().to_representation(instance)
-        return conv_pk_to_str(obj=ret, key_to_model_dict={
-            'degrees': Degrees, 'positions': Positions
-        }) if self.context.get('request').method == 'GET' else ret
+    degrees = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all(), many=True)
+    positions = SlugRelatedField(slug_field='name', queryset=Positions.objects.all(), many=True)
 
     def validate(self, attrs):
         # don't allow double match-ups of degree and position
@@ -102,13 +92,14 @@ class EmployeeSerializer(ModelSerializer):
                   'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
-            'degree': {'queryset': Degrees.objects.all()},
-            'position': {'queryset': Positions.objects.all()},
-            'supervisor': {'queryset': Employees.objects.all()},
             'year_of_studies': {'min_value': 0}
         }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
+
+    degree = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all())
+    position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
+    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all())
 
     plan_modules_url = HyperlinkedIdentityField(
         view_name='employee-plans-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
@@ -122,12 +113,6 @@ class EmployeeSerializer(ModelSerializer):
     supervisor_url = HyperlinkedIdentityField(
         view_name='employees-detail', lookup_field='supervisor', lookup_url_kwarg='abbreviation')
     subordinates = EmployeeListSerializer(read_only=True, many=True)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        return conv_pk_to_str(obj=ret, key_to_model_dict={
-            'degree': Degrees, 'position': Positions, 'supervisor': Employees
-        }) if self.context.get('request').method == 'GET' else ret
 
     # custom validator for supervisor field - not allowing setting employee as it's supervisor
     def validate_supervisor(self, data):

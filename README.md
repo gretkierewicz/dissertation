@@ -12,6 +12,7 @@ Local with SQLite DB
 ###20/01/2020
 
 - FIX / Plans Serializer validation for employee's pensum limit will now work with PATCH method correctly
+- Utils / Exchanged conv_pk_to_str function for SlugRelatedField
 
 ### To be done:
 
