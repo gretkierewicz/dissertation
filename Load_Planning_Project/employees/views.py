@@ -117,13 +117,8 @@ class EmployeeRenderer(CSVRenderer):
     Choosing proper headers and changing labels for better readability
     Needs custom import CSV format action -> method csv_files_upload()
     """
-    header = ['first_name', 'last_name', 'abbreviation', 'degree_repr', 'position_repr', 'e_mail',
-              'supervisor_repr', 'year_of_studies', 'is_procedure_for_a_doctoral_degree_approved', 'has_scholarship']
-    labels = {
-        'degree_repr': 'degree',
-        'position_repr': 'position',
-        'supervisor_repr': 'supervisor'
-    }
+    header = ['first_name', 'last_name', 'abbreviation', 'degree', 'position', 'e_mail',
+              'supervisor', 'year_of_studies', 'is_procedure_for_a_doctoral_degree_approved', 'has_scholarship']
 
 
 class EmployeeViewSet(ModelViewSet):
