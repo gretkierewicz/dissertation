@@ -16,6 +16,7 @@ Local with SQLite DB
 - FIX / Employee Renderer - after using SlugRelatedField update
 - Employee csv_upload_files action rewritten
 - Creating new utility - read_csv_files, and using it with Employees, Degrees and Positions ViewSets
+- TESTS / update
 
 ### To be done:
 

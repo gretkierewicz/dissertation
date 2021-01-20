@@ -2,11 +2,12 @@ from django.test import TestCase
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory
 
-from employees.models import Pensum
 from .models import Modules, Classes, Plans
 from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer
-from utils.tests import StatusCodeTests, basic_supervisor, basic_module, basic_classes, basic_plans, basic_degree, \
-    basic_position
+
+from employees.models import Pensum
+from utils.basic_objects import basic_supervisor, basic_module, basic_classes, basic_plans
+from utils.tests import StatusCodeTests
 
 client = APIClient()
 factory = APIRequestFactory()

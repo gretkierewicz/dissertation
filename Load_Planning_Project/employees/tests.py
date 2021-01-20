@@ -4,7 +4,9 @@ from rest_framework.test import APIClient, APIRequestFactory
 
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer
-from utils.tests import StatusCodeTests, basic_degree, basic_position, basic_employee, basic_supervisor
+
+from utils.basic_objects import basic_degree, basic_position, basic_employee, basic_supervisor
+from utils.tests import StatusCodeTests
 
 client = APIClient()
 factory = APIRequestFactory()
@@ -80,9 +82,10 @@ class EmployeesTests(StatusCodeTests, TestCase):
         valid_data = {'first_name': 'x',
                       'last_name': 'x',
                       'abbreviation': 'x',
-                      'degree': basic_degree().pk,
-                      'position': basic_position().pk,
-                      'e_mail': 'x@x.xx'}
+                      'degree': basic_degree().name,
+                      'position': basic_position().name,
+                      'e_mail': 'x@x.xx',
+                      'supervisor': ''}
 
         self.valid_list_kwargs = {}
         self.valid_detail_kwargs = {'abbreviation': self.basic_element.abbreviation}
@@ -93,7 +96,7 @@ class EmployeesTests(StatusCodeTests, TestCase):
         self.valid_patch_data = {}
         for field, length in max_len.items():
             self.valid_patch_data['Max length ' + field] = {field: length * 'a'}
-        self.valid_patch_data = {'Basic supervisor ': {'supervisor': basic_supervisor().pk},
+        self.valid_patch_data = {'Basic supervisor ': {'supervisor': basic_supervisor().abbreviation},
                                  'No supervisor ': {'supervisor': None},
                                  'Min year_of_studies': {'year_of_studies': 0},
                                  'High year_of_studies': {'year_of_studies': 100}}
@@ -138,35 +141,35 @@ class PensumTests(StatusCodeTests, TestCase):
         self.invalid_detail_kwargs = {'pk': 1000}
 
         self.valid_post_data = {'Valid data': {'value': 10, 'limit': 20,
-                                               'degrees': [basic_degree('valid degree').pk],
-                                               'positions': [basic_position('valid position').pk]}}
+                                               'degrees': [basic_degree('valid degree').name],
+                                               'positions': [basic_position('valid position').name]}}
         self.valid_put_data = self.valid_post_data
         self.valid_patch_data = {'Valid value': {'value': 15},
                                  'Valid limit': {'limit': 95},
-                                 'Valid degrees': {'degrees': [basic_degree('valid degree').pk]},
-                                 'Valid positions': {'positions': [basic_position('valid position').pk]}}
+                                 'Valid degrees': {'degrees': [basic_degree('valid degree').name]},
+                                 'Valid positions': {'positions': [basic_position('valid position').name]}}
 
         self.invalid_post_data = {
             'Existing degree and position match': {'value': 50, 'limit': 60,
-                                                   'degrees': [basic_degree('another_degree').pk],
-                                                   'positions': [basic_position('another_position').pk]},
+                                                   'degrees': [basic_degree('another_degree').name],
+                                                   'positions': [basic_position('another_position').name]},
             'Value greater than limit': {'value': 90, 'limit': 10,
-                                         'degrees': [basic_degree('valid degree A').pk],
-                                         'positions': [basic_position('valid position A').pk]},
+                                         'degrees': [basic_degree('valid degree A').name],
+                                         'positions': [basic_position('valid position A').name]},
             'Value equal to limit': {'value': 100, 'limit': 100,
-                                     'degrees': [basic_degree('valid degree B').pk],
-                                     'positions': [basic_position('valid position B').pk]}
+                                     'degrees': [basic_degree('valid degree B').name],
+                                     'positions': [basic_position('valid position B').name]}
         }
         self.invalid_put_data = {
             'Existing degree and position match': {'value': 70, 'limit': 80,
-                                                   'degrees': [basic_degree('another_degree').pk],
-                                                   'positions': [basic_position('another_position').pk]},
+                                                   'degrees': [basic_degree('another_degree').name],
+                                                   'positions': [basic_position('another_position').name]},
             'Value greater than limit': {'value': 90, 'limit': 10,
-                                         'degrees': [basic_degree('valid degree A').pk],
-                                         'positions': [basic_position('valid position A').pk]},
+                                         'degrees': [basic_degree('valid degree A').name],
+                                         'positions': [basic_position('valid position A').name]},
             'Value equal to limit': {'value': 100, 'limit': 100,
-                                     'degrees': [basic_degree('valid degree B').pk],
-                                     'positions': [basic_position('valid position B').pk]}
+                                     'degrees': [basic_degree('valid degree B').name],
+                                     'positions': [basic_position('valid position B').name]}
         }
         self.invalid_patch_data = {'Value greater than limit': {'value': 1000},
                                    'Value equal to limit': {'value': self.basic_element.limit},

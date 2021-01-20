@@ -13,7 +13,7 @@ class EmployeeListSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Employees
         fields = ['url',
-                  'first_name', 'last_name', 'abbreviation']
+                  'first_name', 'last_name', 'abbreviation', 'e_mail']
         extra_kwargs = {
             'url': {'lookup_field': 'abbreviation'},
         }
