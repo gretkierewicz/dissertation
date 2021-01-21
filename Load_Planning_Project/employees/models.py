@@ -56,15 +56,28 @@ class Employees(models.Model):
                                                      ).distinct().order_by('module_code')
 
     @property
+    # summary plan hours for Employee instance
+    def plan_hours_sum(self):
+        return sum([plan.plan_hours for plan in modules.models.Plans.objects.filter(employee=self)])
+
+    @property
+    # pensum value from Employee's instance degree and position
     def pensum_value(self):
         pensum = Pensum.objects.filter(degrees=self.degree, positions=self.position).first()
         return pensum.value if pensum else 0
 
     @property
+    # True/False for reaching pensum value by Employee instance
+    def pensum_value_reached(self):
+        return self.plan_hours_sum >= self.pensum_value
+
+    @property
+    # pensum limit from Employee's instance degree and position
     def pensum_limit(self):
         pensum = Pensum.objects.filter(degrees=self.degree, positions=self.position).first()
         return pensum.limit if pensum else 0
 
     @property
-    def plan_hours_sum(self):
-        return sum([plan.plan_hours for plan in modules.models.Plans.objects.filter(employee=self)])
+    # True/False for reaching pensum limit by Employee instance
+    def pensum_limit_reached(self):
+        return self.plan_hours_sum >= self.pensum_limit

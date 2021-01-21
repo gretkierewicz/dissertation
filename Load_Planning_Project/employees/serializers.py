@@ -87,7 +87,7 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
-                  'degree', 'position', 'pensum_value', 'pensum_limit',
+                  'degree', 'position', 'pensum_value', 'pensum_value_reached', 'pensum_limit', 'pensum_limit_reached',
                   'plan_hours_sum', 'plan_modules_url', 'plan_modules',
                   'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']

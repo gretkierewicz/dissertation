@@ -39,15 +39,20 @@ class Classes(models.Model):
     def __repr__(self):
         return "{class_name} (Module's code: {module})".format(module=self.module, class_name=self.name)
 
-    # property to check classes' already set hours
     @property
+    # classes' already set hours
     def classes_hours_set(self):
         return sum([plan.plan_hours for plan in self.plans.all()])
 
-    # property to check classes' hour waiting to be set
     @property
+    # classes' hours waiting to be set
     def classes_hours_not_set(self):
         return self.classes_hours - self.classes_hours_set
+
+    @property
+    # True/False for filling all classes' hours with it's plans' hours
+    def classes_hours_filled(self):
+        return self.classes_hours_not_set <= 0
 
 
 class Plans(models.Model):

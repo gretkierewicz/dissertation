@@ -81,7 +81,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours', 'classes_hours_not_set', 'plans_url', 'plans',
+        fields = ['url', 'name', 'classes_hours', 'classes_hours_set', 'classes_hours_filled', 'plans_url', 'plans',
                   # hidden fields:
                   'module']
         extra_kwargs = {

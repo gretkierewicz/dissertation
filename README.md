@@ -11,7 +11,8 @@ Local with SQLite DB
 ## Last changes
 ###21/01/2020
 
-- 
+- Employee / Additional booleans for pensum thresholds
+- Classes / Additional boolean for filling all classes' hours
 
 ### To be done:
 
@@ -23,3 +24,4 @@ Local with SQLite DB
 - New general view: Modules with missing plans
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
+- CSV upload - add module/classes upload option
