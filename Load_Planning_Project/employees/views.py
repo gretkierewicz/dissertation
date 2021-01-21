@@ -1,7 +1,7 @@
 from rest_framework import mixins
 from rest_framework.decorators import action
-from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework_csv.renderers import CSVRenderer
 
@@ -23,6 +23,7 @@ class DegreeViewSet(mixins.CreateModelMixin,
     """
     queryset = Degrees.objects.all()
     serializer_class = DegreeSerializer
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer, )
 
     # Customizing header for CSV format
     def get_renderer_context(self):
@@ -52,6 +53,7 @@ class PositionViewSet(mixins.CreateModelMixin,
     """
     queryset = Positions.objects.all()
     serializer_class = PositionSerializer
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer, )
 
     # Customizing header for CSV format
     def get_renderer_context(self):
@@ -90,7 +92,7 @@ class EmployeeViewSet(ModelViewSet):
     """
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
-    renderer_classes = (BrowsableAPIRenderer, JSONRenderer, EmployeeRenderer, )
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (EmployeeRenderer, )
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'abbreviation'
 

@@ -153,6 +153,14 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     classes = ClassSerializer(read_only=True, many=True)
 
 
+class ModuleFlatSerializer(ModuleSerializer):
+    class Meta:
+        model = Modules
+        fields = ['module_code', 'name', 'examination', 'supervisor',
+                  'lectures_hours', 'laboratory_classes_hours', 'auditorium_classes_hours', 'project_classes_hours',
+                  'seminar_classes_hours']
+
+
 class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerializer):
     """
     Supervised Module Serializer - helper Serializer for nesting in the Employee Serializer

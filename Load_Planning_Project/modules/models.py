@@ -15,6 +15,32 @@ class Modules(models.Model):
     def __str__(self):
         return self.module_code
 
+    @property
+    def lectures_hours(self):
+        return self.__return_classes_hours(name='Lectures')
+
+    @property
+    def laboratory_classes_hours(self):
+        return self.__return_classes_hours('Laboratory_classes')
+
+    @property
+    def auditorium_classes_hours(self):
+        return self.__return_classes_hours(name='Auditorium_classes')
+
+    @property
+    def project_classes_hours(self):
+        return self.__return_classes_hours(name='Project_classes')
+
+    @property
+    def seminar_classes_hours(self):
+        return self.__return_classes_hours(name='Seminar_classes')
+
+    def __return_classes_hours(self, name):
+        if name in [slug for slug, _ in Classes.NAME_CHOICES]:
+            classes = self.classes.filter(name=name).first()
+            return classes.classes_hours if classes else 0
+        return None
+
 
 class Classes(models.Model):
     class Meta:

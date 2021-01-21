@@ -1,9 +1,21 @@
 from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
+from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Modules, Classes, Plans
 from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer, SupervisedModuleSerializer, \
-    EmployeePlanModulesSerializer
+    EmployeePlanModulesSerializer, ModuleFlatSerializer
+
+
+class ModuleRenderer(CSVRenderer):
+    """
+    Custom CSV Renderer for Module View Set
+    Keeps proper column arrangement
+    """
+    header = ['module_code', 'name', 'examination', 'supervisor', 'lectures_hours', 'laboratory_classes_hours',
+              'auditorium_classes_hours', 'project_classes_hours', 'seminar_classes_hours']
 
 
 class ModuleViewSet(ModelViewSet):
@@ -13,8 +25,27 @@ class ModuleViewSet(ModelViewSet):
     """
     queryset = Modules.objects.all()
     serializer_class = ModuleSerializer
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (ModuleRenderer, )
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'module_code'
+
+    # Custom list method with different serializers for different formats
+    def list(self, request, *args, **kwargs):
+        # list flat data of each employee for CSV format
+        if request.query_params.get('format') == 'csv':
+            serializer = ModuleFlatSerializer(self.queryset, many=True, context={'request': request})
+        else:
+            serializer = ModuleSerializer(self.queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    # Custom retrieve method with different serializers for different formats
+    def retrieve(self, request, *args, **kwargs):
+        # get flat data of employee instance for CSV format
+        if request.query_params.get('format') == 'csv':
+            serializer = ModuleFlatSerializer(get_object_or_404(self.queryset, **kwargs), context={'request': request})
+        else:
+            serializer = ModuleSerializer(get_object_or_404(self.queryset, **kwargs), context={'request': request})
+        return Response(serializer.data)
 
 
 class EmployeeModuleViewSet(ModuleViewSet):
