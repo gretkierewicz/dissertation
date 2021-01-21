@@ -9,27 +9,17 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###20/01/2020
+###21/01/2020
 
-- FIX / Plans Serializer validation for employee's pensum limit will now work with PATCH method correctly
-- Utils / Exchanged conv_pk_to_str function for SlugRelatedField
-- FIX / Employee Renderer - after using SlugRelatedField update
-- Employee csv_upload_files action rewritten
-- Creating new utility - read_csv_files, and using it with Employees, Degrees and Positions ViewSets
-- TESTS / update
+- 
 
 ### To be done:
 
 - Implement additional models
 - Implement filters, sorting or search
-- Add messages/errors
 - Custom query-sets for forms (if possible)
 - Change upload CSV files method for employees - it should first create employees without supervisors, and then save supervisors to it (so employees added from list could be set as supervisors for previously added employees)
-- Create static function for try/except reuse (employees csv upload)
 - Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
-- Move importing data from csv files to the to_internal_value methods of serializers
-- Tests!
 - New general view: Modules with missing plans
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
-- Unique and Validation tests
