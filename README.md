@@ -14,6 +14,7 @@ Local with SQLite DB
 - Employee / Additional booleans for pensum thresholds
 - Classes / Additional boolean for filling all classes' hours
 - Minor naming and field configuration changes
+- Module Serializers minor changes to fields
 
 ### To be done:
 
@@ -22,7 +23,7 @@ Local with SQLite DB
 - Custom query-sets for forms (if possible)
 - Change upload CSV files method for employees - it should first create employees without supervisors, and then save supervisors to it (so employees added from list could be set as supervisors for previously added employees)
 - Allow serialization of Modules with nested Orders JSON data (unique create/update methods: https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)
-- New general view: Modules with missing plans
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
-- Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded)
+- Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded
+- New general view: Modules with missing plans
 - CSV upload - add module/classes upload option

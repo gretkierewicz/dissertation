@@ -1,12 +1,12 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 from rest_framework.generics import get_object_or_404
-from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from utils.serializers import ParentFromURLHiddenField, SerializerLambdaField
+from utils.serializers import ParentFromURLHiddenField
 
 from .models import Modules, Classes, Plans
 from employees.models import Employees
@@ -19,13 +19,12 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Plans
         fields = ['url',
-                  'employee', 'employee_repr', 'plan_hours',
+                  'employee', 'employee_url', 'plan_hours',
                   # hidden fields:
                   'classes']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'employee'},
-            'employee': {'lookup_field': 'abbreviation'},
             'plan_hours': {'min_value': 1}
         }
     # for nesting serializer - dict of URL lookups and queryset kwarg keys
@@ -34,7 +33,12 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
         'class_name': 'classes__name',
     }
 
-    employee_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.employee))
+    employee = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
+    employee_url = HyperlinkedIdentityField(
+        view_name='employees-detail',
+        lookup_field='employee',
+        lookup_url_kwarg='abbreviation'
+    )
 
     # hidden classes field - pointing parent's object
     classes = ParentFromURLHiddenField(
@@ -125,16 +129,20 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Modules
         fields = ['url',
-                  'module_code', 'name', 'examination',
-                  'supervisor', 'supervisor_repr',
+                  'module_code', 'name',
+                  'supervisor', 'supervisor_url', 'examination',
                   'classes_url', 'classes']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},
-            'supervisor': {'lookup_field': 'abbreviation', 'allow_null': True}
         }
 
-    supervisor_repr = SerializerLambdaField(lambda obj: '{}'.format(obj.supervisor))
+    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
+    supervisor_url = HyperlinkedIdentityField(
+        view_name='employees-detail',
+        lookup_field='supervisor',
+        lookup_url_kwarg='abbreviation'
+    )
 
     classes_url = HyperlinkedIdentityField(
         view_name='classes-list',
@@ -212,8 +220,8 @@ class EmployeePlanModulesSerializer(ModuleSerializer):
     """
     class Meta:
         model = Modules
-        fields = ['url', 'module_code', 'name', 'examination',
-                  'supervisor', 'supervisor_repr',
+        fields = ['url', 'module_code', 'name',
+                  'supervisor', 'supervisor_url', 'examination',
                   'classes_url', 'classes']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
