@@ -1,7 +1,12 @@
+from collections import OrderedDict
+
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
+from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
 
 from .models import Modules, Classes, Plans
@@ -14,8 +19,9 @@ class ModuleRenderer(CSVRenderer):
     Custom CSV Renderer for Module View Set
     Keeps proper column arrangement
     """
-    header = ['module_code', 'name', 'examination', 'supervisor', 'lectures_hours', 'laboratory_classes_hours',
-              'auditorium_classes_hours', 'project_classes_hours', 'seminar_classes_hours']
+    classes_hours = ['lectures_hours', 'laboratory_classes_hours', 'auditorium_classes_hours', 'project_classes_hours',
+                     'seminar_classes_hours']
+    header = ['module_code', 'name', 'examination', 'supervisor'] + classes_hours
 
 
 class ModuleViewSet(ModelViewSet):
@@ -46,6 +52,45 @@ class ModuleViewSet(ModelViewSet):
         else:
             serializer = ModuleSerializer(get_object_or_404(self.queryset, **kwargs), context={'request': request})
         return Response(serializer.data)
+
+    @action(detail=False, methods=['PUT', 'POST'])
+    def csv_files_upload(self, request):
+        """
+        Action to upload CSV file(s).
+        POST method will try to create new records.
+        PUT method will update existing or create new records.
+        """
+        if request.FILES:
+            data = {}
+            lookup = 'module_code'
+            for file in request.FILES:
+                data[file + ' file'] = {}
+                for file_data in CSVParser.parse(self, stream=request.data.get(file)):
+                    for key, value in file_data.items():
+                        # convert empty strings into None
+                        file_data[key] = value if value else None
+                    partial_data = OrderedDict(file_data)
+                    if request.method == 'PUT':
+                        instance = self.queryset.filter(**{lookup: partial_data[lookup]}).first()
+                        serializer = self.get_serializer(instance, data=partial_data)
+                    else:
+                        serializer = self.get_serializer(data=partial_data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        # additional logic to create classes in the module instance
+                        for rec in ModuleRenderer.classes_hours:
+                            if partial_data.get(rec) not in (None, '', '0'):
+                                classes = serializer.instance.classes.filter(name=rec[:-6].capitalize()).first()
+                                if classes:
+                                    classes.classes_hours = int(partial_data.get(rec))
+                                    classes.save()
+                                else:
+                                    Classes.objects.create(module=serializer.instance, name=rec[:-6].capitalize(),
+                                                           classes_hours=int(partial_data.get(rec)))
+                        data[file + ' file'][partial_data.get(lookup)] = [serializer.data]
+                    if serializer.errors:
+                        data[file + ' file'][partial_data.get(lookup)] = [serializer.errors]
+            return Response(data)
 
 
 class EmployeeModuleViewSet(ModuleViewSet):

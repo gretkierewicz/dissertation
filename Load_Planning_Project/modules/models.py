@@ -21,7 +21,7 @@ class Modules(models.Model):
 
     @property
     def laboratory_classes_hours(self):
-        return self.__return_classes_hours('Laboratory_classes')
+        return self.__return_classes_hours(name='Laboratory_classes')
 
     @property
     def auditorium_classes_hours(self):

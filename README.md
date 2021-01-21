@@ -17,6 +17,7 @@ Local with SQLite DB
 - Module Serializers minor changes to fields
 - CSV rendering only for chosen Views: Employees, Degrees, Positions, Modules(with classes)
 - Created new Module model properties for CSV rendering and Flat Serializer
+- Created Module View action: csv_files_upload that reads rendered CSV format
 
 ### To be done:
 
@@ -28,4 +29,3 @@ Local with SQLite DB
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded
 - New general view: Modules with missing plans
-- CSV upload - add module/classes upload option
