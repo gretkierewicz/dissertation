@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Employee / Additional booleans for pensum thresholds
 - Classes / Additional boolean for filling all classes' hours
+- Minor naming and field configuration changes
 
 ### To be done:
 

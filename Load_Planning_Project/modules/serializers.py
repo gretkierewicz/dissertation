@@ -81,7 +81,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours', 'classes_hours_set', 'classes_hours_filled', 'plans_url', 'plans',
+        fields = ['url', 'name', 'classes_hours', 'classes_hours_set', 'is_class_full', 'plans_url', 'plans',
                   # hidden fields:
                   'module']
         extra_kwargs = {
@@ -173,14 +173,22 @@ class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSeriali
     )
 
 
-class EmployeePlanClassSerializer(ClassSerializer):
+class EmployeePlanClassesSerializer(ClassSerializer):
     """
     Employee Plan Class Serializer - helper Serializer for nesting in the Employee Plan Serializer
     """
     class Meta:
         model = Classes
-        fields = ['name', 'classes_hours', 'employee_plan_hours']
+        fields = ['url', 'name', 'classes_hours', 'employee_plan_hours', 'plans_url', 'plans']
 
+    url = NestedHyperlinkedIdentityField(
+        view_name='classes-detail',
+        lookup_field='name',
+        lookup_url_kwarg='name',
+        parent_lookup_kwargs={
+            'module_module_code': 'module__module_code',
+        }
+    )
     # for Classes instance it is enough to only get one plan_hours as only one Employee is given
     employee_plan_hours = SerializerMethodField('get_plan_hours')
 
@@ -193,34 +201,24 @@ class EmployeePlanClassSerializer(ClassSerializer):
                                     self.context['request'].resolver_match.kwargs.get('employee_abbreviation'))
             # with given Employee, for each Classes instance, there should be always exactly 1 plan filtered!
         ).first()
-        # there should be not even one Classes instance with no plan for given Employee thanks to overwriting
-        # 'to_representation' method in parent's Serializer (EmployeePlanSerializer)
-        # But in case if no plan found - return 0
+        # In case if no plan found - return 0
         return plan.plan_hours if plan else 0
 
 
-class EmployeePlanSerializer(ModuleSerializer):
+class EmployeePlanModulesSerializer(ModuleSerializer):
     """
     Employee Plan Serializer - helper Plan Serializer that includes only Classes with setup hours for specific Employee
     To be nested into the Employee Serializer
     """
     class Meta:
         model = Modules
-        fields = ['url', 'module_code', 'name',
-                  'classes', 'examination',
-                  'supervisor', 'supervisor_repr']
+        fields = ['url', 'module_code', 'name', 'examination',
+                  'supervisor', 'supervisor_repr',
+                  'classes_url', 'classes']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},
             'supervisor': {'lookup_field': 'abbreviation'}
         }
 
-    classes = EmployeePlanClassSerializer(read_only=True, many=True)
-
-    def to_representation(self, instance):
-        odict_obj = super().to_representation(instance)
-        # remove Classes instances with no plan hours for given Employee
-        odict_obj['classes'] = [
-            classes_obj for classes_obj in odict_obj['classes'] if classes_obj.get('employee_plan_hours') > 0
-        ]
-        return odict_obj
+    classes = EmployeePlanClassesSerializer(read_only=True, many=True)

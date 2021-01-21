@@ -51,7 +51,7 @@ class Classes(models.Model):
 
     @property
     # True/False for filling all classes' hours with it's plans' hours
-    def classes_hours_filled(self):
+    def is_class_full(self):
         return self.classes_hours_not_set <= 0
 
 

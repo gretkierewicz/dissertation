@@ -3,7 +3,7 @@ from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializ
 from rest_framework.serializers import ValidationError
 
 from .models import Degrees, Positions, Employees, Pensum
-from modules.serializers import SupervisedModuleSerializer, EmployeePlanSerializer
+from modules.serializers import SupervisedModuleSerializer, EmployeePlanModulesSerializer
 
 
 class EmployeeListSerializer(HyperlinkedModelSerializer):
@@ -86,8 +86,8 @@ class EmployeeSerializer(ModelSerializer):
     """
     class Meta:
         model = Employees
-        fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
-                  'degree', 'position', 'pensum_value', 'pensum_value_reached', 'pensum_limit', 'pensum_limit_reached',
+        fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position',
+                  'pensum_value', 'is_pensum_value_reached', 'pensum_limit', 'is_pensum_limit_reached',
                   'plan_hours_sum', 'plan_modules_url', 'plan_modules',
                   'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
@@ -104,7 +104,7 @@ class EmployeeSerializer(ModelSerializer):
     plan_modules_url = HyperlinkedIdentityField(
         view_name='employee-plans-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
     # queryset given by model's property is transferred to the proper serializer
-    plan_modules = EmployeePlanSerializer(read_only=True, many=True)
+    plan_modules = EmployeePlanModulesSerializer(read_only=True, many=True)
 
     supervised_modules_url = HyperlinkedIdentityField(
         view_name='employee-modules-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')

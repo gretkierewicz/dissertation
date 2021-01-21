@@ -68,7 +68,7 @@ class Employees(models.Model):
 
     @property
     # True/False for reaching pensum value by Employee instance
-    def pensum_value_reached(self):
+    def is_pensum_value_reached(self):
         return self.plan_hours_sum >= self.pensum_value
 
     @property
@@ -79,5 +79,5 @@ class Employees(models.Model):
 
     @property
     # True/False for reaching pensum limit by Employee instance
-    def pensum_limit_reached(self):
+    def is_pensum_limit_reached(self):
         return self.plan_hours_sum >= self.pensum_limit

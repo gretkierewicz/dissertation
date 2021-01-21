@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
 
 from .models import Modules, Classes, Plans
 from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer, SupervisedModuleSerializer, \
-    EmployeePlanSerializer
+    EmployeePlanModulesSerializer
 
 
 class ModuleViewSet(ModelViewSet):
@@ -62,7 +62,7 @@ class PlanViewSet(ModelViewSet):
 
 class EmployeePlanViewSet(GenericViewSet,
                           mixins.ListModelMixin):
-    serializer_class = EmployeePlanSerializer
+    serializer_class = EmployeePlanModulesSerializer
 
     # custom queryset for nested view
     def get_queryset(self):
