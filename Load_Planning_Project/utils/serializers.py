@@ -44,19 +44,24 @@ class ParentFromURLHiddenField(HiddenField):
     matches - dictionary of parent's lookup kwarg's names (keys) and field's names (values)
     returns: - object filtered from the queryset (first occurrence - filtering should return one object anyway!)
     """
-    def __init__(self, queryset, matches, **kwargs):
+    def __init__(self, queryset, matches, parent_lookup=None, **kwargs):
         self.queryset = queryset
         self.matches = matches
+        self.parent_lookup = parent_lookup
         kwargs['write_only'] = True
         kwargs['default'] = None
         super().__init__(**kwargs)
 
     def get_value(self, dictionary):
+        # in case of bulk data sent return passed instance (needs to be set in serializers' create/update methods)
+        if dictionary.get(self.parent_lookup):
+            return dictionary.get(self.parent_lookup)
         # change data forwarded to the to_internal_value()
         filter_kwargs = {}
         for key, value in self.matches.items():
             # getting slug from URL resolver - needs to match parent_lookup_kwarg's names!
-            filter_kwargs[value] = self.context.get('request').resolver_match.kwargs[key]
+            if self.context.get('request'):
+                filter_kwargs[value] = self.context.get('request').resolver_match.kwargs[key]
         return self.queryset.filter(**filter_kwargs).first()
 
     def to_internal_value(self, data):

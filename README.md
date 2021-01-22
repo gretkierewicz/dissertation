@@ -18,6 +18,7 @@ Local with SQLite DB
 - Employee model update - pensum finding property
 - FIX / Module csv_files_upload will now properly delete existing classes instances and read number from classes hours columns (regex implemented)
 - Module ViewSet retrieve method minor update with help of get_object method (based on https://medium.com/profil-software-blog/10-things-you-need-to-know-to-effectively-use-django-rest-framework-7db7728910e0)
+- Implemented nested JSON data import for Modules/Classes/Plans (no error output for now)
 
 ### To be done:
 
@@ -29,3 +30,4 @@ Local with SQLite DB
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded
 - New general view: Modules with missing plans
+- Errors output for nested JSON data import

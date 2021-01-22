@@ -45,16 +45,22 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
         queryset=Classes.objects.all(),
         matches={
             'module_module_code': 'module__module_code',
-            'class_name': 'name'
-        }
+            'class_name': 'name',
+        },
+        # in case no valid URL (i.e. JSON data upload) look for parent passed in create/update methods
+        parent_lookup='classes',
     )
 
     def validate_plan_hours(self, data):
         # validation of plan's hours if summary classes' hours are not exceeded
         # retrieve parent classes from request url
-        url_kwargs = self.context['request'].resolver_match.kwargs
-        filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
-        classes = get_object_or_404(Classes, **filter_kwargs)
+        if self.context.get('request'):
+            url_kwargs = self.context['request'].resolver_match.kwargs
+            filter_kwargs = {'module__module_code': url_kwargs['module_module_code'], 'name': url_kwargs['class_name']}
+            classes = get_object_or_404(Classes, **filter_kwargs)
+        else:
+            # in case of bulk data upload - classes instance moved to initial data in create/update methods
+            classes = self.initial_data.get('classes')
         if classes.classes_hours_set - (self.instance.plan_hours if self.instance else 0)+data > classes.classes_hours:
             raise ValidationError(
                 f"Classes' hours number cannot be exceeded by summary number of it's plans hours. "
@@ -105,6 +111,8 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         queryset=Modules.objects.all(),
         # key is a parent_lookup_kwarg, value - a field to filter by
         matches={'module_module_code': 'module_code'},
+        # in case of no valid URL (i.e. JSON data upload) look for parent passed in create/update methods
+        parent_lookup='module',
     )
 
     # url for plans: parent's lookup_field (ClassesView); lookup_url_kwarg - lookup from URL that points lookup_field;
@@ -119,6 +127,46 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     )
     # needs parent_lookup_kwargs configured in nested serializer (only for auto-hyperlinking)
     plans = PlanSerializer(read_only=True, many=True)
+
+    # overwrite for handling nested plans (this will not delete missing plans in data)
+    def create(self, validated_data):
+        classes = super().create(validated_data)
+        if self.initial_data.get('plans'):
+            for plans_data in self.initial_data.get('plans'):
+                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
+                plans_data['class_name'] = classes.name
+                plans_data['module_module_code'] = classes.module.module_code
+                # additionally passing classes instance for plans hours validation
+                plans_data['classes'] = classes
+                serializer = PlanSerializer(
+                    instance=classes.plans.filter(employee__abbreviation=plans_data.get('employee')).first(),
+                    data=plans_data)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    # TODO: need to pass this somehow to user:
+                    print(serializer.errors)
+        return classes
+
+    # overwrite for handling nested plans (this will not delete missing plans in data)
+    def update(self, instance, validated_data):
+        classes = super().update(instance, validated_data)
+        if self.initial_data.get('plans'):
+            for plans_data in self.initial_data.get('plans'):
+                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
+                plans_data['class_name'] = classes.name
+                plans_data['module_module_code'] = classes.module.module_code
+                # additionally passing classes instance for plans hours validation
+                plans_data['classes'] = classes
+                serializer = PlanSerializer(
+                    instance=classes.plans.filter(employee__abbreviation=plans_data.get('employee')).first(),
+                    data=plans_data)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    # TODO: need to pass this somehow to user:
+                    print(serializer.errors)
+        return classes
 
 
 class ModuleSerializer(HyperlinkedModelSerializer):
@@ -151,6 +199,38 @@ class ModuleSerializer(HyperlinkedModelSerializer):
     )
     # needs parent_lookup_kwargs configured in nested serializer!
     classes = ClassSerializer(read_only=True, many=True)
+
+    # overwrite for handling nested classes (this will not delete missing classes in data)
+    def create(self, validated_data):
+        module = super().create(validated_data)
+        if self.initial_data.get('classes'):
+            for classes_data in self.initial_data.get('classes'):
+                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
+                classes_data['module'] = module
+                serializer = ClassSerializer(instance=module.classes.filter(name=classes_data.get('name')).first(),
+                                             data=classes_data)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    # TODO: need to pass this somehow to user:
+                    print(serializer.errors)
+        return module
+
+    # overwrite for handling nested classes (this will not delete missing classes in data)
+    def update(self, instance, validated_data):
+        module = super().update(instance, validated_data)
+        if self.initial_data.get('classes'):
+            for classes_data in self.initial_data.get('classes'):
+                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
+                classes_data['module'] = module
+                serializer = ClassSerializer(instance=module.classes.filter(name=classes_data.get('name')).first(),
+                                             data=classes_data)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    # TODO: need to pass this somehow to user:
+                    print(serializer.errors)
+        return module
 
 
 class ModuleFlatSerializer(ModuleSerializer):
