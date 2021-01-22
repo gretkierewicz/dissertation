@@ -13,6 +13,9 @@ class Modules(models.Model):
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
 
     def __str__(self):
+        return f"{self.name} (Code: {self.module_code})"
+
+    def __repr__(self):
         return self.module_code
 
     @property
@@ -63,7 +66,7 @@ class Classes(models.Model):
         return self.name
 
     def __repr__(self):
-        return "{class_name} (Module's code: {module})".format(module=self.module, class_name=self.name)
+        return f"{self.name} of {self.module.module_code}"
 
     @property
     # classes' already set hours

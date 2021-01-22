@@ -11,7 +11,7 @@ Local with SQLite DB
 ## Last changes
 ###22/01/2020
 
-- 
+- Minor updated to models
 
 ### To be done:
 

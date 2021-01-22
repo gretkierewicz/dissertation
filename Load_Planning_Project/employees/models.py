@@ -12,6 +12,9 @@ class Degrees(models.Model):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return self.name
+
 
 class Positions(models.Model):
     class Meta:
@@ -22,12 +25,15 @@ class Positions(models.Model):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return self.name
+
 
 class Pensum(models.Model):
     value = models.PositiveIntegerField()
     limit = models.PositiveIntegerField(default=0, null=True)
-    degrees = models.ManyToManyField(Degrees, null=True, related_name='pensum')
-    positions = models.ManyToManyField(Positions, null=True, related_name='pensum')
+    degrees = models.ManyToManyField(Degrees, related_name='pensum')
+    positions = models.ManyToManyField(Positions, related_name='pensum')
 
 
 class Employees(models.Model):
@@ -47,6 +53,9 @@ class Employees(models.Model):
     has_scholarship = models.BooleanField(default=False)
 
     def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.abbreviation})"
+
+    def __repr__(self):
         return self.abbreviation
 
     @property
