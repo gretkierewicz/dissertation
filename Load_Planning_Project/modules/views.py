@@ -48,9 +48,9 @@ class ModuleViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         # get flat data of employee instance for CSV format
         if request.query_params.get('format') == 'csv':
-            serializer = ModuleFlatSerializer(get_object_or_404(self.queryset, **kwargs), context={'request': request})
+            serializer = ModuleFlatSerializer(instance=self.get_object(), context={'request': request})
         else:
-            serializer = ModuleSerializer(get_object_or_404(self.queryset, **kwargs), context={'request': request})
+            serializer = ModuleSerializer(instance=self.get_object(), context={'request': request})
         return Response(serializer.data)
 
     @action(detail=False, methods=['PUT', 'POST'])

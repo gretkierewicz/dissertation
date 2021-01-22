@@ -206,9 +206,9 @@ class EmployeePlanClassesSerializer(ClassSerializer):
         }
     )
     # for Classes instance it is enough to only get one plan_hours as only one Employee is given
-    employee_plan_hours = SerializerMethodField('get_plan_hours')
+    employee_plan_hours = SerializerMethodField()
 
-    def get_plan_hours(self, obj):
+    def get_employee_plan_hours(self, obj):
         # in Classes instance find plan related to the Employee (cannot use get_object_or_404 here because of 404 error)
         plan = obj.plans.filter(
             # logical OR needed because of URL kwargs naming differences:
