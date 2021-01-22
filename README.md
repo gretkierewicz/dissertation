@@ -9,15 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###21/01/2020
+###22/01/2020
 
-- Employee / Additional booleans for pensum thresholds
-- Classes / Additional boolean for filling all classes' hours
-- Minor naming and field configuration changes
-- Module Serializers minor changes to fields
-- CSV rendering only for chosen Views: Employees, Degrees, Positions, Modules(with classes)
-- Created new Module model properties for CSV rendering and Flat Serializer
-- Created Module View action: csv_files_upload that reads rendered CSV format
+- 
 
 ### To be done:
 
