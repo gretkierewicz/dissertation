@@ -1,8 +1,8 @@
+import re
 from collections import OrderedDict
 
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
@@ -59,6 +59,11 @@ class ModuleViewSet(ModelViewSet):
         Action to upload CSV file(s).
         POST method will try to create new records.
         PUT method will update existing or create new records.
+        Module possible column headers: 'module_code', 'name', 'examination', 'supervisor'
+        'supervisor' - must be provided by his abbreviation
+        Additional classes possible column headers. If column will be present with empty value, existing classes
+        instance will be deleted! Put 0 instead to save from deletion.): 'lectures_hours', 'laboratory_classes_hours',
+        'auditorium_classes_hours', 'project_classes_hours', 'seminar_classes_hours'
         """
         if request.FILES:
             data = {}
@@ -77,17 +82,34 @@ class ModuleViewSet(ModelViewSet):
                         serializer = self.get_serializer(data=partial_data)
                     if serializer.is_valid():
                         serializer.save()
-                        # additional logic to create classes in the module instance
+                        deleted_classes = []
+                        # additional logic to create/update classes in the module instance
                         for rec in ModuleRenderer.classes_hours:
-                            if partial_data.get(rec) not in (None, '', '0'):
-                                classes = serializer.instance.classes.filter(name=rec[:-6].capitalize()).first()
-                                if classes:
-                                    classes.classes_hours = int(partial_data.get(rec))
-                                    classes.save()
-                                else:
-                                    Classes.objects.create(module=serializer.instance, name=rec[:-6].capitalize(),
-                                                           classes_hours=int(partial_data.get(rec)))
+                            # filter name - rip of '_hours' from column's header
+                            classes = serializer.instance.classes.filter(name=rec[:-6].capitalize()).first()
+                            # classes columns should contain number, if not - pass None
+                            value = re.search(r'\d+', partial_data.get(rec))
+                            if value:
+                                value = int(value.group())
+                            # in case of missing value in column classes instance will be deleted!
+                            if classes and (rec in partial_data) and value is not None:
+                                classes.classes_hours = value
+                                classes.save()
+                            # 2nd condition ensures that instance will be deleted only if column is present in CSV file
+                            elif classes and (rec in partial_data):
+                                classes.delete()
+                                # save names for informational display
+                                deleted_classes.append(rec[:-6].capitalize())
+                            # if no classes instance but got value for it - create new instance
+                            elif value is not None:
+                                Classes.objects.create(module=serializer.instance, name=rec[:-6].capitalize(),
+                                                       classes_hours=value)
+                        # at this point serializer data will be read for updated module instance
                         data[file + ' file'][partial_data.get(lookup)] = [serializer.data]
+                        # simple additional information about deleted classes (only for response)
+                        for classes in deleted_classes:
+                            data[file + ' file'][partial_data.get(lookup)][0]['classes'].append({
+                                'name': classes, 'status': 'deleted'})
                     if serializer.errors:
                         data[file + ' file'][partial_data.get(lookup)] = [serializer.errors]
             return Response(data)

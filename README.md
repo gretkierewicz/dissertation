@@ -16,6 +16,7 @@ Local with SQLite DB
 - Pensum validation and model update. Lowering number of choices for year condition to minimize possibilities of covering same year ranges.
 - Rearranging tests and basic objects
 - Employee model update - pensum finding property
+- FIX / Module csv_files_upload will now properly delete existing classes instances and read number from classes hours columns (regex implemented)
 
 ### To be done:
 
@@ -27,4 +28,3 @@ Local with SQLite DB
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded
 - New general view: Modules with missing plans
-- Update Module csv upload and serializer to transfer classes into serializer data
