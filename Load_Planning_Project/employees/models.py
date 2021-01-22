@@ -30,10 +30,40 @@ class Positions(models.Model):
 
 
 class Pensum(models.Model):
+    YEAR_CONDITION_CHOICES = [
+        ('greater than', 'greater than'),
+        ('greater than or equal to', 'greater than or equal to'),
+        ('equal to', 'equal to'),
+        ('less than or equal to', 'less than or equal to'),
+        ('less than', 'less than'),
+        (None, 'N/A')
+    ]
+    DOCTORAL_PROCEDURE_CHOICES = [
+        (True, 'YES'),
+        (None, 'N/A'),
+        (False, 'NO')
+    ]
+    SCHOLARSHIP_CHOICES = [
+        (True, 'YES'),
+        (None, 'N/A'),
+        (False, 'NO')
+    ]
+
+    name = models.CharField(max_length=100, unique=True, null=True)
     value = models.PositiveIntegerField()
     limit = models.PositiveIntegerField(default=0, null=True)
     degrees = models.ManyToManyField(Degrees, related_name='pensum')
     positions = models.ManyToManyField(Positions, related_name='pensum')
+    year_of_studies = models.PositiveSmallIntegerField(null=True, blank=True)
+    year_condition = models.CharField(max_length=24, choices=YEAR_CONDITION_CHOICES, null=True)
+    is_procedure_for_a_doctoral_degree_approved = models.BooleanField(choices=DOCTORAL_PROCEDURE_CHOICES, null=True)
+    has_scholarship = models.BooleanField(choices=SCHOLARSHIP_CHOICES, null=True)
+
+    def __str__(self):
+        return f"{self.name} - value: {self.value}, limit: {self.limit}"
+
+    def __repr__(self):
+        return self.name
 
 
 class Employees(models.Model):

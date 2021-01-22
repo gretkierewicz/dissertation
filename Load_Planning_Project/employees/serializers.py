@@ -47,7 +47,13 @@ class PensumSerializer(ModelSerializer):
     """
     class Meta:
         model = Pensum
-        fields = ['url', 'value', 'limit', 'degrees', 'positions']
+        fields = ['url', 'name', 'value', 'limit', 'degrees', 'positions', 'year_of_studies', 'year_condition',
+                  'is_procedure_for_a_doctoral_degree_approved', 'has_scholarship']
+        extra_kwargs = {
+            'year_condition': {'allow_null': False},
+            'is_procedure_for_a_doctoral_degree_approved': {'allow_null': False},
+            'has_scholarship': {'allow_null': False},
+        }
 
     url = HyperlinkedIdentityField(view_name='pensum-detail')
 

@@ -12,6 +12,7 @@ Local with SQLite DB
 ###22/01/2020
 
 - Minor updated to models
+- Pensum model update - additional field for scholarship, doctoral procedure and years
 
 ### To be done:
 
@@ -23,3 +24,5 @@ Local with SQLite DB
 - Additional views with no nesting (could be problematic with a huge amount of plans or modules)
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes (classes hours not exceeded
 - New general view: Modules with missing plans
+- Update pensum validation to check all choices
+- Update employee model to find pensum value/limit properly
