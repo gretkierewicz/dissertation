@@ -32,35 +32,34 @@ class Positions(models.Model):
 class Pensum(models.Model):
     YEAR_CONDITION_CHOICES = [
         ('greater than', 'greater than'),
-        ('greater than or equal to', 'greater than or equal to'),
         ('equal to', 'equal to'),
-        ('less than or equal to', 'less than or equal to'),
         ('less than', 'less than'),
-        (None, 'N/A')
+        ('N/A', 'N/A')
     ]
     DOCTORAL_PROCEDURE_CHOICES = [
-        (True, 'YES'),
-        (None, 'N/A'),
-        (False, 'NO')
+        ('True', 'YES'),
+        ('N/A', 'N/A'),
+        ('False', 'NO')
     ]
     SCHOLARSHIP_CHOICES = [
-        (True, 'YES'),
-        (None, 'N/A'),
-        (False, 'NO')
+        ('True', 'YES'),
+        ('N/A', 'N/A'),
+        ('False', 'NO')
     ]
 
-    name = models.CharField(max_length=100, unique=True, null=True)
+    name = models.CharField(max_length=100, unique=True)
     value = models.PositiveIntegerField()
     limit = models.PositiveIntegerField(default=0, null=True)
     degrees = models.ManyToManyField(Degrees, related_name='pensum')
-    positions = models.ManyToManyField(Positions, related_name='pensum')
+    positions = models.ManyToManyField(Positions, related_name='pensum', blank=True)
     year_of_studies = models.PositiveSmallIntegerField(null=True, blank=True)
-    year_condition = models.CharField(max_length=24, choices=YEAR_CONDITION_CHOICES, null=True)
-    is_procedure_for_a_doctoral_degree_approved = models.BooleanField(choices=DOCTORAL_PROCEDURE_CHOICES, null=True)
-    has_scholarship = models.BooleanField(choices=SCHOLARSHIP_CHOICES, null=True)
+    year_condition = models.CharField(max_length=12, choices=YEAR_CONDITION_CHOICES, default='N/A')
+    is_procedure_for_a_doctoral_degree_approved = models.CharField(max_length=5, choices=DOCTORAL_PROCEDURE_CHOICES,
+                                                                   default='N/A')
+    has_scholarship = models.CharField(max_length=5, choices=SCHOLARSHIP_CHOICES, default='N/A')
 
     def __str__(self):
-        return f"{self.name} - value: {self.value}, limit: {self.limit}"
+        return f"{self.name} (value: {self.value}, limit: {self.limit})"
 
     def __repr__(self):
         return self.name

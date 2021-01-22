@@ -50,9 +50,9 @@ class PensumSerializer(ModelSerializer):
         fields = ['url', 'name', 'value', 'limit', 'degrees', 'positions', 'year_of_studies', 'year_condition',
                   'is_procedure_for_a_doctoral_degree_approved', 'has_scholarship']
         extra_kwargs = {
-            'year_condition': {'allow_null': False},
-            'is_procedure_for_a_doctoral_degree_approved': {'allow_null': False},
-            'has_scholarship': {'allow_null': False},
+            'year_condition': {'allow_null': False, 'initial': 'N/A'},
+            'is_procedure_for_a_doctoral_degree_approved': {'allow_null': False, 'initial': 'N/A'},
+            'has_scholarship': {'allow_null': False, 'initial': 'N/A'},
         }
 
     url = HyperlinkedIdentityField(view_name='pensum-detail')
@@ -61,13 +61,33 @@ class PensumSerializer(ModelSerializer):
     positions = SlugRelatedField(slug_field='name', queryset=Positions.objects.all(), many=True)
 
     def validate(self, attrs):
-        # don't allow double match-ups of degree and position
-        degrees = attrs.get('degrees') or (self.instance.degrees.all() if self.instance else None)
-        positions = attrs.get('positions') or (self.instance.positions.all() if self.instance else None)
-        query = Pensum.objects.filter(degrees__in=degrees, positions__in=positions).distinct()
-        if len(query) == 0 or (len(query) == 1 and self.instance in query):
-            return attrs
-        raise ValidationError('Given combination of degree and position exists in another pensum record(s).')
+        # don't allow same match-ups of field's values
+        query = Pensum.objects.exclude(pk=self.instance.pk) if self.instance else Pensum.objects.all()
+        query = query.filter(
+            degrees__in=attrs.get('degrees') or (self.instance.degrees.all() if self.instance else None),
+            positions__in=attrs.get('positions') or (self.instance.positions.all() if self.instance else None)
+        )
+        year_of_studies = attrs.get('year_of_studies') or (self.instance.year_of_studies if self.instance else None)
+        year_condition = attrs.get('year_condition') or (self.instance.year_condition if self.instance else None)
+        if year_of_studies and year_condition and year_condition != 'N/A':
+            # TODO: not perfect solution - different pensum records can cover same year range
+            query = query.filter(year_of_studies=year_of_studies, year_condition=year_condition)
+
+        is_procedure_for_a_doctoral_degree_approved = attrs.get('is_procedure_for_a_doctoral_degree_approved') or (
+            self.instance.is_procedure_for_a_doctoral_degree_approved if self.instance else None)
+        if is_procedure_for_a_doctoral_degree_approved and is_procedure_for_a_doctoral_degree_approved != 'N/A':
+            query = query.filter(
+                is_procedure_for_a_doctoral_degree_approved=is_procedure_for_a_doctoral_degree_approved)
+
+        has_scholarship = attrs.get('has_scholarship') or (self.instance.has_scholarship if self.instance else None)
+        if has_scholarship and has_scholarship != 'N/A':
+            query = query.filter(has_scholarship=has_scholarship)
+
+        if len(query) != 0:
+            # list all pensum found (rip off square parenthesis)
+            raise ValidationError(f"Given combination exists in another pensum record(s): "
+                                  f"{str([pensum.name for pensum in query.distinct()])[1:-1]}")
+        return attrs
 
     def validate_limit(self, data):
         # validation for proper setting of pensum's limit
