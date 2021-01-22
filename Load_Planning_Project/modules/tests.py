@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory
@@ -6,11 +7,32 @@ from .models import Modules, Classes, Plans
 from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer
 
 from employees.models import Pensum
-from utils.basic_objects import basic_supervisor, basic_module, basic_classes, basic_plans
+from employees.tests import basic_supervisor
 from utils.tests import StatusCodeTests
 
 client = APIClient()
 factory = APIRequestFactory()
+
+
+def basic_module(name='basic_module'):
+    try:
+        return Modules.objects.get(module_code=name)
+    except ObjectDoesNotExist:
+        return Modules.objects.create(name=name, module_code=name)
+
+
+def basic_classes(classes_hours=100, name='Lectures'):
+    try:
+        return Classes.objects.get(module=basic_module(), name=name)
+    except ObjectDoesNotExist:
+        return Classes.objects.create(module=basic_module(), name=name, classes_hours=classes_hours)
+
+
+def basic_plans(employee, classes=basic_classes(), plan_hours=10):
+    try:
+        return Plans.objects.get(employee=employee, classes=classes)
+    except ObjectDoesNotExist:
+        return Plans.objects.create(employee=employee, classes=classes, plan_hours=plan_hours)
 
 
 class ModuleTests(StatusCodeTests, TestCase):

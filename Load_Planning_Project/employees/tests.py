@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory
@@ -5,11 +6,53 @@ from rest_framework.test import APIClient, APIRequestFactory
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer
 
-from utils.basic_objects import basic_degree, basic_position, basic_employee, basic_supervisor
 from utils.tests import StatusCodeTests
 
 client = APIClient()
 factory = APIRequestFactory()
+
+
+def basic_degree(name='basic_degree'):
+    try:
+        return Degrees.objects.get(name=name)
+    except ObjectDoesNotExist:
+        return Degrees.objects.create(name=name)
+
+
+def basic_position(name='basic_position'):
+    try:
+        return Positions.objects.get(name=name)
+    except ObjectDoesNotExist:
+        return Positions.objects.create(name=name)
+
+
+def basic_supervisor(abbreviation='SUPER'):
+    name = abbreviation + '_employee'
+    try:
+        return Employees.objects.get(abbreviation=abbreviation)
+    except ObjectDoesNotExist:
+        return Employees.objects.create(
+            first_name=name + '_first_name',
+            last_name=name + '_last_name',
+            abbreviation=abbreviation,
+            e_mail=name + '@basic.basic',
+            degree=basic_degree(),
+            position=basic_position())
+
+
+def basic_employee(abbreviation='BASIC'):
+    name = abbreviation + '_employee'
+    try:
+        return Employees.objects.get(abbreviation=abbreviation)
+    except ObjectDoesNotExist:
+        return Employees.objects.create(
+            first_name=name + '_first_name',
+            last_name=name + '_last_name',
+            abbreviation=abbreviation,
+            e_mail=name + '@basic.basic',
+            degree=basic_degree(),
+            position=basic_position(),
+            supervisor=basic_supervisor())
 
 
 class DegreesTests(StatusCodeTests, TestCase):
