@@ -15,6 +15,7 @@ Local with SQLite DB
 - Pensum model update - additional field for scholarship, doctoral procedure and years
 - Pensum validation and model update. Lowering number of choices for year condition to minimize possibilities of covering same year ranges.
 - Rearranging tests and basic objects
+- Employee model update - pensum finding property
 
 ### To be done:
 

@@ -4,6 +4,7 @@ from rest_framework.serializers import ValidationError
 
 from .models import Degrees, Positions, Employees, Pensum
 from modules.serializers import SupervisedModuleSerializer, EmployeePlanModulesSerializer
+from utils.constants import NA
 
 
 class EmployeeListSerializer(HyperlinkedModelSerializer):
@@ -69,20 +70,19 @@ class PensumSerializer(ModelSerializer):
         )
         year_of_studies = attrs.get('year_of_studies') or (self.instance.year_of_studies if self.instance else None)
         year_condition = attrs.get('year_condition') or (self.instance.year_condition if self.instance else None)
-        if year_of_studies and year_condition and year_condition != 'N/A':
+        if year_of_studies and year_condition and year_condition != NA:
             # TODO: not perfect solution - different pensum records can cover same year range
             query = query.filter(year_of_studies=year_of_studies, year_condition=year_condition)
 
         is_procedure_for_a_doctoral_degree_approved = attrs.get('is_procedure_for_a_doctoral_degree_approved') or (
             self.instance.is_procedure_for_a_doctoral_degree_approved if self.instance else None)
-        if is_procedure_for_a_doctoral_degree_approved and is_procedure_for_a_doctoral_degree_approved != 'N/A':
+        if is_procedure_for_a_doctoral_degree_approved and is_procedure_for_a_doctoral_degree_approved != NA:
             query = query.filter(
                 is_procedure_for_a_doctoral_degree_approved=is_procedure_for_a_doctoral_degree_approved)
 
         has_scholarship = attrs.get('has_scholarship') or (self.instance.has_scholarship if self.instance else None)
-        if has_scholarship and has_scholarship != 'N/A':
+        if has_scholarship and has_scholarship != NA:
             query = query.filter(has_scholarship=has_scholarship)
-
         if len(query) != 0:
             # list all pensum found (rip off square parenthesis)
             raise ValidationError(f"Given combination exists in another pensum record(s): "
@@ -113,7 +113,7 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position',
-                  'pensum_value', 'is_pensum_value_reached', 'pensum_limit', 'is_pensum_limit_reached',
+                  'pensum_name', 'pensum_value', 'is_pensum_value_reached', 'pensum_limit', 'is_pensum_limit_reached',
                   'plan_hours_sum', 'plan_modules_url', 'plan_modules',
                   'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']

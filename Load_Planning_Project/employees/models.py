@@ -1,6 +1,7 @@
 from django.db import models
 
 import modules.models
+from utils.constants import GT, ET, LT, NA
 
 
 class Degrees(models.Model):
@@ -31,19 +32,19 @@ class Positions(models.Model):
 
 class Pensum(models.Model):
     YEAR_CONDITION_CHOICES = [
-        ('greater than', 'greater than'),
-        ('equal to', 'equal to'),
-        ('less than', 'less than'),
-        ('N/A', 'N/A')
+        (GT, GT),
+        (ET, ET),
+        (LT, LT),
+        (NA, NA)
     ]
     DOCTORAL_PROCEDURE_CHOICES = [
         ('True', 'YES'),
-        ('N/A', 'N/A'),
+        (NA, NA),
         ('False', 'NO')
     ]
     SCHOLARSHIP_CHOICES = [
         ('True', 'YES'),
-        ('N/A', 'N/A'),
+        (NA, NA),
         ('False', 'NO')
     ]
 
@@ -53,10 +54,10 @@ class Pensum(models.Model):
     degrees = models.ManyToManyField(Degrees, related_name='pensum')
     positions = models.ManyToManyField(Positions, related_name='pensum', blank=True)
     year_of_studies = models.PositiveSmallIntegerField(null=True, blank=True)
-    year_condition = models.CharField(max_length=12, choices=YEAR_CONDITION_CHOICES, default='N/A')
+    year_condition = models.CharField(max_length=12, choices=YEAR_CONDITION_CHOICES, default=NA)
     is_procedure_for_a_doctoral_degree_approved = models.CharField(max_length=5, choices=DOCTORAL_PROCEDURE_CHOICES,
-                                                                   default='N/A')
-    has_scholarship = models.CharField(max_length=5, choices=SCHOLARSHIP_CHOICES, default='N/A')
+                                                                   default=NA)
+    has_scholarship = models.CharField(max_length=5, choices=SCHOLARSHIP_CHOICES, default=NA)
 
     def __str__(self):
         return f"{self.name} (value: {self.value}, limit: {self.limit})"
@@ -99,9 +100,32 @@ class Employees(models.Model):
         return sum([plan.plan_hours for plan in modules.models.Plans.objects.filter(employee=self)])
 
     @property
+    # find pensum instance that corresponds to employee's data
+    # TODO: consider creating table that will keep employee-pensum relations (updated on save of employee or pensum)
+    def pensum(self):
+        query = Pensum.objects.filter(
+            degrees=self.degree,
+            positions=self.position,
+            is_procedure_for_a_doctoral_degree_approved__in=[NA, self.is_procedure_for_a_doctoral_degree_approved],
+            has_scholarship__in=[NA, self.has_scholarship]
+        )
+        for pensum in query:
+            if (pensum.year_condition == NA) or \
+                    (pensum.year_condition == GT and self.year_of_studies > pensum.year_of_studies) or \
+                    (pensum.year_condition == ET and self.year_of_studies == pensum.year_of_studies) or \
+                    (pensum.year_condition == LT and self.year_of_studies < pensum.year_of_studies):
+                return pensum
+        return None
+
+    @property
+    # get pensum's name
+    def pensum_name(self):
+        return self.pensum.name
+
+    @property
     # pensum value from Employee's instance degree and position
     def pensum_value(self):
-        pensum = Pensum.objects.filter(degrees=self.degree, positions=self.position).first()
+        pensum = self.pensum
         return pensum.value if pensum else 0
 
     @property
@@ -112,7 +136,7 @@ class Employees(models.Model):
     @property
     # pensum limit from Employee's instance degree and position
     def pensum_limit(self):
-        pensum = Pensum.objects.filter(degrees=self.degree, positions=self.position).first()
+        pensum = self.pensum
         return pensum.limit if pensum else 0
 
     @property
