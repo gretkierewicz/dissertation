@@ -133,10 +133,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         classes = super().create(validated_data)
         if self.initial_data.get('plans'):
             for plans_data in self.initial_data.get('plans'):
-                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
-                plans_data['class_name'] = classes.name
-                plans_data['module_module_code'] = classes.module.module_code
-                # additionally passing classes instance for plans hours validation
+                # as there is no valid request url to check - need to pass classes instance as parent
                 plans_data['classes'] = classes
                 serializer = PlanSerializer(
                     instance=classes.plans.filter(employee__abbreviation=plans_data.get('employee')).first(),

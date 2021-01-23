@@ -9,16 +9,10 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###22/01/2020
+###23/01/2020
 
-- Minor updated to models
-- Pensum model update - additional field for scholarship, doctoral procedure and years
-- Pensum validation and model update. Lowering number of choices for year condition to minimize possibilities of covering same year ranges.
-- Rearranging tests and basic objects
-- Employee model update - pensum finding property
-- FIX / Module csv_files_upload will now properly delete existing classes instances and read number from classes hours columns (regex implemented)
-- Module ViewSet retrieve method minor update with help of get_object method (based on https://medium.com/profil-software-blog/10-things-you-need-to-know-to-effectively-use-django-rest-framework-7db7728910e0)
-- Implemented nested JSON data import for Modules/Classes/Plans (no error output for now)
+- Minor changes (Back to abbreviation str representation for Employee model - it caused some troubles with nested auto-URL creation.
+  Removed not used code anymore after ParentFromURLHiddenField update)
 
 ### To be done:
 
