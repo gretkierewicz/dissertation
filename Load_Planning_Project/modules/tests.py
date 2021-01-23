@@ -7,35 +7,12 @@ from .models import Modules, Classes, Plans
 from .serializers import ModuleSerializer, ClassSerializer, PlanSerializer
 
 from employees.models import Pensum
-from employees.tests import basic_supervisor
-from utils.tests import StatusCodeTests
 
 client = APIClient()
 factory = APIRequestFactory()
 
 
-def basic_module(name='basic_module'):
-    try:
-        return Modules.objects.get(module_code=name)
-    except ObjectDoesNotExist:
-        return Modules.objects.create(name=name, module_code=name)
-
-
-def basic_classes(classes_hours=100, name='Lectures'):
-    try:
-        return Classes.objects.get(module=basic_module(), name=name)
-    except ObjectDoesNotExist:
-        return Classes.objects.create(module=basic_module(), name=name, classes_hours=classes_hours)
-
-
-def basic_plans(employee, classes=basic_classes(), plan_hours=10):
-    try:
-        return Plans.objects.get(employee=employee, classes=classes)
-    except ObjectDoesNotExist:
-        return Plans.objects.create(employee=employee, classes=classes, plan_hours=plan_hours)
-
-
-class ModuleTests(StatusCodeTests, TestCase):
+class ModuleTests(TestCase):
     def setUp(self):
         self.basename = 'modules'
         self.model = Modules
@@ -78,7 +55,7 @@ class ModuleTests(StatusCodeTests, TestCase):
             basic_module(name=f'module_{i}')
 
 
-class ClassesTests(StatusCodeTests, TestCase):
+class ClassesTests(TestCase):
     def setUp(self):
         self.basename = 'classes'
         self.model = Classes
@@ -94,7 +71,7 @@ class ClassesTests(StatusCodeTests, TestCase):
 
         self.valid_list_kwargs = {'module_module_code': basic_module().module_code}
         self.valid_detail_kwargs = {'name': self.basic_element.name, 'module_module_code': basic_module().module_code}
-        self.invalid_detail_kwargs = {'name': 'x', 'module_module_code': basic_module('random').module_code}
+        self.invalid_detail_kwargs = {'name': 'x', 'module_module_code': basic_module('get_random_str').module_code}
 
         self.valid_post_data = {'Valid data': valid_data}
         self.valid_put_data = self.valid_post_data
@@ -119,7 +96,7 @@ class ClassesTests(StatusCodeTests, TestCase):
         }
 
 
-class PlansTests(StatusCodeTests, TestCase):
+class PlansTests(TestCase):
     def setUp(self):
         self.basename = 'plans'
         self.model = Plans

@@ -1,220 +1,364 @@
+import json
+import random
+import string
+
 from django.core.exceptions import ObjectDoesNotExist
-from django.test import TestCase
 from rest_framework import status
-from rest_framework.test import APIClient, APIRequestFactory
-
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 from .models import Degrees, Positions, Employees, Pensum
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer
-
-from utils.tests import StatusCodeTests
-
-client = APIClient()
-factory = APIRequestFactory()
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer, \
+    EmployeeListSerializer
 
 
-def basic_degree(name='basic_degree'):
-    try:
-        return Degrees.objects.get(name=name)
-    except ObjectDoesNotExist:
-        return Degrees.objects.create(name=name)
+class DegreesTests(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.factory = APIRequestFactory()
 
+        cls.model = Degrees
+        cls.serializer = DegreeSerializer
+        cls.list_serializer = cls.serializer
+        cls.basename = 'degrees'
+        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.lookup = 'pk'
+        cls.field_lookup = 'name'
+        cls.delete_forbidden = True
 
-def basic_position(name='basic_position'):
-    try:
-        return Positions.objects.get(name=name)
-    except ObjectDoesNotExist:
-        return Positions.objects.create(name=name)
+        cls.get_random_str = lambda k: ''.join(random.choices(string.ascii_letters + string.punctuation + ' _', k=k))
+        cls.get_random_field_str = lambda field_name: ''.join(random.choices(
+            string.ascii_letters + string.punctuation + ' _',
+            k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
 
-
-def basic_supervisor(abbreviation='SUPER'):
-    name = abbreviation + '_employee'
-    try:
-        return Employees.objects.get(abbreviation=abbreviation)
-    except ObjectDoesNotExist:
-        return Employees.objects.create(
-            first_name=name + '_first_name',
-            last_name=name + '_last_name',
-            abbreviation=abbreviation,
-            e_mail=name + '@basic.basic',
-            degree=basic_degree(),
-            position=basic_position())
-
-
-def basic_employee(abbreviation='BASIC'):
-    name = abbreviation + '_employee'
-    try:
-        return Employees.objects.get(abbreviation=abbreviation)
-    except ObjectDoesNotExist:
-        return Employees.objects.create(
-            first_name=name + '_first_name',
-            last_name=name + '_last_name',
-            abbreviation=abbreviation,
-            e_mail=name + '@basic.basic',
-            degree=basic_degree(),
-            position=basic_position(),
-            supervisor=basic_supervisor())
-
-
-class DegreesTests(StatusCodeTests, TestCase):
-    def setUp(self):
-        self.basename = 'degrees'
-        self.model = Degrees
-        self.serializer = DegreeSerializer
-        self.basic_element = basic_degree()
-
-        self.name_max_len = 45
-
-        self.valid_list_kwargs = {}
-        self.valid_detail_kwargs = {'pk': self.basic_element.pk}
-        self.invalid_detail_kwargs = {'pk': 1000}
-
-        self.valid_post_data = {'Valid name': {'name': self.name_max_len * 'x'}}
-        self.valid_put_data = self.valid_post_data
-        self.valid_patch_data = self.valid_put_data
-
-        self.invalid_post_data = {'Blank name': {'name': ''}, 'Too long name': {'name': self.name_max_len*'x'+'x'}}
-        self.invalid_put_data = self.invalid_post_data
-        self.invalid_patch_data = self.invalid_put_data
-
+        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.field_lookup)}
+        cls.obj = cls.model.objects.create(**cls.obj_data)
         for i in range(3):
-            Degrees.objects.create(name=f'degree {i}')
+            cls.model.objects.create(name=cls.get_random_field_str(cls.field_lookup))
 
-    def test_delete_valid_data(self):
-        self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.valid_detail_kwargs,
-                                status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def test_delete_invalid_data(self):
-        self.method_simple_test(function=client.delete, url_suffix='detail', url_kwargs=self.invalid_detail_kwargs,
-                                status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
-class PositionsTests(DegreesTests, TestCase):
-    def setUp(self):
-        self.basename = 'positions'
-        self.model = Positions
-        self.serializer = PositionSerializer
-        self.basic_element = basic_position()
-
-        self.name_max_len = 45
-
-        self.valid_list_kwargs = {}
-        self.valid_detail_kwargs = {'pk': self.basic_element.pk}
-        self.invalid_detail_kwargs = {'pk': 1000}
-
-        self.valid_post_data = {'Valid name': {'name': self.name_max_len * 'x'}}
-        self.valid_put_data = self.valid_post_data
-        self.valid_patch_data = self.valid_put_data
-
-        self.invalid_post_data = {'Blank name': {'name': ''}, 'Too long name': {'name': self.name_max_len*'x'+'x'}}
-        self.invalid_put_data = self.invalid_post_data
-        self.invalid_patch_data = self.invalid_put_data
-
-        for i in range(3):
-            Positions.objects.create(name=f'position {i}')
-
-
-class EmployeesTests(StatusCodeTests, TestCase):
-    def setUp(self):
-        self.basename = 'employees'
-        self.model = Employees
-        self.serializer = EmployeeSerializer
-        self.basic_element = basic_employee()
-
-        max_len = {'first_name': 45, 'last_name': 45, 'abbreviation': 5, 'e_mail': 45}
-        no_null_fields = ['first_name', 'last_name', 'abbreviation', 'e_mail']
-        valid_data = {'first_name': 'x',
-                      'last_name': 'x',
-                      'abbreviation': 'x',
-                      'degree': basic_degree().name,
-                      'position': basic_position().name,
-                      'e_mail': 'x@x.xx',
-                      'supervisor': ''}
-
-        self.valid_list_kwargs = {}
-        self.valid_detail_kwargs = {'abbreviation': self.basic_element.abbreviation}
-        self.invalid_detail_kwargs = {'abbreviation': 'some_random_slag'}
-
-        self.valid_post_data = {'Valid data': valid_data}
-        self.valid_put_data = self.valid_post_data
-        self.valid_patch_data = {}
-        for field, length in max_len.items():
-            self.valid_patch_data['Max length ' + field] = {field: length * 'a'}
-        self.valid_patch_data = {'Basic supervisor ': {'supervisor': basic_supervisor().abbreviation},
-                                 'No supervisor ': {'supervisor': None},
-                                 'Min year_of_studies': {'year_of_studies': 0},
-                                 'High year_of_studies': {'year_of_studies': 100}}
-
-        self.invalid_post_data = {'No degree': valid_data.copy()}
-        self.invalid_post_data['No degree']['degree'] = None
-        self.invalid_post_data = {'No position': valid_data.copy()}
-        self.invalid_post_data['No position']['position'] = None
-        self.invalid_patch_data = {'No degree': {'degree': None},
-                                   'No position': {'position': None}}
-        for field in no_null_fields:
-            self.invalid_post_data['Blank ' + field] = valid_data.copy()
-            self.invalid_post_data['Blank ' + field][field] = ''
-            self.invalid_patch_data['Blank ' + field] = {field: ''}
-            self.invalid_patch_data['None ' + field] = {field: None}
-        self.invalid_put_data = self.invalid_post_data
-
-        for i in range(3):
-            Employees.objects.create(
-                first_name=f'first_name {i}',
-                last_name=f'last_name {i}',
-                abbreviation=f'abb{i}',
-                degree=basic_degree(),
-                position=basic_position(),
-                e_mail=f'e.mail.{i}@x.xx')
-
-
-class PensumTests(StatusCodeTests, TestCase):
-    def setUp(self):
-        self.basename = 'pensum'
-        self.model = Pensum
-        self.serializer = PensumSerializer
-        self.basic_element = Pensum.objects.create(value=15, limit=95)
-        self.basic_element.degrees.add(basic_degree().pk)
-        self.basic_element.positions.add(basic_position().pk)
-        self.another_element = Pensum.objects.create(value=30, limit=40)
-        self.another_element.degrees.add(basic_degree('another_degree').pk)
-        self.another_element.positions.add(basic_position('another_position').pk)
-
-        self.valid_list_kwargs = {}
-        self.valid_detail_kwargs = {'pk': self.basic_element.pk}
-        self.invalid_detail_kwargs = {'pk': 1000}
-
-        self.valid_post_data = {'Valid data': {'value': 10, 'limit': 20,
-                                               'degrees': [basic_degree('valid degree').name],
-                                               'positions': [basic_position('valid position').name]}}
-        self.valid_put_data = self.valid_post_data
-        self.valid_patch_data = {'Valid value': {'value': 15},
-                                 'Valid limit': {'limit': 95},
-                                 'Valid degrees': {'degrees': [basic_degree('valid degree').name]},
-                                 'Valid positions': {'positions': [basic_position('valid position').name]}}
-
-        self.invalid_post_data = {
-            'Existing degree and position match': {'value': 50, 'limit': 60,
-                                                   'degrees': [basic_degree('another_degree').name],
-                                                   'positions': [basic_position('another_position').name]},
-            'Value greater than limit': {'value': 90, 'limit': 10,
-                                         'degrees': [basic_degree('valid degree A').name],
-                                         'positions': [basic_position('valid position A').name]},
-            'Value equal to limit': {'value': 100, 'limit': 100,
-                                     'degrees': [basic_degree('valid degree B').name],
-                                     'positions': [basic_position('valid position B').name]}
+        cls.data_payload = {
+            'max length': {'name': cls.get_random_field_str(cls.field_lookup)},
+            'short': {'name': cls.get_random_str(k=1)},
         }
-        self.invalid_put_data = {
-            'Existing degree and position match': {'value': 70, 'limit': 80,
-                                                   'degrees': [basic_degree('another_degree').name],
-                                                   'positions': [basic_position('another_position').name]},
-            'Value greater than limit': {'value': 90, 'limit': 10,
-                                         'degrees': [basic_degree('valid degree A').name],
-                                         'positions': [basic_position('valid position A').name]},
-            'Value equal to limit': {'value': 100, 'limit': 100,
-                                     'degrees': [basic_degree('valid degree B').name],
-                                     'positions': [basic_position('valid position B').name]}
+        cls.partial_data = cls.data_payload
+
+        cls.invalid_data_payload = {
+            'over max length': {'name': cls.get_random_field_str(cls.field_lookup) + 'x'},
+            'empty string': {'name': ''},
         }
-        self.invalid_patch_data = {'Value greater than limit': {'value': 1000},
-                                   'Value equal to limit': {'value': self.basic_element.limit},
-                                   'Limit lower than value': {'limit': 1},
-                                   'Limit equal to value': {'limit': self.basic_element.value}}
+        cls.invalid_partial_data = cls.invalid_data_payload
+
+    def get_obj(self, data):
+        try:
+            return self.model.objects.get(**{self.field_lookup: data[self.field_lookup]})
+        except ObjectDoesNotExist:
+            return None
+
+    def get_kwargs(self, obj=None, valid=True):
+        obj = obj if obj else self.obj
+        return {self.lookup: getattr(obj, self.lookup)} if valid else {self.lookup: '100000'}
+
+    def test_get_list_code(self):
+        response = self.client.get(reverse(self.basename + '-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+    def test_get_list_data(self):
+        response = self.client.get(reverse(self.basename + '-list'))
+        self.assertJSONEqual(
+            json.dumps(response.data),
+            self.list_serializer(instance=self.model.objects.all(), many=True, context=self.context).data,
+            response.data)
+
+    def test_get_obj_code(self, obj=None, key=None):
+        response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
+
+    def test_get_obj_data(self, key=None):
+        response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs()))
+        self.assertJSONEqual(
+            json.dumps(response.data), self.serializer(instance=self.obj, context=self.context).data,
+            f"{key}: {response.data}")
+
+    def test_post_data_payload_raw(self):
+        for key, data in self.data_payload.items():
+            response = self.client.post(reverse(self.basename + '-list'), data=data)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{key}: {response.data}")
+            # check if created properly
+            obj = self.get_obj(data)
+            self.assertIsNotNone(obj, key)
+            self.test_get_obj_code(obj=obj, key=key)
+            self.assertJSONEqual(
+                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
+
+    def test_post_data_payload_json(self):
+        for key, data in self.data_payload.items():
+            response = self.client.post(
+                reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{key}: {response.data}")
+            # check if created properly
+            obj = self.get_obj(data)
+            self.assertIsNotNone(obj, key)
+            self.test_get_obj_code(obj=obj, key=key)
+            self.assertJSONEqual(
+                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
+
+    def test_put_data_payload_raw(self):
+        for key, data in self.data_payload.items():
+            response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
+            # check if updated properly
+            obj = self.get_obj(data)
+            self.assertIsNotNone(obj, key)
+            self.assertEqual(obj.pk, self.obj.pk, key)
+            self.test_get_obj_code(obj=obj, key=key)
+            self.assertJSONEqual(
+                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
+
+    def test_put_data_payload_json(self):
+        for key, data in self.data_payload.items():
+            response = self.client.put(
+                reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
+                content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
+            # check if updated properly
+            obj = self.get_obj(data)
+            self.assertIsNotNone(obj, key)
+            self.assertEqual(obj.pk, self.obj.pk, key)
+            self.test_get_obj_code(obj=obj, key=key)
+            self.assertJSONEqual(
+                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
+
+    def test_patch_data_payload_raw(self):
+        for key, data in self.partial_data.items():
+            response = self.client.patch(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
+            # check if updated properly
+            obj = self.get_obj(data)
+            self.assertIsNotNone(obj, key)
+            self.assertEqual(obj.pk, self.obj.pk, key)
+            self.test_get_obj_code(obj=obj, key=key)
+            self.assertJSONEqual(
+                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
+
+    def test_patch_data_payload_json(self):
+        for key, data in self.partial_data.items():
+            response = self.client.patch(
+                reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
+                content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
+            # check if updated properly
+            obj = self.get_obj(data)
+            self.assertIsNotNone(obj, key)
+            self.assertEqual(obj.pk, self.obj.pk, key)
+            self.test_get_obj_code(obj=obj, key=key)
+            self.assertJSONEqual(
+                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
+
+    def test_del_data(self, allowed=True):
+        allowed = False if self.delete_forbidden else allowed
+        response = self.client.delete(reverse(self.basename + '-detail', kwargs=self.get_kwargs()))
+        self.assertEqual(
+            response.status_code, status.HTTP_204_NO_CONTENT if allowed else status.HTTP_405_METHOD_NOT_ALLOWED,
+            response.data)
+        # check if record has/hasn't been deleted
+        if allowed:
+            self.test_get_invalid(deleted_record=True)
+        else:
+            self.test_get_obj_code()
+
+    # INVALID DATA TESTS
+
+    def test_get_invalid(self, deleted_record=False):
+        response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs(valid=deleted_record)))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.data)
+
+    def test_post_invalid_data_payload_raw(self):
+        number_of_records = len(self.model.objects.all())
+        for key, data in self.invalid_data_payload.items():
+            response = self.client.post(reverse(self.basename + '-list'), data=data)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            # check if not created
+            obj = self.get_obj(data)
+            self.assertIsNone(obj, key)
+            self.assertEqual(number_of_records, len(self.model.objects.all()))
+
+    def test_post_invalid_data_payload_json(self):
+        number_of_records = len(self.model.objects.all())
+        for key, data in self.invalid_data_payload.items():
+            response = self.client.post(
+                reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            # check if not created
+            obj = self.get_obj(data)
+            self.assertIsNone(obj, key)
+            self.assertEqual(number_of_records, len(self.model.objects.all()))
+
+    def test_put_invalid_data_payload_raw(self):
+        for key, data in self.invalid_data_payload.items():
+            response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            # check if not updated
+            obj = self.get_obj(data)
+            self.assertIsNone(obj, key)
+            self.test_get_obj_code(key=key)
+            self.test_get_obj_data(key=key)
+
+    def test_put_invalid_data_payload_json(self):
+        for key, data in self.invalid_data_payload.items():
+            response = self.client.put(
+                reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
+                content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            # check if not updated
+            obj = self.get_obj(data)
+            self.assertIsNone(obj, key)
+            self.test_get_obj_code(key=key)
+            self.test_get_obj_data(key=key)
+
+    def test_patch_invalid_data_payload_raw(self):
+        for key, data in self.invalid_partial_data.items():
+            response = self.client.patch(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            # check if not updated
+            obj = self.get_obj(data)
+            self.assertIsNone(obj, key)
+            self.test_get_obj_code(key=key)
+            self.test_get_obj_data(key=key)
+
+    def test_patch_invalid_data_payload_json(self):
+        for key, data in self.invalid_partial_data.items():
+            response = self.client.patch(
+                reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
+                content_type='application/json')
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            # check if not updated
+            obj = self.get_obj(data)
+            self.assertIsNone(obj, key)
+            self.test_get_obj_code(key=key)
+            self.test_get_obj_data(key=key)
+
+    def test_del_invalid_data(self, allowed=True):
+        allowed = False if self.delete_forbidden else allowed
+        response = self.client.delete(reverse(self.basename + '-detail', kwargs=self.get_kwargs(valid=False)))
+        self.assertEqual(
+            response.status_code, status.HTTP_404_NOT_FOUND if allowed else status.HTTP_405_METHOD_NOT_ALLOWED,
+            response.data)
+
+
+class PositionsTests(DegreesTests):
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.factory = APIRequestFactory()
+
+        cls.model = Positions
+        cls.serializer = PositionSerializer
+        cls.list_serializer = cls.serializer
+        cls.basename = 'positions'
+        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.lookup = 'pk'
+        cls.field_lookup = 'name'
+        cls.delete_forbidden = True
+
+        cls.get_random_str = lambda k: ''.join(random.choices(string.ascii_letters + string.punctuation + ' _', k=k))
+        cls.get_random_field_str = lambda field_name: ''.join(random.choices(
+            string.ascii_letters + string.punctuation + ' _',
+            k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
+
+        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.field_lookup)}
+        cls.obj = cls.model.objects.create(**cls.obj_data)
+        for i in range(3):
+            cls.model.objects.create(name=cls.get_random_field_str(cls.field_lookup))
+
+        cls.data_payload = {
+            'max length': {'name': cls.get_random_field_str(cls.field_lookup)},
+            'short': {'name': cls.get_random_str(k=1)},
+        }
+        cls.partial_data = cls.data_payload
+
+        cls.invalid_data_payload = {
+            'over max length': {'name': cls.get_random_field_str(cls.field_lookup) + 'x'},
+            'empty string': {'name': ''},
+        }
+        cls.invalid_partial_data = cls.invalid_data_payload
+
+
+class EmployeesTests(DegreesTests):
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.factory = APIRequestFactory()
+
+        cls.model = Employees
+        cls.serializer = EmployeeSerializer
+        cls.list_serializer = EmployeeListSerializer
+        cls.basename = 'employees'
+        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.lookup = 'abbreviation'
+        cls.field_lookup = 'abbreviation'
+        cls.delete_forbidden = False
+
+        cls.get_random_str = lambda k: ''.join(random.choices(string.ascii_letters + string.punctuation + ' _', k=k))
+        cls.get_random_field_str = lambda field_name: ''.join(random.choices(
+            string.ascii_letters + string.punctuation + ' _',
+            k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
+        cls.get_random_slug = lambda field_name: ''.join(random.choices(
+            string.ascii_letters + '-_', k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
+
+        cls.obj_data = {
+            'first_name': cls.get_random_field_str('first_name'),
+            'last_name': cls.get_random_field_str('last_name'),
+            cls.field_lookup: cls.get_random_slug(cls.field_lookup),
+            'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
+            'degree': Degrees.objects.create(name=cls.get_random_str(k=15)),
+            'position': Positions.objects.create(name=cls.get_random_str(k=15))
+        }
+        cls.obj = cls.model.objects.create(**cls.obj_data)
+        for i in range(0):
+            cls.model.objects.create(**{
+                'first_name': cls.get_random_field_str('first_name'),
+                'last_name': cls.get_random_field_str('last_name'),
+                cls.field_lookup: cls.get_random_slug(cls.field_lookup),
+                'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
+                'degree': Degrees.objects.create(name=cls.get_random_str(k=15)),
+                'position': Positions.objects.create(name=cls.get_random_str(k=15))
+            })
+
+        cls.basic_data = {
+            'first_name': cls.get_random_field_str('first_name'),
+            'last_name': cls.get_random_field_str('last_name'),
+            cls.field_lookup: cls.get_random_slug(cls.field_lookup),
+            'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
+            'degree': Degrees.objects.create(name=cls.get_random_str(k=15)).name,
+            'position': Positions.objects.create(name=cls.get_random_str(k=15)).name,
+            'supervisor': Employees.objects.last().abbreviation,
+        }
+        cls.data_payload = {
+            'max length': cls.basic_data,
+            'short': {
+                'first_name': cls.get_random_str(k=1),
+                'last_name': cls.get_random_str(k=1),
+                cls.field_lookup: cls.get_random_str(k=1),
+                'e_mail': cls.get_random_str(k=1),
+                'degree': Degrees.objects.create(name=cls.get_random_str(k=15)).name,
+                'position': Positions.objects.create(name=cls.get_random_str(k=15)).name,
+                'supervisor': Employees.objects.last().abbreviation,
+            },
+            'complete': {
+                'first_name': cls.get_random_field_str('first_name'),
+                'last_name': cls.get_random_field_str('last_name'),
+                cls.field_lookup: cls.get_random_slug(cls.field_lookup),
+                'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
+                'degree': Degrees.objects.create(name=cls.get_random_str(k=15)).name,
+                'position': Positions.objects.create(name=cls.get_random_str(k=15)).name,
+                'supervisor': Employees.objects.first().abbreviation,
+            }
+        }
+        cls.partial_data = {
+
+        }
+
+        cls.invalid_data_payload = {
+
+        }
+        cls.invalid_partial_data = cls.invalid_data_payload
