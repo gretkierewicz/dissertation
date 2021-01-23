@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Minor changes (Back to abbreviation str representation for Employee model - it caused some troubles with nested auto-URL creation.
   Removed not used code anymore after ParentFromURLHiddenField update)
+- Minor ParentFromURLHiddenField name (now GetParentHiddenField) and note change
 
 ### To be done:
 

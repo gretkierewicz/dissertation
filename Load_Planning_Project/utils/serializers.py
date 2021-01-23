@@ -33,16 +33,13 @@ def read_csv_files(self, request, model, lookup):
         return Response(data)
 
 
-class ParentFromURLHiddenField(HiddenField):
+class GetParentHiddenField(HiddenField):
     """
-    ParentFromURLHiddenField - Hidden Field that doesn't take value from user, but returns parent object
-    It will create filter kwargs with help of provided dictionary (matches) and resolved URL's matches.
-    Be sure that parent lookup kwarg's names match the ones configured with serializer and view.
-    If you give more matches, all will be considered as filter kwargs.
-    params:
-    queryset - object to be filtered
-    matches - dictionary of parent's lookup kwarg's names (keys) and field's names (values)
-    returns: - object filtered from the queryset (first occurrence - filtering should return one object anyway!)
+    GetParentHiddenField - Hidden Field that returns parent object pointed with URL or passed with serializer's data
+    params: queryset - object to be filtered
+    params: matches - dictionary of parent's lookup URL kwargs names (keys) and parent's fields names (values)
+    params: parent_lookup (optional) - lookup key in case of passing model instance with serializer's data
+    return: model instance
     """
     def __init__(self, queryset, matches, parent_lookup=None, **kwargs):
         self.queryset = queryset

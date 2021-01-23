@@ -6,7 +6,7 @@ from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from utils.serializers import ParentFromURLHiddenField
+from utils.serializers import GetParentHiddenField
 
 from .models import Modules, Classes, Plans
 from employees.models import Employees
@@ -41,7 +41,7 @@ class PlanSerializer(NestedHyperlinkedModelSerializer):
     )
 
     # hidden classes field - pointing parent's object
-    classes = ParentFromURLHiddenField(
+    classes = GetParentHiddenField(
         queryset=Classes.objects.all(),
         matches={
             'module_module_code': 'module__module_code',
@@ -106,7 +106,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
 
     # New type of Field made - module should be never provided by the user!
     # Requested URL should point one parent object - in this case module's code
-    module = ParentFromURLHiddenField(
+    module = GetParentHiddenField(
         # queryset that will be filtered
         queryset=Modules.objects.all(),
         # key is a parent_lookup_kwarg, value - a field to filter by
@@ -260,7 +260,7 @@ class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSeriali
         }
 
     # Requested URL should point one parent object - in this case supervisor
-    supervisor = ParentFromURLHiddenField(
+    supervisor = GetParentHiddenField(
         queryset=Employees.objects.all(),
         matches={'employee_abbreviation': 'abbreviation'},
     )
