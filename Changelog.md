@@ -1,3 +1,11 @@
+###23/01/2020
+
+- Minor changes (Back to abbreviation str representation for Employee model - it caused some troubles with nested 
+  auto-URL creation.
+  Removed not used code anymore after ParentFromURLHiddenField update)
+- Minor ParentFromURLHiddenField name (now GetParentHiddenField) and note change
+- Refactoring Tests (help: https://www.b-list.org/weblog/2007/nov/04/working-models/)
+
 ###22/01/2020
 
 - Minor updated to models

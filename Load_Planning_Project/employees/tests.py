@@ -26,37 +26,67 @@ class DegreesTests(APITestCase):
         cls.field_lookup = 'name'
         cls.delete_forbidden = True
 
-        cls.get_random_str = lambda k: ''.join(random.choices(string.ascii_letters + string.punctuation + ' _', k=k))
-        cls.get_random_field_str = lambda field_name: ''.join(random.choices(
-            string.ascii_letters + string.punctuation + ' _',
-            k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
-
-        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.field_lookup)}
+        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup)}
         cls.obj = cls.model.objects.create(**cls.obj_data)
         for i in range(3):
-            cls.model.objects.create(name=cls.get_random_field_str(cls.field_lookup))
+            cls.model.objects.create(name=cls.get_random_field_str(cls.model, cls.field_lookup))
 
         cls.data_payload = {
-            'max length': {'name': cls.get_random_field_str(cls.field_lookup)},
-            'short': {'name': cls.get_random_str(k=1)},
+            'max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup)},
+            'short': {'name': cls.get_random_str(1)},
         }
         cls.partial_data = cls.data_payload
 
         cls.invalid_data_payload = {
-            'over max length': {'name': cls.get_random_field_str(cls.field_lookup) + 'x'},
+            'over max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup) + 'x'},
             'empty string': {'name': ''},
         }
         cls.invalid_partial_data = cls.invalid_data_payload
 
-    def get_obj(self, data):
-        try:
-            return self.model.objects.get(**{self.field_lookup: data[self.field_lookup]})
-        except ObjectDoesNotExist:
-            return None
+    @classmethod
+    def get_random_str(cls, k):
+        return ''.join(random.choices(string.ascii_letters, k=k))
+
+    @classmethod
+    def get_random_field_str(cls, model, field_name):
+        return ''.join(random.choices(string.ascii_letters, k=getattr(model._meta.get_field(field_name), 'max_length')))
+
+    def get_obj(self, data=None):
+        """
+        Try to return obj by data provided or just base self.obj if no data provided
+        params data: (optional) raw dictionary data with field_lookup pointing record - if not provided: return self.obj
+        return: model instance or None if not found
+        """
+        if data:
+            try:
+                return self.model.objects.get(**{self.field_lookup: data[self.field_lookup]})
+            except ObjectDoesNotExist:
+                return None
+        else:
+            return self.obj
+
+    def get_obj_by_pk(self, pk):
+        """
+        Try to return obj by pk provided
+        params pk: pk of the object
+        return: model instance or None if not found
+        """
+        if pk:
+            try:
+                return self.model.objects.get(pk=pk)
+            except ObjectDoesNotExist:
+                return None
+        return None
 
     def get_kwargs(self, obj=None, valid=True):
+        """
+        Get kwargs to build URL
+        params obj: (optional) model instance - if not provided, self.obj is taken
+        params valid: (optional) flag - return valid kwargs or not
+        return: dictionary of URL kwargs
+        """
         obj = obj if obj else self.obj
-        return {self.lookup: getattr(obj, self.lookup)} if valid else {self.lookup: '100000'}
+        return {self.lookup: getattr(obj, self.lookup)} if valid else {self.lookup: '99999'}
 
     def test_get_list_code(self):
         response = self.client.get(reverse(self.basename + '-list'))
@@ -71,22 +101,25 @@ class DegreesTests(APITestCase):
 
     def test_get_obj_code(self, obj=None, key=None):
         response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
 
     def test_get_obj_data(self, key=None):
         response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs()))
         self.assertJSONEqual(
             json.dumps(response.data), self.serializer(instance=self.obj, context=self.context).data,
-            f"{key}: {response.data}")
+            (f"{key}: " if key else "") + f"{response.data}")
 
     def test_post_data_payload_raw(self):
         for key, data in self.data_payload.items():
             response = self.client.post(reverse(self.basename + '-list'), data=data)
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{key}: {response.data}")
-            # check if created properly
+            self.assertEqual(
+                response.status_code, status.HTTP_201_CREATED, (f"{key}: " if key else "") + f"{response.data}")
+            # try to get created model instance
             obj = self.get_obj(data)
             self.assertIsNotNone(obj, key)
+            # check response code with get method
             self.test_get_obj_code(obj=obj, key=key)
+            # check data integrity of data sent and serialized instance
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
@@ -94,23 +127,28 @@ class DegreesTests(APITestCase):
         for key, data in self.data_payload.items():
             response = self.client.post(
                 reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{key}: {response.data}")
-            # check if created properly
+            self.assertEqual(
+                response.status_code, status.HTTP_201_CREATED, (f"{key}: " if key else "") + f"{response.data}")
+            # try to get created model instance
             obj = self.get_obj(data)
             self.assertIsNotNone(obj, key)
+            # check response code with get method
             self.test_get_obj_code(obj=obj, key=key)
+            # check data integrity of data sent and serialized instance
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_put_data_payload_raw(self):
         for key, data in self.data_payload.items():
             response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
-            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
-            # check if updated properly
+            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
+            # try to get updated model instance
             obj = self.get_obj(data)
             self.assertIsNotNone(obj, key)
             self.assertEqual(obj.pk, self.obj.pk, key)
+            # check response code with get method
             self.test_get_obj_code(obj=obj, key=key)
+            # check data integrity of data sent and serialized instance
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
@@ -119,24 +157,27 @@ class DegreesTests(APITestCase):
             response = self.client.put(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
                 content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
-            # check if updated properly
+            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
+            # try to get updated model instance
             obj = self.get_obj(data)
             self.assertIsNotNone(obj, key)
             self.assertEqual(obj.pk, self.obj.pk, key)
+            # check response code with get method
             self.test_get_obj_code(obj=obj, key=key)
+            # check data integrity of data sent and serialized instance
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_patch_data_payload_raw(self):
         for key, data in self.partial_data.items():
             response = self.client.patch(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
-            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
-            # check if updated properly
-            obj = self.get_obj(data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
+            # try to get updated model instance
+            obj = self.get_obj_by_pk(self.obj.pk)
             self.assertIsNotNone(obj, key)
-            self.assertEqual(obj.pk, self.obj.pk, key)
+            # check response code with get method
             self.test_get_obj_code(obj=obj, key=key)
+            # check data integrity of data sent and serialized instance
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
@@ -145,26 +186,26 @@ class DegreesTests(APITestCase):
             response = self.client.patch(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
                 content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_200_OK, f"{key}: {response.data}")
-            # check if updated properly
-            obj = self.get_obj(data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
+            # try to get updated model instance
+            obj = self.get_obj_by_pk(self.obj.pk)
             self.assertIsNotNone(obj, key)
-            self.assertEqual(obj.pk, self.obj.pk, key)
+            # check response code with get method
             self.test_get_obj_code(obj=obj, key=key)
+            # check data integrity of data sent and serialized instance
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
-    def test_del_data(self, allowed=True):
-        allowed = False if self.delete_forbidden else allowed
+    def test_del_data(self):
         response = self.client.delete(reverse(self.basename + '-detail', kwargs=self.get_kwargs()))
         self.assertEqual(
-            response.status_code, status.HTTP_204_NO_CONTENT if allowed else status.HTTP_405_METHOD_NOT_ALLOWED,
-            response.data)
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED if self.delete_forbidden else status.HTTP_204_NO_CONTENT, response.data)
         # check if record has/hasn't been deleted
-        if allowed:
-            self.test_get_invalid(deleted_record=True)
-        else:
+        if self.delete_forbidden:
             self.test_get_obj_code()
+        else:
+            self.test_get_invalid(deleted_record=True)
 
     # INVALID DATA TESTS
 
@@ -173,34 +214,36 @@ class DegreesTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.data)
 
     def test_post_invalid_data_payload_raw(self):
-        number_of_records = len(self.model.objects.all())
+        records = [_.pk for _ in self.model.objects.all()]
         for key, data in self.invalid_data_payload.items():
             response = self.client.post(reverse(self.basename + '-list'), data=data)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            self.assertEqual(
+                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
             # check if not created
             obj = self.get_obj(data)
             self.assertIsNone(obj, key)
-            self.assertEqual(number_of_records, len(self.model.objects.all()))
+            # double check records' pks
+            self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
 
     def test_post_invalid_data_payload_json(self):
-        number_of_records = len(self.model.objects.all())
+        records = [_.pk for _ in self.model.objects.all()]
         for key, data in self.invalid_data_payload.items():
             response = self.client.post(
                 reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
+            self.assertEqual(
+                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
             # check if not created
             obj = self.get_obj(data)
             self.assertIsNone(obj, key)
-            self.assertEqual(number_of_records, len(self.model.objects.all()))
+            # double check records' pks
+            self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
 
     def test_put_invalid_data_payload_raw(self):
         for key, data in self.invalid_data_payload.items():
             response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
-            # check if not updated
-            obj = self.get_obj(data)
-            self.assertIsNone(obj, key)
-            self.test_get_obj_code(key=key)
+            self.assertEqual(
+                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
+            # check if self.obj was not changed
             self.test_get_obj_data(key=key)
 
     def test_put_invalid_data_payload_json(self):
@@ -208,21 +251,17 @@ class DegreesTests(APITestCase):
             response = self.client.put(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
                 content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
-            # check if not updated
-            obj = self.get_obj(data)
-            self.assertIsNone(obj, key)
-            self.test_get_obj_code(key=key)
+            self.assertEqual(
+                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
+            # check if self.obj was not changed
             self.test_get_obj_data(key=key)
 
     def test_patch_invalid_data_payload_raw(self):
         for key, data in self.invalid_partial_data.items():
             response = self.client.patch(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
-            # check if not updated
-            obj = self.get_obj(data)
-            self.assertIsNone(obj, key)
-            self.test_get_obj_code(key=key)
+            self.assertEqual(
+                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
+            # check if self.obj was not changed
             self.test_get_obj_data(key=key)
 
     def test_patch_invalid_data_payload_json(self):
@@ -230,19 +269,16 @@ class DegreesTests(APITestCase):
             response = self.client.patch(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
                 content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, f"{key}: {response.data}")
-            # check if not updated
-            obj = self.get_obj(data)
-            self.assertIsNone(obj, key)
-            self.test_get_obj_code(key=key)
+            self.assertEqual(
+                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
+            # check if self.obj was not changed
             self.test_get_obj_data(key=key)
 
-    def test_del_invalid_data(self, allowed=True):
-        allowed = False if self.delete_forbidden else allowed
+    def test_del_invalid_data(self):
         response = self.client.delete(reverse(self.basename + '-detail', kwargs=self.get_kwargs(valid=False)))
         self.assertEqual(
-            response.status_code, status.HTTP_404_NOT_FOUND if allowed else status.HTTP_405_METHOD_NOT_ALLOWED,
-            response.data)
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED if self.delete_forbidden else status.HTTP_404_NOT_FOUND, response.data)
 
 
 class PositionsTests(DegreesTests):
@@ -260,24 +296,19 @@ class PositionsTests(DegreesTests):
         cls.field_lookup = 'name'
         cls.delete_forbidden = True
 
-        cls.get_random_str = lambda k: ''.join(random.choices(string.ascii_letters + string.punctuation + ' _', k=k))
-        cls.get_random_field_str = lambda field_name: ''.join(random.choices(
-            string.ascii_letters + string.punctuation + ' _',
-            k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
-
-        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.field_lookup)}
+        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup)}
         cls.obj = cls.model.objects.create(**cls.obj_data)
         for i in range(3):
-            cls.model.objects.create(name=cls.get_random_field_str(cls.field_lookup))
+            cls.model.objects.create(name=cls.get_random_field_str(cls.model, cls.field_lookup))
 
         cls.data_payload = {
-            'max length': {'name': cls.get_random_field_str(cls.field_lookup)},
-            'short': {'name': cls.get_random_str(k=1)},
+            'max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup)},
+            'short': {'name': cls.get_random_str(1)},
         }
         cls.partial_data = cls.data_payload
 
         cls.invalid_data_payload = {
-            'over max length': {'name': cls.get_random_field_str(cls.field_lookup) + 'x'},
+            'over max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup) + 'x'},
             'empty string': {'name': ''},
         }
         cls.invalid_partial_data = cls.invalid_data_payload
@@ -298,67 +329,61 @@ class EmployeesTests(DegreesTests):
         cls.field_lookup = 'abbreviation'
         cls.delete_forbidden = False
 
-        cls.get_random_str = lambda k: ''.join(random.choices(string.ascii_letters + string.punctuation + ' _', k=k))
-        cls.get_random_field_str = lambda field_name: ''.join(random.choices(
-            string.ascii_letters + string.punctuation + ' _',
-            k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
-        cls.get_random_slug = lambda field_name: ''.join(random.choices(
-            string.ascii_letters + '-_', k=getattr(cls.model._meta.get_field(field_name), 'max_length')))
-
-        cls.obj_data = {
-            'first_name': cls.get_random_field_str('first_name'),
-            'last_name': cls.get_random_field_str('last_name'),
-            cls.field_lookup: cls.get_random_slug(cls.field_lookup),
-            'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
-            'degree': Degrees.objects.create(name=cls.get_random_str(k=15)),
-            'position': Positions.objects.create(name=cls.get_random_str(k=15))
-        }
-        cls.obj = cls.model.objects.create(**cls.obj_data)
+        cls.obj = cls.model.objects.create(**{
+                'first_name': cls.get_random_field_str(cls.model, 'first_name'),
+                'last_name': cls.get_random_field_str(cls.model, 'last_name'),
+                cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup),
+                'e_mail': cls.get_random_field_str(cls.model, 'e_mail')[:-6] + '@ab.ba',
+                'degree': Degrees.objects.create(name=cls.get_random_str(5)),
+                'position': Positions.objects.create(name=cls.get_random_str(5))
+            })
         for i in range(0):
             cls.model.objects.create(**{
-                'first_name': cls.get_random_field_str('first_name'),
-                'last_name': cls.get_random_field_str('last_name'),
-                cls.field_lookup: cls.get_random_slug(cls.field_lookup),
-                'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
-                'degree': Degrees.objects.create(name=cls.get_random_str(k=15)),
-                'position': Positions.objects.create(name=cls.get_random_str(k=15))
+                'first_name': cls.get_random_field_str(cls.model, 'first_name'),
+                'last_name': cls.get_random_field_str(cls.model, 'last_name'),
+                cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup),
+                'e_mail': cls.get_random_field_str(cls.model, 'e_mail')[:-6] + '@ab.ba',
+                'degree': Degrees.objects.create(name=cls.get_random_str(5)),
+                'position': Positions.objects.create(name=cls.get_random_str(5))
             })
 
-        cls.basic_data = {
-            'first_name': cls.get_random_field_str('first_name'),
-            'last_name': cls.get_random_field_str('last_name'),
-            cls.field_lookup: cls.get_random_slug(cls.field_lookup),
-            'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
-            'degree': Degrees.objects.create(name=cls.get_random_str(k=15)).name,
-            'position': Positions.objects.create(name=cls.get_random_str(k=15)).name,
-            'supervisor': Employees.objects.last().abbreviation,
-        }
+        def create_simple_data():
+            return {
+                'first_name': cls.get_random_field_str(cls.model, 'first_name'),
+                'last_name': cls.get_random_field_str(cls.model, 'last_name'),
+                'abbreviation': cls.get_random_field_str(cls.model, 'abbreviation'),
+                'e_mail': cls.get_random_field_str(cls.model, 'e_mail')[:-6] + '@ab.ba',
+                'degree': Degrees.objects.create(name=cls.get_random_str(5)).name,
+                'position': Positions.objects.create(name=cls.get_random_str(5)).name,
+                'supervisor': None,
+            }
+
         cls.data_payload = {
-            'max length': cls.basic_data,
-            'short': {
-                'first_name': cls.get_random_str(k=1),
-                'last_name': cls.get_random_str(k=1),
-                cls.field_lookup: cls.get_random_str(k=1),
-                'e_mail': cls.get_random_str(k=1),
-                'degree': Degrees.objects.create(name=cls.get_random_str(k=15)).name,
-                'position': Positions.objects.create(name=cls.get_random_str(k=15)).name,
-                'supervisor': Employees.objects.last().abbreviation,
+            'max length': create_simple_data(),
+            'short strings': {
+                'first_name': cls.get_random_str(10),
+                'last_name': cls.get_random_str(10),
+                cls.field_lookup: cls.get_random_str(2),
+                'e_mail': cls.get_random_str(10) + '@ab.ba',
+                'degree': Degrees.objects.create(name=cls.get_random_str(15)).name,
+                'position': Positions.objects.create(name=cls.get_random_str(15)).name,
+                'supervisor': None,
             },
-            'complete': {
-                'first_name': cls.get_random_field_str('first_name'),
-                'last_name': cls.get_random_field_str('last_name'),
-                cls.field_lookup: cls.get_random_slug(cls.field_lookup),
-                'e_mail': cls.get_random_slug('e_mail')[:-6] + '@ab.ba',
-                'degree': Degrees.objects.create(name=cls.get_random_str(k=15)).name,
-                'position': Positions.objects.create(name=cls.get_random_str(k=15)).name,
+            'all fields': {
+                **create_simple_data(),
                 'supervisor': Employees.objects.first().abbreviation,
+                'year_of_studies': random.randint(1, 100),
+                'is_procedure_for_a_doctoral_degree_approved': random.choices([True, False])[0],
+                'has_scholarship': random.choices([True, False])[0],
             }
         }
         cls.partial_data = {
-
+            'max length first_name': {'first_name': cls.get_random_field_str(cls.model, 'first_name')}
         }
 
         cls.invalid_data_payload = {
-
+            'first_name empty': {**create_simple_data(), 'first_name': ''}
         }
-        cls.invalid_partial_data = cls.invalid_data_payload
+        cls.invalid_partial_data = {
+            'first_name empty': {'first_name': ''}
+        }

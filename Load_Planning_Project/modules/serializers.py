@@ -150,9 +150,6 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         classes = super().update(instance, validated_data)
         if self.initial_data.get('plans'):
             for plans_data in self.initial_data.get('plans'):
-                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
-                plans_data['class_name'] = classes.name
-                plans_data['module_module_code'] = classes.module.module_code
                 # additionally passing classes instance for plans hours validation
                 plans_data['classes'] = classes
                 serializer = PlanSerializer(
@@ -202,7 +199,7 @@ class ModuleSerializer(HyperlinkedModelSerializer):
         module = super().create(validated_data)
         if self.initial_data.get('classes'):
             for classes_data in self.initial_data.get('classes'):
-                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
+                # additionally passing module instance for classes hidden field
                 classes_data['module'] = module
                 serializer = ClassSerializer(instance=module.classes.filter(name=classes_data.get('name')).first(),
                                              data=classes_data)
@@ -218,7 +215,7 @@ class ModuleSerializer(HyperlinkedModelSerializer):
         module = super().update(instance, validated_data)
         if self.initial_data.get('classes'):
             for classes_data in self.initial_data.get('classes'):
-                # as there is no valid request url to check - need to pass kwargs for ParentURL Field filtering
+                # additionally passing module instance for classes hidden field
                 classes_data['module'] = module
                 serializer = ClassSerializer(instance=module.classes.filter(name=classes_data.get('name')).first(),
                                              data=classes_data)
