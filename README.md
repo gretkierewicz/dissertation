@@ -13,6 +13,7 @@ Local with SQLite DB
 
 - Refactoring Tests
 - Urls / minor namespace changes
+- Tests / additional kwargs in test for future scenarios tests
 
 ### To be done:
 
