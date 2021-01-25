@@ -12,6 +12,7 @@ Local with SQLite DB
 ###25/01/2020
 
 - Refactoring Tests
+- Urls / minor namespace changes
 
 ### To be done:
 

@@ -19,49 +19,49 @@ from django.urls import path, include
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 
 from . import views
-from employees import views as e_views
-from modules import views as m_views
+from employees import views as employees_views
+from modules import views as modules_views
 
 router = DefaultRouter()
-router.register(r'degrees', e_views.DegreeViewSet)
+router.register(r'degrees', employees_views.DegreeViewSet)
 ## generates:
 # /degrees/
 # /degrees/{position_pk}
 
-router.register(r'positions', e_views.PositionViewSet)
+router.register(r'positions', employees_views.PositionViewSet)
 ## generates:
 # /positions/
 # /positions/{position_pk}
 
-router.register(r'pensum', e_views.PensumViewSet)
+router.register(r'pensum', employees_views.PensumViewSet)
 ## generates
 # /pensum/
 # /pensum/{pensum_pk}
 
-router.register(r'employees', e_views.EmployeeViewSet)
+router.register(r'employees', employees_views.EmployeeViewSet)
 ## generates:
 # /employees/
 # /employees/{employee_abbreviation}
 employees_router = NestedDefaultRouter(router, r'employees', lookup='employee')
-employees_router.register(r'modules', m_views.EmployeeModuleViewSet, basename='employee-modules')
+employees_router.register(r'modules', modules_views.EmployeeModuleViewSet, basename='employee-modules')
 ## generates:
 # /employees/{employee_abbreviation}/modules/
 # /employees/{employee_abbreviation}/modules/{module_code}/
-employees_router.register(r'plans', m_views.EmployeePlanViewSet, basename='employee-plans')
+employees_router.register(r'plans', modules_views.EmployeePlanViewSet, basename='employee-plans')
 ## generates:
 # /employees/{employee_abbreviation}/plans/
 
-router.register(r'modules', m_views.ModuleViewSet)
+router.register(r'modules', modules_views.ModuleViewSet)
 ## generates:
 # /modules/
 # /modules/{module_code}
 modules_router = NestedDefaultRouter(router, r'modules', lookup='module')
-modules_router.register(r'classes', m_views.ClassViewSet, basename='classes')
+modules_router.register(r'classes', modules_views.ClassViewSet, basename='classes')
 ## generates:
 # /modules/{module_code}/classes/
 # /modules/{module_code}/classes/{class_name}
 classes_router = NestedDefaultRouter(modules_router, r'classes', lookup='class')
-classes_router.register(r'employees', m_views.PlanViewSet, basename='plans')
+classes_router.register(r'employees', modules_views.PlanViewSet, basename='plans')
 ## generates:
 # /modules/{module_code}/classes/{class_name}/employees/
 # /modules/{module_code}/classes/{class_name}/employees/{employee}
