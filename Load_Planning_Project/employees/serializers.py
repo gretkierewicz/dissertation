@@ -142,11 +142,7 @@ class EmployeeSerializer(ModelSerializer):
 
     # custom validator for supervisor field - not allowing setting employee as it's supervisor
     def validate_supervisor(self, data):
-        if data:
-            # supervisor's sent field is compared to user's url - cannot matches!
-            if self.initial_data.get('supervisor') == self.context.get('request').build_absolute_uri():
-                raise ValidationError("Cannot self reference that field!")
-            # fix for uploading csv files
-            if self.initial_data.get('abbreviation') == data.abbreviation:
-                raise ValidationError("Cannot self reference that field!")
+        abbreviation = self.initial_data.get('abbreviation') or (self.instance.abbreviation if self.instance else None)
+        if data and abbreviation and abbreviation == data.abbreviation:
+            raise ValidationError("Employee cannot be it's own Supervisor")
         return data
