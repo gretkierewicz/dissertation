@@ -15,6 +15,7 @@ Local with SQLite DB
 - Urls / minor namespace changes
 - Tests / additional kwargs in test for future scenarios tests
 - FIX / Employee serializier Supervisor validation for PATCH method
+- Tests / Basic tests for Pensum View
 
 ### To be done:
 

@@ -246,7 +246,7 @@ class DegreesTests(APITestCase):
             self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
 
     def test_put_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
-        for msg, data in (payload_data or self.invalid_post_data_payload).items():
+        for msg, data in (payload_data or self.invalid_put_data_payload).items():
             response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs(base_obj)), data=data)
             self.assertEqual(
                 response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
@@ -254,7 +254,7 @@ class DegreesTests(APITestCase):
             self.test_get_obj_data(obj=base_obj, msg=msg)
 
     def test_put_invalid_data_payload_json(self, base_obj=None, payload_data=None):
-        for msg, data in (payload_data or self.invalid_post_data_payload).items():
+        for msg, data in (payload_data or self.invalid_put_data_payload).items():
             response = self.client.put(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs(base_obj)), data=json.dumps(data),
                 content_type='application/json')
@@ -397,25 +397,7 @@ class EmployeesTests(DegreesTests):
             }
         }
         
-        cls.valid_put_data_payload = {
-            'max length': create_payload_data(),
-            'short strings': {
-                first_name: cls.get_random_str(1),
-                last_name: cls.get_random_str(1),
-                abbreviation: cls.get_random_str(1),
-                e_mail: cls.get_random_str(1) + '@ab.ba',
-                degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
-                position: Positions.objects.create(name=cls.get_random_str(5)).name,
-                supervisor: None,
-            },
-            'all fields': {
-                **create_payload_data(),
-                supervisor: Employees.objects.create(**create_model_data()).abbreviation,
-                year_of_studies: random.randint(1, 100),
-                is_procedure_for_a_doctoral_degree_approved: random.choices([True, False])[0],
-                has_scholarship: random.choices([True, False])[0],
-            }
-        }
+        cls.valid_put_data_payload = cls.valid_post_data_payload
         
         cls.valid_partial_data = {
             'max length ' + first_name: {first_name: cls.get_random_field_str(cls.model, first_name)}
@@ -428,12 +410,11 @@ class EmployeesTests(DegreesTests):
                 **create_payload_data(), 'abbreviation': rand_abbreviation, 'supervisor': rand_abbreviation}
         }
 
-        rand_abbreviation = cls.get_random_field_str(cls.model, abbreviation)
         cls.invalid_put_data_payload = {
+            **cls.invalid_post_data_payload,
             'self supervising with old abbreviation': {
-                **create_payload_data(), 'abbreviation': cls.obj.abbreviation, 'supervisor': cls.obj.abbreviation},
-            'self supervising with new abbreviation': {
-                **create_payload_data(), 'abbreviation': rand_abbreviation, 'supervisor': rand_abbreviation}
+                **create_payload_data(), 'abbreviation': cls.obj.abbreviation, 'supervisor': cls.obj.abbreviation
+            }
         }
         for field in (first_name, last_name, abbreviation, e_mail):
             cls.invalid_partial_data['empty ' + field] = {**create_payload_data(), field: ''}
@@ -447,3 +428,172 @@ class EmployeesTests(DegreesTests):
             cls.invalid_partial_data['empty ' + field] = {field: ''}
             cls.invalid_partial_data['too long ' + field] = {
                 field: cls.get_random_field_str(cls.model, first_name) + cls.get_random_str(1)}
+
+
+class PensumTests(DegreesTests):
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.factory = APIRequestFactory()
+
+        name = 'name'
+        value = 'value'
+        limit = 'limit'
+        degrees = 'degrees'
+        positions = 'positions'
+        year_of_studies = 'year_of_studies'
+        year_condition = 'year_condition'
+        is_procedure_for_a_doctoral_degree_approved = 'is_procedure_for_a_doctoral_degree_approved'
+        has_scholarship = 'has_scholarship'
+
+        cls.model = Pensum
+        cls.serializer = PensumSerializer
+        cls.list_serializer = cls.serializer
+        cls.basename = 'pensum'
+        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.lookup = 'pk'
+        cls.field_lookup = name
+        cls.delete_forbidden = False
+
+        def create_model_data():
+            return {
+                name: cls.get_random_field_str(cls.model, name),
+                value: random.randint(1, 500),
+                limit: random.randint(501, 1000),
+            }
+
+        cls.obj = cls.model.objects.create(**create_model_data())
+        cls.obj.degrees.create(name=cls.get_random_str(15))
+        cls.obj.positions.create(name=cls.get_random_str(15))
+        cls.obj.degrees.create(name=cls.get_random_str(15))
+        cls.obj.positions.create(name=cls.get_random_str(15))
+        for i in range(3):
+            pensum = cls.model.objects.create(**create_model_data())
+            pensum.degrees.create(name=cls.get_random_str(15))
+            pensum.positions.create(name=cls.get_random_str(15))
+            pensum.degrees.create(name=cls.get_random_str(15))
+            pensum.positions.create(name=cls.get_random_str(15))
+
+        duplicate = cls.model.objects.create(**{
+            **create_model_data(),
+            year_of_studies: random.randint(1, 20),
+            year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
+            is_procedure_for_a_doctoral_degree_approved: random.choices(Pensum.DOCTORAL_PROCEDURE_CHOICES)[0][0],
+            has_scholarship: random.choices(Pensum.SCHOLARSHIP_CHOICES)[0][0],
+        })
+        duplicate.degrees.create(name=cls.get_random_str(15))
+        duplicate.positions.create(name=cls.get_random_str(15))
+
+        def create_payload_data():
+            return {
+                name: cls.get_random_field_str(cls.model, name),
+                value: random.randint(1, 500),
+                limit: random.randint(501, 1000),
+                degrees: [
+                    Degrees.objects.create(name=cls.get_random_str(15)).name,
+                    Degrees.objects.create(name=cls.get_random_str(15)).name
+                ],
+                positions: [
+                    Positions.objects.create(name=cls.get_random_str(15)).name,
+                    Positions.objects.create(name=cls.get_random_str(15)).name
+                ],
+            }
+
+        cls.valid_post_data_payload = {
+            'max length': {**create_payload_data()},
+            'short': {**create_payload_data(), 'name': cls.get_random_str(1)},
+            'same ' + degrees + ' & ' + positions + ' but different ' + year_condition + ' & ' + year_of_studies: {
+                **create_payload_data(),
+                degrees: [_.name for _ in cls.obj.degrees.all()],
+                positions: [_.name for _ in cls.obj.positions.all()],
+                year_of_studies: random.randint(1, 20),
+                year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
+            },
+            'completed data': {
+                **create_payload_data(),
+                year_of_studies: random.randint(1, 20),
+                year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
+                is_procedure_for_a_doctoral_degree_approved: random.choices(Pensum.DOCTORAL_PROCEDURE_CHOICES)[0][0],
+                has_scholarship: random.choices(Pensum.SCHOLARSHIP_CHOICES)[0][0]
+            }
+        }
+
+        cls.valid_put_data_payload = cls.valid_post_data_payload
+
+        cls.valid_partial_data = {
+            'max length ' + name: {name: cls.get_random_field_str(cls.model, name)},
+            'min ' + value: {value: 0},
+            'min ' + limit: {limit: 1},
+            'high ' + limit: {limit: 2000},
+            'high ' + value: {value: 1999},
+        }
+
+        cls.invalid_post_data_payload = {
+            'too long ' + name: {
+                **create_payload_data(),
+                name: cls.get_random_field_str(cls.model, name) + cls.get_random_str(1)},
+            'empty ' + name: {**create_payload_data(), name: ''},
+            'duplicate ' + degrees + '-' + positions: {
+                **create_payload_data(),
+                degrees: [cls.obj.degrees.first().name],
+                positions: [cls.obj.positions.first().name]
+            },
+            'duplicate ' + year_of_studies + ' and ' + year_condition: {
+                **create_payload_data(),
+                degrees: [cls.obj.degrees.first().name],
+                positions: [cls.obj.positions.first().name],
+                year_of_studies: cls.obj.year_of_studies,
+                year_condition: cls.obj.year_condition,
+            }
+        }
+
+        cls.invalid_put_data_payload = {
+            'duplicate ' + degrees + '-' + positions: {
+                **create_payload_data(),
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name]
+            },
+            'duplicate ' + year_of_studies + ' and ' + year_condition: {
+                **create_payload_data(),
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+                year_of_studies: duplicate.year_of_studies,
+                year_condition: duplicate.year_condition,
+            },
+            'duplicate ' + is_procedure_for_a_doctoral_degree_approved: {
+                **create_payload_data(),
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+                is_procedure_for_a_doctoral_degree_approved: duplicate.is_procedure_for_a_doctoral_degree_approved,
+            },
+            'duplicate ' + has_scholarship: {
+                **create_payload_data(),
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+                has_scholarship: duplicate.has_scholarship,
+            }
+        }
+
+        cls.invalid_partial_data = {
+            **cls.invalid_post_data_payload,
+            'duplicate ' + degrees + '-' + positions: {
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+            },
+            'duplicate ' + year_of_studies + ' and ' + year_condition: {
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+                year_of_studies: duplicate.year_of_studies,
+                year_condition: duplicate.year_condition,
+            },
+            'duplicate ' + is_procedure_for_a_doctoral_degree_approved: {\
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+                is_procedure_for_a_doctoral_degree_approved: duplicate.is_procedure_for_a_doctoral_degree_approved,
+            },
+            'duplicate ' + has_scholarship: {
+                degrees: [duplicate.degrees.first().name],
+                positions: [duplicate.positions.first().name],
+                has_scholarship: duplicate.is_procedure_for_a_doctoral_degree_approved,
+            }
+        }
