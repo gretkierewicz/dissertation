@@ -31,17 +31,21 @@ class DegreesTests(APITestCase):
         for i in range(3):
             cls.model.objects.create(name=cls.get_random_field_str(cls.model, cls.field_lookup))
 
-        cls.data_payload = {
+        cls.valid_post_data_payload = {
             'max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup)},
             'short': {'name': cls.get_random_str(1)},
         }
-        cls.partial_data = cls.data_payload
 
-        cls.invalid_data_payload = {
+        cls.valid_put_data_payload = cls.valid_post_data_payload
+        cls.valid_partial_data = cls.valid_post_data_payload
+
+        cls.invalid_post_data_payload = {
             'over max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup) + 'x'},
             'empty string': {'name': ''},
         }
-        cls.invalid_partial_data = cls.invalid_data_payload
+
+        cls.invalid_put_data_payload = cls.invalid_post_data_payload
+        cls.invalid_partial_data = cls.invalid_post_data_payload
 
     @classmethod
     def get_random_str(cls, k):
@@ -110,7 +114,7 @@ class DegreesTests(APITestCase):
             (f"{key}: " if key else "") + f"{response.data}")
 
     def test_post_data_payload_raw(self):
-        for key, data in self.data_payload.items():
+        for key, data in self.valid_post_data_payload.items():
             response = self.client.post(reverse(self.basename + '-list'), data=data)
             self.assertEqual(
                 response.status_code, status.HTTP_201_CREATED, (f"{key}: " if key else "") + f"{response.data}")
@@ -124,7 +128,7 @@ class DegreesTests(APITestCase):
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_post_data_payload_json(self):
-        for key, data in self.data_payload.items():
+        for key, data in self.valid_post_data_payload.items():
             response = self.client.post(
                 reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
             self.assertEqual(
@@ -139,8 +143,9 @@ class DegreesTests(APITestCase):
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_put_data_payload_raw(self):
-        for key, data in self.data_payload.items():
-            response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
+        obj = None
+        for key, data in self.valid_post_data_payload.items():
+            response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)), data=data)
             self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
             # try to get updated model instance
             obj = self.get_obj(data)
@@ -153,9 +158,10 @@ class DegreesTests(APITestCase):
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_put_data_payload_json(self):
-        for key, data in self.data_payload.items():
+        obj = None
+        for key, data in self.valid_post_data_payload.items():
             response = self.client.put(
-                reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
+                reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)), data=json.dumps(data),
                 content_type='application/json')
             self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
             # try to get updated model instance
@@ -169,7 +175,7 @@ class DegreesTests(APITestCase):
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_patch_data_payload_raw(self):
-        for key, data in self.partial_data.items():
+        for key, data in self.valid_partial_data.items():
             response = self.client.patch(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
             self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{key}: " if key else "") + f"{response.data}")
             # try to get updated model instance
@@ -182,7 +188,7 @@ class DegreesTests(APITestCase):
                 json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, key)
 
     def test_patch_data_payload_json(self):
-        for key, data in self.partial_data.items():
+        for key, data in self.valid_partial_data.items():
             response = self.client.patch(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
                 content_type='application/json')
@@ -215,7 +221,7 @@ class DegreesTests(APITestCase):
 
     def test_post_invalid_data_payload_raw(self):
         records = [_.pk for _ in self.model.objects.all()]
-        for key, data in self.invalid_data_payload.items():
+        for key, data in self.invalid_post_data_payload.items():
             response = self.client.post(reverse(self.basename + '-list'), data=data)
             self.assertEqual(
                 response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
@@ -227,7 +233,7 @@ class DegreesTests(APITestCase):
 
     def test_post_invalid_data_payload_json(self):
         records = [_.pk for _ in self.model.objects.all()]
-        for key, data in self.invalid_data_payload.items():
+        for key, data in self.invalid_post_data_payload.items():
             response = self.client.post(
                 reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
             self.assertEqual(
@@ -239,7 +245,7 @@ class DegreesTests(APITestCase):
             self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
 
     def test_put_invalid_data_payload_raw(self):
-        for key, data in self.invalid_data_payload.items():
+        for key, data in self.invalid_post_data_payload.items():
             response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=data)
             self.assertEqual(
                 response.status_code, status.HTTP_400_BAD_REQUEST, (f"{key}: " if key else "") + f"{response.data}")
@@ -247,7 +253,7 @@ class DegreesTests(APITestCase):
             self.test_get_obj_data(key=key)
 
     def test_put_invalid_data_payload_json(self):
-        for key, data in self.invalid_data_payload.items():
+        for key, data in self.invalid_post_data_payload.items():
             response = self.client.put(
                 reverse(self.basename + '-detail', kwargs=self.get_kwargs()), data=json.dumps(data),
                 content_type='application/json')
@@ -301,17 +307,21 @@ class PositionsTests(DegreesTests):
         for i in range(3):
             cls.model.objects.create(name=cls.get_random_field_str(cls.model, cls.field_lookup))
 
-        cls.data_payload = {
+        cls.valid_post_data_payload = {
             'max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup)},
             'short': {'name': cls.get_random_str(1)},
         }
-        cls.partial_data = cls.data_payload
 
-        cls.invalid_data_payload = {
+        cls.valid_put_data_payload = cls.valid_post_data_payload
+        cls.valid_partial_data = cls.valid_post_data_payload
+
+        cls.invalid_post_data_payload = {
             'over max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup) + 'x'},
             'empty string': {'name': ''},
         }
-        cls.invalid_partial_data = cls.invalid_data_payload
+
+        cls.invalid_put_data_payload = cls.invalid_post_data_payload
+        cls.invalid_partial_data = cls.invalid_post_data_payload
 
 
 class EmployeesTests(DegreesTests):
@@ -320,70 +330,118 @@ class EmployeesTests(DegreesTests):
         cls.client = APIClient()
         cls.factory = APIRequestFactory()
 
+        first_name = 'first_name'
+        last_name = 'last_name'
+        abbreviation = 'abbreviation'
+        e_mail = 'e_mail'
+        degree = 'degree'
+        position = 'position'
+        supervisor = 'supervisor'
+        year_of_studies = 'year_of_studies'
+        is_procedure_for_a_doctoral_degree_approved = 'is_procedure_for_a_doctoral_degree_approved'
+        has_scholarship = 'has_scholarship'
+
         cls.model = Employees
         cls.serializer = EmployeeSerializer
         cls.list_serializer = EmployeeListSerializer
         cls.basename = 'employees'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
-        cls.lookup = 'abbreviation'
-        cls.field_lookup = 'abbreviation'
+        cls.lookup = abbreviation
+        cls.field_lookup = cls.lookup
         cls.delete_forbidden = False
 
-        cls.obj = cls.model.objects.create(**{
-                'first_name': cls.get_random_field_str(cls.model, 'first_name'),
-                'last_name': cls.get_random_field_str(cls.model, 'last_name'),
-                cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup),
-                'e_mail': cls.get_random_field_str(cls.model, 'e_mail')[:-6] + '@ab.ba',
-                'degree': Degrees.objects.create(name=cls.get_random_str(5)),
-                'position': Positions.objects.create(name=cls.get_random_str(5))
-            })
-        for i in range(0):
-            cls.model.objects.create(**{
-                'first_name': cls.get_random_field_str(cls.model, 'first_name'),
-                'last_name': cls.get_random_field_str(cls.model, 'last_name'),
-                cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup),
-                'e_mail': cls.get_random_field_str(cls.model, 'e_mail')[:-6] + '@ab.ba',
-                'degree': Degrees.objects.create(name=cls.get_random_str(5)),
-                'position': Positions.objects.create(name=cls.get_random_str(5))
-            })
-
-        def create_simple_data():
+        def create_model_data():
             return {
-                'first_name': cls.get_random_field_str(cls.model, 'first_name'),
-                'last_name': cls.get_random_field_str(cls.model, 'last_name'),
-                'abbreviation': cls.get_random_field_str(cls.model, 'abbreviation'),
-                'e_mail': cls.get_random_field_str(cls.model, 'e_mail')[:-6] + '@ab.ba',
-                'degree': Degrees.objects.create(name=cls.get_random_str(5)).name,
-                'position': Positions.objects.create(name=cls.get_random_str(5)).name,
+                first_name: cls.get_random_field_str(cls.model, first_name),
+                last_name: cls.get_random_field_str(cls.model, last_name),
+                abbreviation: cls.get_random_field_str(cls.model, abbreviation),
+                e_mail: cls.get_random_field_str(cls.model, e_mail)[:-6] + '@ab.ba',
+                degree: Degrees.objects.create(name=cls.get_random_str(5)),
+                position: Positions.objects.create(name=cls.get_random_str(5))
+            }
+
+        cls.obj = cls.model.objects.create(**create_model_data())
+        for i in range(3):
+            cls.model.objects.create(**create_model_data())
+
+        def create_payload_data():
+            return {
+                first_name: cls.get_random_field_str(cls.model, first_name),
+                last_name: cls.get_random_field_str(cls.model, last_name),
+                abbreviation: cls.get_random_field_str(cls.model, abbreviation),
+                e_mail: cls.get_random_field_str(cls.model, e_mail)[:-6] + '@ab.ba',
+                degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
+                position: Positions.objects.create(name=cls.get_random_str(5)).name,
                 'supervisor': None,
             }
 
-        cls.data_payload = {
-            'max length': create_simple_data(),
+        cls.valid_post_data_payload = {
+            'max length': create_payload_data(),
             'short strings': {
-                'first_name': cls.get_random_str(10),
-                'last_name': cls.get_random_str(10),
-                cls.field_lookup: cls.get_random_str(2),
-                'e_mail': cls.get_random_str(10) + '@ab.ba',
-                'degree': Degrees.objects.create(name=cls.get_random_str(15)).name,
-                'position': Positions.objects.create(name=cls.get_random_str(15)).name,
-                'supervisor': None,
+                first_name: cls.get_random_str(1),
+                last_name: cls.get_random_str(1),
+                abbreviation: cls.get_random_str(1),
+                e_mail: cls.get_random_str(1) + '@ab.ba',
+                degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
+                position: Positions.objects.create(name=cls.get_random_str(5)).name,
+                supervisor: None,
             },
             'all fields': {
-                **create_simple_data(),
-                'supervisor': Employees.objects.first().abbreviation,
-                'year_of_studies': random.randint(1, 100),
-                'is_procedure_for_a_doctoral_degree_approved': random.choices([True, False])[0],
-                'has_scholarship': random.choices([True, False])[0],
+                **create_payload_data(),
+                supervisor: Employees.objects.create(**create_model_data()).abbreviation,
+                year_of_studies: random.randint(1, 100),
+                is_procedure_for_a_doctoral_degree_approved: random.choices([True, False])[0],
+                has_scholarship: random.choices([True, False])[0],
             }
         }
-        cls.partial_data = {
-            'max length first_name': {'first_name': cls.get_random_field_str(cls.model, 'first_name')}
+        
+        cls.valid_put_data_payload = {
+            'max length': create_payload_data(),
+            'short strings': {
+                first_name: cls.get_random_str(1),
+                last_name: cls.get_random_str(1),
+                abbreviation: cls.get_random_str(1),
+                e_mail: cls.get_random_str(1) + '@ab.ba',
+                degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
+                position: Positions.objects.create(name=cls.get_random_str(5)).name,
+                supervisor: None,
+            },
+            'all fields': {
+                **create_payload_data(),
+                supervisor: Employees.objects.create(**create_model_data()).abbreviation,
+                year_of_studies: random.randint(1, 100),
+                is_procedure_for_a_doctoral_degree_approved: random.choices([True, False])[0],
+                has_scholarship: random.choices([True, False])[0],
+            }
+        }
+        
+        cls.valid_partial_data = {
+            'max length ' + first_name: {first_name: cls.get_random_field_str(cls.model, first_name)}
         }
 
-        cls.invalid_data_payload = {
-            'first_name empty': {**create_simple_data(), 'first_name': ''}
+        rand_abbreviation = cls.get_random_field_str(cls.model, abbreviation)
+        cls.invalid_post_data_payload = {
+            'empty ' + first_name: {**create_payload_data(), first_name: ''},
+            'self supervising with new abbreviation': {
+                **create_payload_data(), 'abbreviation': rand_abbreviation, 'supervisor': rand_abbreviation}
         }
+
+        rand_abbreviation = cls.get_random_field_str(cls.model, abbreviation)
+        cls.invalid_put_data_payload = {
+            'self supervising with old abbreviation': {
+                **create_payload_data(), 'abbreviation': cls.obj.abbreviation, 'supervisor': cls.obj.abbreviation},
+            'self supervising with new abbreviation': {
+                **create_payload_data(), 'abbreviation': rand_abbreviation, 'supervisor': rand_abbreviation}
+        }
+        for field in (first_name, last_name, abbreviation, e_mail):
+            cls.invalid_partial_data['empty ' + field] = {**create_payload_data(), field: ''}
+            cls.invalid_partial_data['too long ' + field] = {
+                **create_payload_data(),
+                field: cls.get_random_field_str(cls.model, first_name) + cls.get_random_str(1)}
+
         cls.invalid_partial_data = {
-            'first_name empty': {'first_name': ''}
-        }
+            'self supervising': {'supervisor': cls.obj.abbreviation}}
+        for field in (first_name, last_name, abbreviation, e_mail):
+            cls.invalid_partial_data['empty ' + field] = {field: ''}
+            cls.invalid_partial_data['too long ' + field] = {
+                field: cls.get_random_field_str(cls.model, first_name) + cls.get_random_str(1)}

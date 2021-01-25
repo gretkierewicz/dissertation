@@ -9,9 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###24/01/2020
+###25/01/2020
 
-- Refactoring Tests (help: https://www.b-list.org/weblog/2007/nov/04/working-models/)
+- Refactoring Tests
 
 ### To be done:
 

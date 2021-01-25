@@ -1,3 +1,7 @@
+###24/01/2020
+
+- Refactoring Tests
+
 ###23/01/2020
 
 - Minor changes (Back to abbreviation str representation for Employee model - it caused some troubles with nested 
