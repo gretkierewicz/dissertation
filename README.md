@@ -16,6 +16,7 @@ Local with SQLite DB
 - Tests / additional kwargs in test for future scenarios tests
 - FIX / Employee serializier Supervisor validation for PATCH method
 - Tests / Basic tests for Pensum View
+- FIX / Pensum limit and value validators
 
 ### To be done:
 

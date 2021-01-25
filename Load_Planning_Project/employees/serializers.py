@@ -51,6 +51,8 @@ class PensumSerializer(ModelSerializer):
         fields = ['url', 'name', 'value', 'limit', 'degrees', 'positions', 'year_of_studies', 'year_condition',
                   'is_procedure_for_a_doctoral_degree_approved', 'has_scholarship']
         extra_kwargs = {
+            'value': {'min_value': 0},
+            'limit': {'min_value': 1},
             'year_condition': {'allow_null': False, 'initial': 'N/A'},
             'is_procedure_for_a_doctoral_degree_approved': {'allow_null': False, 'initial': 'N/A'},
             'has_scholarship': {'allow_null': False, 'initial': 'N/A'},
@@ -91,18 +93,19 @@ class PensumSerializer(ModelSerializer):
 
     def validate_limit(self, data):
         # validation for proper setting of pensum's limit
-        value = int(self.initial_data.get('value') or (self.instance.value if self.instance else 0))
-        limit = int(data or (self.instance.limit if self.instance else 0))
-        if limit <= value:
-            raise ValidationError(f"Limit ({limit}) cannot be lower or equal to value ({value}).")
+        if data:
+            value = int(self.initial_data.get('value') or (self.instance.value if self.instance else 0))
+            limit = int(data or (self.instance.limit if self.instance else 0))
+            if limit <= value:
+                raise ValidationError(f"Limit ({limit}) cannot be lower or equal to value ({value}).")
         return data
 
     def validate_value(self, data):
         # validation for proper setting of pensum's value
         value = int(data or (self.instance.value if self.instance else 0))
-        limit = int(self.initial_data.get('limit') or (self.instance.limit if self.instance else 0))
-        if limit <= value:
-            raise ValidationError(f"Limit ({limit}) cannot be lower or equal to value ({value}).")
+        limit = self.initial_data.get('limit') or (self.instance.limit if self.instance else 0)
+        if limit and int(limit) <= value:
+            raise ValidationError(f"Limit ({int(limit)}) cannot be lower or equal to value ({value}).")
         return data
 
 

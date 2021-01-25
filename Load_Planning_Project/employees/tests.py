@@ -226,9 +226,6 @@ class DegreesTests(APITestCase):
             response = self.client.post(reverse(self.basename + '-list'), data=data)
             self.assertEqual(
                 response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # check if not created
-            obj = self.get_obj(data)
-            self.assertIsNone(obj, msg)
             # double check records' pks
             self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
 
@@ -239,9 +236,6 @@ class DegreesTests(APITestCase):
                 reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
             self.assertEqual(
                 response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # check if not created
-            obj = self.get_obj(data)
-            self.assertIsNone(obj, msg)
             # double check records' pks
             self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
 
@@ -526,6 +520,9 @@ class PensumTests(DegreesTests):
             'min ' + limit: {limit: 1},
             'high ' + limit: {limit: 2000},
             'high ' + value: {value: 1999},
+            'no ' + limit: {limit: None},
+            'rand ' + value: {value: 333},
+            'min ' + limit: {limit: 334},
         }
 
         cls.invalid_post_data_payload = {
@@ -576,6 +573,10 @@ class PensumTests(DegreesTests):
 
         cls.invalid_partial_data = {
             **cls.invalid_post_data_payload,
+            'negative ' + value: {value: -1},
+            'negative ' + limit: {limit: -1},
+            'limit lte value': {limit: cls.obj.value},
+            'value gte limit': {value: cls.obj.limit},
             'duplicate ' + degrees + '-' + positions: {
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
@@ -586,7 +587,7 @@ class PensumTests(DegreesTests):
                 year_of_studies: duplicate.year_of_studies,
                 year_condition: duplicate.year_condition,
             },
-            'duplicate ' + is_procedure_for_a_doctoral_degree_approved: {\
+            'duplicate ' + is_procedure_for_a_doctoral_degree_approved: {
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
                 is_procedure_for_a_doctoral_degree_approved: duplicate.is_procedure_for_a_doctoral_degree_approved,
