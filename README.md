@@ -12,6 +12,7 @@ Local with SQLite DB
 ###26/01/2020
 
 - Tests / Pensum tests corrections; EmpFields class added for later use in Modules tests
+- Tests / Basic tests for Modules view
 
 ### To be done:
 
