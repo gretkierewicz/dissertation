@@ -476,12 +476,16 @@ class PensumTests(DegreesTests):
             pensum.degrees.create(name=cls.get_random_str(15))
             pensum.positions.create(name=cls.get_random_str(15))
 
+        active_year_choices = [a for a, b in Pensum.YEAR_CONDITION_CHOICES if a != NA]
+        active_procedure_choices = [a for a, b in Pensum.DOCTORAL_PROCEDURE_CHOICES if a != NA]
+        active_scholarship_choices = [a for a, b in Pensum.SCHOLARSHIP_CHOICES if a != NA]
+
         duplicate = cls.model.objects.create(**{
             **create_model_data(),
             year_of_studies: random.randint(1, 20),
-            year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
-            is_procedure_for_a_doctoral_degree_approved: random.choices(Pensum.DOCTORAL_PROCEDURE_CHOICES)[0][0],
-            has_scholarship: random.choices(Pensum.SCHOLARSHIP_CHOICES)[0][0],
+            year_condition: random.choices(active_year_choices)[0],
+            is_procedure_for_a_doctoral_degree_approved: random.choices(active_procedure_choices)[0],
+            has_scholarship: random.choices(active_scholarship_choices)[0],
         })
         duplicate.degrees.create(name=cls.get_random_str(15))
         duplicate.positions.create(name=cls.get_random_str(15))
@@ -509,16 +513,16 @@ class PensumTests(DegreesTests):
                 degrees: [_.name for _ in cls.obj.degrees.all()],
                 positions: [_.name for _ in cls.obj.positions.all()],
                 year_of_studies: random.randint(1, 20),
-                year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
+                year_condition: random.choices(active_year_choices)[0],
                 is_procedure_for_a_doctoral_degree_approved: NA,
                 has_scholarship: NA,
             },
             'completed data': {
                 **create_payload_data(),
                 year_of_studies: random.randint(1, 20),
-                year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
-                is_procedure_for_a_doctoral_degree_approved: random.choices(Pensum.DOCTORAL_PROCEDURE_CHOICES)[0][0],
-                has_scholarship: random.choices(Pensum.SCHOLARSHIP_CHOICES)[0][0]
+                year_condition: random.choices(active_year_choices)[0],
+                is_procedure_for_a_doctoral_degree_approved: random.choices(active_procedure_choices)[0],
+                has_scholarship: random.choices(active_scholarship_choices)[0],
             }
         }
 
@@ -628,6 +632,6 @@ class PensumTests(DegreesTests):
                 positions: [duplicate.positions.first().name],
                 year_condition: NA,
                 is_procedure_for_a_doctoral_degree_approved: NA,
-                has_scholarship: duplicate.is_procedure_for_a_doctoral_degree_approved,
+                has_scholarship: duplicate.has_scholarship,
             }
         }
