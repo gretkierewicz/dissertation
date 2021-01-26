@@ -6,9 +6,26 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer, \
     EmployeeListSerializer
+from utils.constants import NA
+
+
+class EmpFields:
+    first_name = 'first_name'
+    last_name = 'last_name'
+    abbreviation = 'abbreviation'
+    e_mail = 'e_mail'
+    degree = 'degree'
+    position = 'position'
+    supervisor = 'supervisor'
+    year_of_studies = 'year_of_studies'
+    is_procedure_for_a_doctoral_degree_approved = 'is_procedure_for_a_doctoral_degree_approved'
+    has_scholarship = 'has_scholarship'
+
+    string_fields = (first_name, last_name, abbreviation, e_mail)
 
 
 class DegreesTests(APITestCase):
@@ -326,34 +343,23 @@ class EmployeesTests(DegreesTests):
         cls.client = APIClient()
         cls.factory = APIRequestFactory()
 
-        first_name = 'first_name'
-        last_name = 'last_name'
-        abbreviation = 'abbreviation'
-        e_mail = 'e_mail'
-        degree = 'degree'
-        position = 'position'
-        supervisor = 'supervisor'
-        year_of_studies = 'year_of_studies'
-        is_procedure_for_a_doctoral_degree_approved = 'is_procedure_for_a_doctoral_degree_approved'
-        has_scholarship = 'has_scholarship'
-
         cls.model = Employees
         cls.serializer = EmployeeSerializer
         cls.list_serializer = EmployeeListSerializer
         cls.basename = 'employees'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
-        cls.lookup = abbreviation
+        cls.lookup = EmpFields.abbreviation
         cls.field_lookup = cls.lookup
         cls.delete_forbidden = False
 
         def create_model_data():
             return {
-                first_name: cls.get_random_field_str(cls.model, first_name),
-                last_name: cls.get_random_field_str(cls.model, last_name),
-                abbreviation: cls.get_random_field_str(cls.model, abbreviation),
-                e_mail: cls.get_random_field_str(cls.model, e_mail)[:-6] + '@ab.ba',
-                degree: Degrees.objects.create(name=cls.get_random_str(5)),
-                position: Positions.objects.create(name=cls.get_random_str(5))
+                EmpFields.first_name: cls.get_random_field_str(cls.model, EmpFields.first_name),
+                EmpFields.last_name: cls.get_random_field_str(cls.model, EmpFields.last_name),
+                EmpFields.abbreviation: cls.get_random_field_str(cls.model, EmpFields.abbreviation),
+                EmpFields.e_mail: cls.get_random_field_str(cls.model, EmpFields.e_mail)[:-6] + '@ab.ba',
+                EmpFields.degree: Degrees.objects.create(name=cls.get_random_str(5)),
+                EmpFields.position: Positions.objects.create(name=cls.get_random_str(5))
             }
 
         cls.obj = cls.model.objects.create(**create_model_data())
@@ -362,44 +368,46 @@ class EmployeesTests(DegreesTests):
 
         def create_payload_data():
             return {
-                first_name: cls.get_random_field_str(cls.model, first_name),
-                last_name: cls.get_random_field_str(cls.model, last_name),
-                abbreviation: cls.get_random_field_str(cls.model, abbreviation),
-                e_mail: cls.get_random_field_str(cls.model, e_mail)[:-6] + '@ab.ba',
-                degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
-                position: Positions.objects.create(name=cls.get_random_str(5)).name,
+                EmpFields.first_name: cls.get_random_field_str(cls.model, EmpFields.first_name),
+                EmpFields.last_name: cls.get_random_field_str(cls.model, EmpFields.last_name),
+                EmpFields.abbreviation: cls.get_random_field_str(cls.model, EmpFields.abbreviation),
+                EmpFields.e_mail: cls.get_random_field_str(cls.model, EmpFields.e_mail)[:-6] + '@ab.ba',
+                EmpFields.degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
+                EmpFields.position: Positions.objects.create(name=cls.get_random_str(5)).name,
                 'supervisor': None,
             }
 
         cls.valid_post_data_payload = {
             'max length': create_payload_data(),
             'short strings': {
-                first_name: cls.get_random_str(1),
-                last_name: cls.get_random_str(1),
-                abbreviation: cls.get_random_str(1),
-                e_mail: cls.get_random_str(1) + '@ab.ba',
-                degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
-                position: Positions.objects.create(name=cls.get_random_str(5)).name,
-                supervisor: None,
+                EmpFields.first_name: cls.get_random_str(1),
+                EmpFields.last_name: cls.get_random_str(1),
+                EmpFields.abbreviation: cls.get_random_str(1),
+                EmpFields.e_mail: cls.get_random_str(1) + '@ab.ba',
+                EmpFields.degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
+                EmpFields.position: Positions.objects.create(name=cls.get_random_str(5)).name,
+                EmpFields.supervisor: None,
             },
             'all fields': {
                 **create_payload_data(),
-                supervisor: Employees.objects.create(**create_model_data()).abbreviation,
-                year_of_studies: random.randint(1, 100),
-                is_procedure_for_a_doctoral_degree_approved: random.choices([True, False])[0],
-                has_scholarship: random.choices([True, False])[0],
+                EmpFields.supervisor: Employees.objects.create(**create_model_data()).abbreviation,
+                EmpFields.year_of_studies: random.randint(1, 100),
+                EmpFields.is_procedure_for_a_doctoral_degree_approved: random.choices([True, False])[0],
+                EmpFields.has_scholarship: random.choices([True, False])[0],
             }
         }
         
         cls.valid_put_data_payload = cls.valid_post_data_payload
         
         cls.valid_partial_data = {
-            'max length ' + first_name: {first_name: cls.get_random_field_str(cls.model, first_name)}
+            'max length ' + EmpFields.first_name: {
+                EmpFields.first_name: cls.get_random_field_str(cls.model, EmpFields.first_name)
+            }
         }
 
-        rand_abbreviation = cls.get_random_field_str(cls.model, abbreviation)
+        rand_abbreviation = cls.get_random_field_str(cls.model, EmpFields.abbreviation)
         cls.invalid_post_data_payload = {
-            'empty ' + first_name: {**create_payload_data(), first_name: ''},
+            'empty ' + EmpFields.first_name: {**create_payload_data(), EmpFields.first_name: ''},
             'self supervising with new abbreviation': {
                 **create_payload_data(), 'abbreviation': rand_abbreviation, 'supervisor': rand_abbreviation}
         }
@@ -410,18 +418,18 @@ class EmployeesTests(DegreesTests):
                 **create_payload_data(), 'abbreviation': cls.obj.abbreviation, 'supervisor': cls.obj.abbreviation
             }
         }
-        for field in (first_name, last_name, abbreviation, e_mail):
+        for field in EmpFields.string_fields:
             cls.invalid_partial_data['empty ' + field] = {**create_payload_data(), field: ''}
             cls.invalid_partial_data['too long ' + field] = {
                 **create_payload_data(),
-                field: cls.get_random_field_str(cls.model, first_name) + cls.get_random_str(1)}
+                field: cls.get_random_field_str(cls.model, EmpFields.first_name) + cls.get_random_str(1)}
 
         cls.invalid_partial_data = {
             'self supervising': {'supervisor': cls.obj.abbreviation}}
-        for field in (first_name, last_name, abbreviation, e_mail):
+        for field in EmpFields.string_fields:
             cls.invalid_partial_data['empty ' + field] = {field: ''}
             cls.invalid_partial_data['too long ' + field] = {
-                field: cls.get_random_field_str(cls.model, first_name) + cls.get_random_str(1)}
+                field: cls.get_random_field_str(cls.model, EmpFields.first_name) + cls.get_random_str(1)}
 
 
 class PensumTests(DegreesTests):
@@ -502,6 +510,8 @@ class PensumTests(DegreesTests):
                 positions: [_.name for _ in cls.obj.positions.all()],
                 year_of_studies: random.randint(1, 20),
                 year_condition: random.choices(Pensum.YEAR_CONDITION_CHOICES)[0][0],
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             },
             'completed data': {
                 **create_payload_data(),
@@ -533,7 +543,10 @@ class PensumTests(DegreesTests):
             'duplicate ' + degrees + '-' + positions: {
                 **create_payload_data(),
                 degrees: [cls.obj.degrees.first().name],
-                positions: [cls.obj.positions.first().name]
+                positions: [cls.obj.positions.first().name],
+                year_condition: NA,
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             },
             'duplicate ' + year_of_studies + ' and ' + year_condition: {
                 **create_payload_data(),
@@ -541,6 +554,8 @@ class PensumTests(DegreesTests):
                 positions: [cls.obj.positions.first().name],
                 year_of_studies: cls.obj.year_of_studies,
                 year_condition: cls.obj.year_condition,
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             }
         }
 
@@ -548,7 +563,10 @@ class PensumTests(DegreesTests):
             'duplicate ' + degrees + '-' + positions: {
                 **create_payload_data(),
                 degrees: [duplicate.degrees.first().name],
-                positions: [duplicate.positions.first().name]
+                positions: [duplicate.positions.first().name],
+                year_condition: NA,
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             },
             'duplicate ' + year_of_studies + ' and ' + year_condition: {
                 **create_payload_data(),
@@ -556,17 +574,23 @@ class PensumTests(DegreesTests):
                 positions: [duplicate.positions.first().name],
                 year_of_studies: duplicate.year_of_studies,
                 year_condition: duplicate.year_condition,
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             },
             'duplicate ' + is_procedure_for_a_doctoral_degree_approved: {
                 **create_payload_data(),
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
+                year_condition: NA,
                 is_procedure_for_a_doctoral_degree_approved: duplicate.is_procedure_for_a_doctoral_degree_approved,
+                has_scholarship: NA,
             },
             'duplicate ' + has_scholarship: {
                 **create_payload_data(),
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
+                year_condition: NA,
+                is_procedure_for_a_doctoral_degree_approved: NA,
                 has_scholarship: duplicate.has_scholarship,
             }
         }
@@ -580,21 +604,30 @@ class PensumTests(DegreesTests):
             'duplicate ' + degrees + '-' + positions: {
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
+                year_condition: NA,
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             },
             'duplicate ' + year_of_studies + ' and ' + year_condition: {
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
                 year_of_studies: duplicate.year_of_studies,
                 year_condition: duplicate.year_condition,
+                is_procedure_for_a_doctoral_degree_approved: NA,
+                has_scholarship: NA,
             },
             'duplicate ' + is_procedure_for_a_doctoral_degree_approved: {
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
+                year_condition: NA,
                 is_procedure_for_a_doctoral_degree_approved: duplicate.is_procedure_for_a_doctoral_degree_approved,
+                has_scholarship: NA,
             },
             'duplicate ' + has_scholarship: {
                 degrees: [duplicate.degrees.first().name],
                 positions: [duplicate.positions.first().name],
+                year_condition: NA,
+                is_procedure_for_a_doctoral_degree_approved: NA,
                 has_scholarship: duplicate.is_procedure_for_a_doctoral_degree_approved,
             }
         }

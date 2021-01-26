@@ -9,14 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###25/01/2020
+###26/01/2020
 
-- Refactoring Tests
-- Urls / minor namespace changes
-- Tests / additional kwargs in test for future scenarios tests
-- FIX / Employee serializier Supervisor validation for PATCH method
-- Tests / Basic tests for Pensum View
-- FIX / Pensum limit and value validators
+- Tests / Pensum tests corrections; EmpFields class added for later use in Modules tests
 
 ### To be done:
 
