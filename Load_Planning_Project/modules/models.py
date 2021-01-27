@@ -50,7 +50,7 @@ class Modules(models.Model):
 
 class Classes(models.Model):
     class Meta:
-        ordering = ['name']
+        ordering = ['module', 'name']
         unique_together = (('module', 'name'), )
 
     NAME_CHOICES = [(_, _) for _ in CLASSES_NAMES]
@@ -60,7 +60,7 @@ class Classes(models.Model):
     classes_hours = models.PositiveIntegerField()
 
     def __str__(self):
-        return self.name
+        return f"{self.module.module_code} ({self.module.name}): {self.name}"
 
     def __repr__(self):
-        return f"{self.name} of {self.module.module_code}"
+        return f"{self.module.module_code}: {self.name}"

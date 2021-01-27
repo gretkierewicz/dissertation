@@ -1,3 +1,9 @@
 from django.db import models
 
-# Create your models here.
+from modules.models import Classes
+
+
+class Orders(models.Model):
+    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='orders')
+    students_number = models.IntegerField()
+    order_number = models.CharField(max_length=50, blank=True, null=True)

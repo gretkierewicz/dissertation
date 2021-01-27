@@ -21,6 +21,7 @@ from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from . import views
 from employees import views as employees_views
 from modules import views as modules_views
+from orders import views as orders_views
 
 router = DefaultRouter()
 router.register(r'degrees', employees_views.DegreeViewSet)
@@ -57,6 +58,11 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 ## generates:
 # /modules/{module_code}/classes/
 # /modules/{module_code}/classes/{class_name}
+
+router.register(r'orders', orders_views.OrdersViewSet)
+## generates:
+# /orders/
+# /orders/{order_pk}
 
 urlpatterns = [
     path('API/', include(router.urls)),

@@ -1,0 +1,15 @@
+from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.serializers import ModelSerializer
+
+from .models import Orders
+
+
+class OrderSerializer(ModelSerializer):
+    class Meta:
+        model = Orders
+        fields = ['url', 'classes', 'students_number', 'order_number']
+        extra_kwargs = {
+            'students_number': {'min_value': 0}
+        }
+
+    url = HyperlinkedIdentityField(view_name='orders-detail')

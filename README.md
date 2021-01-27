@@ -11,8 +11,9 @@ Local with SQLite DB
 ## Last changes
 ###27/01/2020
 
-- Plans / deleting model for now - will be moved to new app with future Orders model
+- Plans / deleting model for now - will be moved to new app wiGth future Orders model
 - Orders - new app for orders and setting employee-plan setups
+- Orders / Implementing simple Orders model, view and serializer (changed Classes model str representation and ordering for better readability in Orders' forms)
 
 ### To be done:
 
