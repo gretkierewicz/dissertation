@@ -3,6 +3,9 @@ from django.db import models
 from employees.models import Employees
 
 
+CLASSES_NAMES = ['Lectures', 'Laboratory classes', 'Auditorium classes', 'Project classes', 'Seminar classes']
+
+
 class Modules(models.Model):
     class Meta:
         ordering = ['module_code']
@@ -50,16 +53,10 @@ class Classes(models.Model):
         ordering = ['name']
         unique_together = (('module', 'name'), )
 
-    NAME_CHOICES = [
-        ('Lectures', 'Lectures'),
-        ('Laboratory_classes', 'Laboratory classes'),
-        ('Auditorium_classes', 'Auditorium classes'),
-        ('Project_classes', 'Project classes'),
-        ('Seminar_classes', 'Seminar classes'),
-    ]
+    NAME_CHOICES = [(_, _) for _ in CLASSES_NAMES]
 
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='classes')
-    name = models.CharField(max_length=18, choices=NAME_CHOICES, default='Lectures')
+    name = models.CharField(max_length=18, choices=NAME_CHOICES, default=CLASSES_NAMES[0])
     classes_hours = models.PositiveIntegerField()
 
     def __str__(self):
@@ -67,28 +64,3 @@ class Classes(models.Model):
 
     def __repr__(self):
         return f"{self.name} of {self.module.module_code}"
-
-    @property
-    # classes' already set hours
-    def classes_hours_set(self):
-        return sum([plan.plan_hours for plan in self.plans.all()])
-
-    @property
-    # classes' hours waiting to be set
-    def classes_hours_not_set(self):
-        return self.classes_hours - self.classes_hours_set
-
-    @property
-    # True/False for filling all classes' hours with it's plans' hours
-    def is_class_full(self):
-        return self.classes_hours_not_set <= 0
-
-
-class Plans(models.Model):
-    class Meta:
-        ordering = ['employee', 'classes']
-        unique_together = (('employee', 'classes'), )
-
-    employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')
-    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plans')
-    plan_hours = models.PositiveIntegerField()

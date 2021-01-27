@@ -9,11 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###26/01/2020
+###27/01/2020
 
-- Tests / Pensum tests corrections; EmpFields class added for later use in Modules tests
-- Tests / Basic tests for Modules view
-- FIX / Pensum tests fixed (100% passing now)
+- Plans / deleting model for now - will be moved to new app with future Orders model
 
 ### To be done:
 

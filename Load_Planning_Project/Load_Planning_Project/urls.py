@@ -47,9 +47,6 @@ employees_router.register(r'modules', modules_views.EmployeeModuleViewSet, basen
 ## generates:
 # /employees/{employee_abbreviation}/modules/
 # /employees/{employee_abbreviation}/modules/{module_code}/
-employees_router.register(r'plans', modules_views.EmployeePlanViewSet, basename='employee-plans')
-## generates:
-# /employees/{employee_abbreviation}/plans/
 
 router.register(r'modules', modules_views.ModuleViewSet)
 ## generates:
@@ -60,17 +57,11 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 ## generates:
 # /modules/{module_code}/classes/
 # /modules/{module_code}/classes/{class_name}
-classes_router = NestedDefaultRouter(modules_router, r'classes', lookup='class')
-classes_router.register(r'employees', modules_views.PlanViewSet, basename='plans')
-## generates:
-# /modules/{module_code}/classes/{class_name}/employees/
-# /modules/{module_code}/classes/{class_name}/employees/{employee}
 
 urlpatterns = [
     path('API/', include(router.urls)),
     path('API/', include(employees_router.urls)),
     path('API/', include(modules_router.urls)),
-    path('API/', include(classes_router.urls)),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
 ]

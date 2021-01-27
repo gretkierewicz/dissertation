@@ -1,6 +1,5 @@
 from django.db import models
 
-import modules.models
 from utils.constants import GT, ET, LT, NA
 
 
@@ -89,17 +88,6 @@ class Employees(models.Model):
         return self.abbreviation
 
     @property
-    # gets only modules with plans included in it for Employee instance
-    def plan_modules(self):
-        return modules.models.Modules.objects.filter(classes__plans__in=self.plans.all()
-                                                     ).distinct().order_by('module_code')
-
-    @property
-    # summary plan hours for Employee instance
-    def plan_hours_sum(self):
-        return sum([plan.plan_hours for plan in modules.models.Plans.objects.filter(employee=self)])
-
-    @property
     # find pensum instance that corresponds to employee's data
     # TODO: consider creating table that will keep employee-pensum relations (updated on save of employee or pensum)
     def pensum(self):
@@ -129,17 +117,7 @@ class Employees(models.Model):
         return pensum.value if pensum else 0
 
     @property
-    # True/False for reaching pensum value by Employee instance
-    def is_pensum_value_reached(self):
-        return self.plan_hours_sum >= self.pensum_value
-
-    @property
     # pensum limit from Employee's instance degree and position
     def pensum_limit(self):
         pensum = self.pensum
         return pensum.limit if pensum else 0
-
-    @property
-    # True/False for reaching pensum limit by Employee instance
-    def is_pensum_limit_reached(self):
-        return self.plan_hours_sum >= self.pensum_limit
