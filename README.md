@@ -12,6 +12,7 @@ Local with SQLite DB
 ###27/01/2020
 
 - Plans / deleting model for now - will be moved to new app with future Orders model
+- Orders - new app for orders and setting employee-plan setups
 
 ### To be done:
 
