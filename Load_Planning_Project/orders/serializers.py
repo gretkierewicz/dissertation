@@ -1,5 +1,6 @@
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import ModelSerializer
+from rest_framework.validators import UniqueValidator
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 
 from modules.models import Classes
@@ -22,5 +23,6 @@ class OrderSerializer(ModelSerializer):
         lookup_field='name',
         parent_lookup_kwargs={
             'module_module_code': 'module__module_code'
-        }
+        },
+        validators=[UniqueValidator(queryset=Orders.objects.all())],
     )

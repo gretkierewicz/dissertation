@@ -4,6 +4,6 @@ from modules.models import Classes
 
 
 class Orders(models.Model):
-    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='orders')
+    classes = models.OneToOneField(Classes, on_delete=models.CASCADE)
     students_number = models.IntegerField()
     order_number = models.CharField(max_length=50, blank=True, null=True)
