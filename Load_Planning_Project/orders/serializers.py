@@ -10,7 +10,7 @@ from .models import Orders
 class OrderSerializer(ModelSerializer):
     class Meta:
         model = Orders
-        fields = ['url', 'classes', 'students_number', 'order_number']
+        fields = ['url', 'classes', 'students_number', 'groups_number', 'order_hours', 'order_number']
         extra_kwargs = {
             'students_number': {'min_value': 0}
         }

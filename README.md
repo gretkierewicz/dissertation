@@ -14,6 +14,7 @@ Local with SQLite DB
 - Orders / Changing classes_pk field into nested hyper-link related field for better readability
 - Classes / Added students_limit_per_group field. For now manual input per classes instance.
 - Orders / Changed classes FK field for OneToOneField and added unique validator to the serializer
+- Orders / Added properties: groups_number and order_hours
 
 ### To be done:
 
