@@ -9,11 +9,9 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###27/01/2020
+###28/01/2020
 
-- Plans / deleting model for now - will be moved to new app wiGth future Orders model
-- Orders - new app for orders and setting employee-plan setups
-- Orders / Implementing simple Orders model, view and serializer (changed Classes model str representation and ordering for better readability in Orders' forms)
+- Orders / Changing classes_pk field into nested hyper-link related field for better readability
 
 ### To be done:
 

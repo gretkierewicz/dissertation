@@ -1,3 +1,9 @@
+###27/01/2020
+
+- Plans / deleting model for now - will be moved to new app wiGth future Orders model
+- Orders - new app for orders and setting employee-plan setups
+- Orders / Implementing simple Orders model, view and serializer (changed Classes model str representation and ordering for better readability in Orders' forms)
+
 ###26/01/2020
 
 - Tests / Pensum tests corrections; EmpFields class added for later use in Modules tests
