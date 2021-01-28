@@ -58,6 +58,7 @@ class Classes(models.Model):
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='classes')
     name = models.CharField(max_length=18, choices=NAME_CHOICES, default=CLASSES_NAMES[0])
     classes_hours = models.PositiveIntegerField()
+    students_limit_per_group = models.PositiveIntegerField(null=True)
 
     def __str__(self):
         return f"{self.module.module_code} ({self.module.name}): {self.name}"

@@ -12,6 +12,7 @@ Local with SQLite DB
 ###28/01/2020
 
 - Orders / Changing classes_pk field into nested hyper-link related field for better readability
+- Classes / Added students_limit_per_group field. For now manual input per classes instance.
 
 ### To be done:
 

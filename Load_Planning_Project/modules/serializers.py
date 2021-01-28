@@ -14,13 +14,14 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours',
+        fields = ['url', 'name', 'classes_hours', 'students_limit_per_group',
                   # hidden fields:
                   'module']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'name'},
-            'classes_hours': {'min_value': 0}
+            'classes_hours': {'min_value': 0},
+            'students_limit_per_group': {'min_value': 0},
         }
     # for nesting serializer - dict of URL lookups and queryset kwarg keys
     parent_lookup_kwargs = {
