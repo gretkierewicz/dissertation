@@ -64,6 +64,11 @@ router.register(r'orders', orders_views.OrdersViewSet)
 # /orders/
 # /orders/{order_pk}
 
+router.register(r'plans', orders_views.PlansViewSet)
+## generates:
+# /plans/
+# /plans/{plan_pk}
+
 urlpatterns = [
     path('API/', include(router.urls)),
     path('API/', include(employees_router.urls)),

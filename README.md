@@ -15,6 +15,7 @@ Local with SQLite DB
 - Classes / Added students_limit_per_group field. For now manual input per classes instance.
 - Orders / Changed classes FK field for OneToOneField and added unique validator to the serializer
 - Orders / Added properties: groups_number and order_hours
+- Plans / Created basic Plans model, view and serializer
 
 ### To be done:
 

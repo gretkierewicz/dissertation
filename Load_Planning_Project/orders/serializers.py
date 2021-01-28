@@ -1,10 +1,10 @@
 from rest_framework.relations import HyperlinkedIdentityField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, HyperlinkedModelSerializer
 from rest_framework.validators import UniqueValidator
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 
 from modules.models import Classes
-from .models import Orders
+from .models import Orders, Plans
 
 
 class OrderSerializer(ModelSerializer):
@@ -25,4 +25,23 @@ class OrderSerializer(ModelSerializer):
             'module_module_code': 'module__module_code'
         },
         validators=[UniqueValidator(queryset=Orders.objects.all())],
+    )
+
+
+class PlansSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Plans
+        fields = ['url', 'classes', 'employee', 'plan_hours']
+        extra_kwargs = {
+            'employee': {'lookup_field': 'abbreviation'},
+            'plan_hours': {'min_value': 0}
+        }
+
+    classes = NestedHyperlinkedRelatedField(
+        queryset=Classes.objects.all(),
+        view_name='classes-detail',
+        lookup_field='name',
+        parent_lookup_kwargs={
+            'module_module_code': 'module__module_code'
+        },
     )
