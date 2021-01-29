@@ -2,16 +2,28 @@ from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Orders, Plans
-from .serializers import OrderSerializer, OrderPlansSerializer
+from .serializers import OrdersSerializer, PlansSerializer, ClassesOrderSerializer
 
 
 class OrdersViewSet(ModelViewSet):
-    queryset = Orders.objects.all()
-    serializer_class = OrderSerializer
+    # return different queryset for nested view and full for not nested
+    def get_queryset(self):
+        if self.kwargs.get('module_module_code') and self.kwargs.get('class_name'):
+            return Orders.objects.filter(
+                classes__module__module_code=self.kwargs.get('module_module_code'),
+                classes__name=self.kwargs.get('class_name')
+            )
+        return Orders.objects.all()
+
+    # return nested serializer (classes hidden) for nested view and full for not nested
+    def get_serializer_class(self):
+        if self.kwargs.get('module_module_code') and self.kwargs.get('class_name'):
+            return ClassesOrderSerializer
+        return OrdersSerializer
 
 
 class OrderPlansViewSet(ModelViewSet):
-    serializer_class = OrderPlansSerializer
+    serializer_class = PlansSerializer
     lookup_field = 'employee'
 
     # filtering plans for explicit order (nested view)

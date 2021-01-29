@@ -58,11 +58,18 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 ## generates:
 # /modules/{module_code}/classes/
 # /modules/{module_code}/classes/{class_name}
+classes_router = NestedDefaultRouter(modules_router, r'classes', lookup='class')
+classes_router.register(r'order', orders_views.OrdersViewSet, basename='class-order')
+## generates:
+# /modules/{module_code}/classes/{class_name}/order/
+# /modules/{module_code}/classes/{class_name}/order/{order_pk}
+classes_order_router = NestedDefaultRouter(classes_router, r'order', lookup='order')
+classes_order_router.register(r'plans', orders_views.OrderPlansViewSet, basename='class-order-plans')
 
-router.register(r'orders', orders_views.OrdersViewSet)
+router.register(r'orders', orders_views.OrdersViewSet, basename='orders')
 ## generates:
 # /orders/
-# /orders/{order_pk}
+# /orders/{order_pk} - overwritten by classes_router
 orders_router = NestedDefaultRouter(router, r'orders', lookup='order')
 orders_router.register(r'plans', orders_views.OrderPlansViewSet, basename='order-plans')
 ## generates:
@@ -73,6 +80,8 @@ urlpatterns = [
     path('API/', include(router.urls)),
     path('API/', include(employees_router.urls)),
     path('API/', include(modules_router.urls)),
+    path('API/', include(classes_router.urls)),
+    path('API/', include(classes_order_router.urls)),
     path('API/', include(orders_router.urls)),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),

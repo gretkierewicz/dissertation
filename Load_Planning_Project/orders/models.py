@@ -7,7 +7,7 @@ from modules.models import Classes
 
 
 class Orders(models.Model):
-    classes = models.OneToOneField(Classes, on_delete=models.CASCADE)
+    classes = models.OneToOneField(Classes, on_delete=models.CASCADE, related_name='order')
     students_number = models.PositiveIntegerField()
     order_number = models.CharField(max_length=50, blank=True, null=True)
 

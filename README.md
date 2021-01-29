@@ -17,10 +17,13 @@ Local with SQLite DB
   Minor change for Plans model - changed classes FK field into order FK field. 
   Classes are going to get its own nested plans soon enough.
   Changed serializer and view names to correspond relation more.
+- Orders / Nested orders into Classes.
+  Converted most of the Orders main serializer hyper-links into nested form.
+  Created Orders serializer for nesting into Classes (derivative of main Orders serializer).
+  Added url routes nested in classes ones.
 
 ### To be done:
 
-- Implement additional models: Orders! - more like change Plans to Orders and than implement Plans properly
 - Implement custom filters, sorting or search
 - Custom query-sets for forms (if possible)
 - Change upload CSV files method for employees - it should first create employees without supervisors, and then save 
