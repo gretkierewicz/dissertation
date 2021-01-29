@@ -28,8 +28,8 @@ class Orders(models.Model):
 
 class Plans(models.Model):
     class Meta:
-        unique_together = ['classes', 'employee']
+        unique_together = ['order', 'employee']
 
-    classes = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name='plans')
+    order = models.ForeignKey(Orders, on_delete=models.CASCADE, related_name='plans')
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')
     plan_hours = models.PositiveIntegerField()
