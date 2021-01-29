@@ -63,16 +63,17 @@ router.register(r'orders', orders_views.OrdersViewSet)
 ## generates:
 # /orders/
 # /orders/{order_pk}
-
-router.register(r'plans', orders_views.PlansViewSet)
+orders_router = NestedDefaultRouter(router, r'orders', lookup='order')
+orders_router.register(r'plans', orders_views.OrderPlansViewSet, basename='order-plans')
 ## generates:
-# /plans/
-# /plans/{plan_pk}
+# /orders/{order_pk}/plans/
+# /orders/{order_pk}/plans/{plan_employee}
 
 urlpatterns = [
     path('API/', include(router.urls)),
     path('API/', include(employees_router.urls)),
     path('API/', include(modules_router.urls)),
+    path('API/', include(orders_router.urls)),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
 ]

@@ -9,13 +9,14 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###28/01/2020
+###29/01/2020
 
-- Orders / Changing classes_pk field into nested hyper-link related field for better readability
-- Classes / Added students_limit_per_group field. For now manual input per classes instance.
-- Orders / Changed classes FK field for OneToOneField and added unique validator to the serializer
-- Orders / Added properties: groups_number and order_hours
-- Plans / Created basic Plans model, view and serializer
+- Plans / Nested Plans into Orders. 
+  Added hyper-link to Orders serializer and nested plans serializer in it.
+  Changed Plans serializer, url router and view to provide information regarding parent order.
+  Minor change for Plans model - changed classes FK field into order FK field. 
+  Classes are going to get its own nested plans soon enough.
+  Changed serializer and view names to correspond relation more.
 
 ### To be done:
 

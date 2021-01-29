@@ -1,3 +1,11 @@
+###28/01/2020
+
+- Orders / Changing classes_pk field into nested hyper-link related field for better readability
+- Classes / Added students_limit_per_group field. For now manual input per classes instance.
+- Orders / Changed classes FK field for OneToOneField and added unique validator to the serializer
+- Orders / Added properties: groups_number and order_hours
+- Plans / Created basic Plans model, view and serializer
+
 ###27/01/2020
 
 - Plans / deleting model for now - will be moved to new app wiGth future Orders model
