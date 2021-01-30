@@ -9,18 +9,10 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###29/01/2020
+###30/01/2020
 
-- Plans / Nested Plans into Orders. 
-  Added hyper-link to Orders serializer and nested plans serializer in it.
-  Changed Plans serializer, url router and view to provide information regarding parent order.
-  Minor change for Plans model - changed classes FK field into order FK field. 
-  Classes are going to get its own nested plans soon enough.
-  Changed serializer and view names to correspond relation more.
-- Orders / Nested orders into Classes.
-  Converted most of the Orders main serializer hyper-links into nested form.
-  Created Orders serializer for nesting into Classes (derivative of main Orders serializer).
-  Added url routes nested in classes ones.
+- Added action to create Orders from Module list view.
+  Added a filter so form includes now only classes without order.
 
 ### To be done:
 
@@ -31,3 +23,4 @@ Local with SQLite DB
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes 
   (classes hours not exceeded)
 - Errors output for nested JSON data import
+- Creating orders only as an additional action from modules and classes views.

@@ -65,7 +65,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
     plans = PlansSerializer(read_only=True, many=True)
 
     classes = NestedHyperlinkedRelatedField(
-        queryset=Classes.objects.all(),
+        queryset=Classes.objects.filter(order__isnull=True),
         view_name='classes-detail',
         lookup_field='name',
         parent_lookup_kwargs={

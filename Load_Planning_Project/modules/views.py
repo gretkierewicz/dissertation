@@ -2,13 +2,13 @@ import re
 from collections import OrderedDict
 
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
-from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
+from rest_framework.viewsets import ModelViewSet
 from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
 
+from orders.serializers import OrdersSerializer
 from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer, SupervisedModuleSerializer, ModuleFlatSerializer
 
@@ -112,6 +112,18 @@ class ModuleViewSet(ModelViewSet):
                     if serializer.errors:
                         data[file + ' file'][partial_data.get(lookup)] = [serializer.errors]
             return Response(data)
+
+    @action(detail=False, methods=['GET', 'POST'])
+    def create_order(self, request):
+        self.serializer_class = OrdersSerializer
+        if self.request.method == 'GET':
+            # just return Orders form
+            return Response(None)
+        # in case of POST method serialize and return data or errors
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.errors or serializer.data)
 
 
 class EmployeeModuleViewSet(ModuleViewSet):

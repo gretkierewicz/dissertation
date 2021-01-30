@@ -1,3 +1,16 @@
+###29/01/2020
+
+- Plans / Nested Plans into Orders.
+  Added hyper-link to Orders serializer and nested plans serializer in it.
+  Changed Plans serializer, url router and view to provide information regarding parent order.
+  Minor change for Plans model - changed classes FK field into order FK field.
+  Classes are going to get its own nested plans soon enough.
+  Changed serializer and view names to correspond relation more.
+- Orders / Nested orders into Classes.
+  Converted most of the Orders main serializer hyper-links into nested form.
+  Created Orders serializer for nesting into Classes (derivative of main Orders serializer).
+  Added url routes nested in classes ones.
+
 ###28/01/2020
 
 - Orders / Changing classes_pk field into nested hyper-link related field for better readability
