@@ -97,6 +97,6 @@ class ClassesOrderSerializer(OrdersSerializer):
         queryset=Classes.objects.all(),
         matches={
             'module_module_code': 'module__module_code',
-            'classes_name': 'name'
+            'name': 'name'
         }
     )

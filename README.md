@@ -18,6 +18,8 @@ Local with SQLite DB
   Utils / Created variation of NestedHyperlinkedIdentityField with prefix: AdvLookup.
   It allows passing a lookup with double underscore to point nested attributes of instance.
   Plans are now available from orders view - nested in Classes aswell.
+- Orders / Added PUT PATCH and DELETE methods to the 'order' action nested in Classes Instance View.
+  Small update of ClassesOrderSerializer - URL kwarg for Classes changed to 'name'.
 
 ### To be done:
 
