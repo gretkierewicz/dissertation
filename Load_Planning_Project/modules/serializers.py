@@ -31,11 +31,11 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     }
 
     order_url = NestedHyperlinkedIdentityField(
-        view_name='class-order-list',
+        view_name='classes-order',
         lookup_field='name',
-        lookup_url_kwarg='class_name',
+        lookup_url_kwarg='name',
         parent_lookup_kwargs={
-            'module_module_code': 'module__module_code',
+            'module_module_code': 'module__module_code'
         }
     )
     order = ClassesOrderSerializer(read_only=True)

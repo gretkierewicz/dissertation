@@ -22,13 +22,16 @@ class OrdersViewSet(ModelViewSet):
         return OrdersSerializer
 
 
-class OrderPlansViewSet(ModelViewSet):
+class PlansViewSet(ModelViewSet):
     serializer_class = PlansSerializer
     lookup_field = 'employee'
 
     # filtering plans for explicit order (nested view)
     def get_queryset(self):
-        return Plans.objects.filter(order__pk=self.kwargs.get('order_pk'))
+        return Plans.objects.filter(
+            order__classes__name=self.kwargs.get('classes_name'),
+            order__classes__module__module_code=self.kwargs.get('module_module_code')
+        )
 
     # custom object for explicit employee (nested plan's queryset for explicit order - see above)
     def get_object(self):

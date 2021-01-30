@@ -5,7 +5,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from modules.models import Classes
-from utils.serializers import GetParentHiddenField
+from utils.serializers import GetParentHiddenField, AdvLookupNestedHyperlinkedIdentityField
 
 from .models import Orders, Plans
 
@@ -17,15 +17,14 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
                   # hidden
                   'order']
         extra_kwargs = {
-            'url': {'view_name': 'class-order-plans-detail', 'lookup_field': 'employee'},
+            'url': {'view_name': 'classes-order-plans-detail', 'lookup_field': 'employee'},
             'employee': {'lookup_field': 'abbreviation'},
             'plan_hours': {'min_value': 0}
         }
     # setting parents' URL kwargs
     parent_lookup_kwargs = {
         'module_module_code': 'order__classes__module__module_code',
-        'class_name': 'order__classes__name',
-        'order_pk': 'order__pk'
+        'classes_name': 'order__classes__name',
     }
 
     employee = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all())
@@ -34,7 +33,8 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     order = GetParentHiddenField(
         queryset=Orders.objects.all(),
         matches={
-            'order_pk': 'pk'
+            'module_module_code': 'classes__module__module_code',
+            'classes_name': 'classes__name',
         }
     )
 
@@ -45,23 +45,30 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         fields = ['url', 'classes', 'students_number', 'groups_number', 'order_hours', 'order_number',
                   'plans_url', 'plans']
         extra_kwargs = {
-            'url': {'view_name': 'class-order-detail'},
             'students_number': {'min_value': 0}
         }
     parent_lookup_kwargs = {
         'module_module_code': 'classes__module__module_code',
-        'class_name': 'classes__name'
+        'classes_name': 'classes__name'
     }
-
-    plans_url = NestedHyperlinkedIdentityField(
-        view_name='class-order-plans-list',
-        lookup_field='pk',
-        lookup_url_kwarg='order_pk',
+    url = AdvLookupNestedHyperlinkedIdentityField(
+        view_name='classes-order',
+        lookup_field='classes__name',
+        lookup_url_kwarg='name',
         parent_lookup_kwargs={
-            'module_module_code': 'classes__module__module_code',
-            'class_name': 'classes__name'
+            'module_module_code': 'classes__module__module_code'
         }
     )
+
+    plans_url = AdvLookupNestedHyperlinkedIdentityField(
+        view_name='classes-order-plans-list',
+        lookup_field='classes__name',
+        lookup_url_kwarg='classes_name',
+        parent_lookup_kwargs={
+            'module_module_code': 'classes__module__module_code'
+        }
+    )
+
     plans = PlansSerializer(read_only=True, many=True)
 
     classes = NestedHyperlinkedRelatedField(
@@ -78,18 +85,18 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
 class ClassesOrderSerializer(OrdersSerializer):
     class Meta:
         model = Orders
-        fields = ['url', 'students_number', 'groups_number', 'order_hours', 'order_number',
+        fields = ['students_number', 'groups_number', 'order_hours', 'order_number',
                   'plans_url', 'plans',
                   # hidden
                   'classes']
         extra_kwargs = {
-            'url': {'view_name': 'class-order-detail'}
+            'url': {'view_name': 'classes-order'}
         }
 
     classes = GetParentHiddenField(
         queryset=Classes.objects.all(),
         matches={
             'module_module_code': 'module__module_code',
-            'class_name': 'name'
+            'classes_name': 'name'
         }
     )

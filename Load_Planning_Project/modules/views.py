@@ -8,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
 
-from orders.serializers import OrdersSerializer
+from orders.serializers import OrdersSerializer, ClassesOrderSerializer
 from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer, SupervisedModuleSerializer, ModuleFlatSerializer
 
@@ -152,3 +152,9 @@ class ClassViewSet(ModelViewSet):
     def get_queryset(self):
         # kwarg needs to match url kwarg (router lookup + field name)
         return Classes.objects.filter(module__module_code=self.kwargs.get('module_module_code'))
+
+    @action(detail=True, methods=['GET'])
+    def order(self, request, **kwargs):
+        order = getattr(self.get_object(), 'order', None)
+        serializer = ClassesOrderSerializer(instance=order, context={'request': request})
+        return Response(serializer.data if order else None)
