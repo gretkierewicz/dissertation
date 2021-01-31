@@ -1,10 +1,8 @@
 import json
 import random
 
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient, APIRequestFactory
+from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer, \
@@ -30,7 +28,7 @@ class EmpFields:
     string_fields = (first_name, last_name, abbreviation, e_mail)
 
 
-class DegreesTests(BasicAPITests):
+class DegreesTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
@@ -69,7 +67,7 @@ class DegreesTests(BasicAPITests):
         cls.invalid_partial_data = cls.invalid_post_data_payload
 
 
-class PositionsTests(BasicAPITests):
+class PositionsTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
@@ -108,7 +106,7 @@ class PositionsTests(BasicAPITests):
         cls.invalid_partial_data = cls.invalid_post_data_payload
 
 
-class EmployeesTests(BasicAPITests):
+class EmployeesTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
@@ -206,7 +204,7 @@ class EmployeesTests(BasicAPITests):
                 field: random_max_len_field_str(cls.model, EmpFields.first_name) + random_str(1)}
 
 
-class PensumTests(BasicAPITests):
+class PensumTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()

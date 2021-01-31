@@ -20,6 +20,7 @@ Local with SQLite DB
 - TESTS / Some additional changes so tests are skipped easier regarding provided data.
 - TESTS / Implementing unittests' SubTest method (https://docs.python.org/3/library/unittest.html#distinguishing-test-iterations-using-subtests)
   Each dictionary case is not tested independently.
+- TESTS / Changed Utils BasicAPITests not to inherit from APITestCase, so it is not considered in tests.
 
 ### To be done:
 

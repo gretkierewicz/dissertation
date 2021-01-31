@@ -1,7 +1,7 @@
 import json
 
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient, APIRequestFactory
+from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 
 from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer
@@ -17,7 +17,7 @@ client = APIClient()
 factory = APIRequestFactory()
 
 
-class ModuleTests(BasicAPITests):
+class ModuleTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()

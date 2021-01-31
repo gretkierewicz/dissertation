@@ -1,4 +1,5 @@
 import json
+import unittest
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -7,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 
-class BasicAPITests(APITestCase):
+class BasicAPITests:
     @classmethod
     def setUpTestData(cls):
         """
