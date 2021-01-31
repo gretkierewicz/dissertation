@@ -5,23 +5,24 @@ from .models import Orders, Plans
 from .serializers import OrdersSerializer, PlansSerializer, ClassesOrderSerializer
 
 
-class OrdersViewSet(GenericViewSet,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
-    # return different queryset for nested view and full for not nested
-    def get_queryset(self):
-        if self.kwargs.get('module_module_code') and self.kwargs.get('class_name'):
-            return Orders.objects.filter(
-                classes__module__module_code=self.kwargs.get('module_module_code'),
-                classes__name=self.kwargs.get('class_name')
-            )
-        return Orders.objects.all()
+class OrdersListViewSet(GenericViewSet,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin):
+    serializer_class = OrdersSerializer
+    queryset = Orders.objects.all()
 
-    # return nested serializer (classes hidden) for nested view and full for not nested
-    def get_serializer_class(self):
-        if self.kwargs.get('module_module_code') and self.kwargs.get('class_name'):
-            return ClassesOrderSerializer
-        return OrdersSerializer
+
+class OrderDetailViewSet(GenericViewSet,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.DestroyModelMixin):
+    serializer_class = ClassesOrderSerializer
+
+    def get_object(self):
+        return get_object_or_404(Orders, **{
+            'classes__module__module_code': self.kwargs.get('module_module_code'),
+            'classes__name': self.kwargs.get('classes_name')
+        })
 
 
 class PlansViewSet(ModelViewSet):

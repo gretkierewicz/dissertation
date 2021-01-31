@@ -33,7 +33,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     order_url = NestedHyperlinkedIdentityField(
         view_name='classes-order-detail',
         lookup_field='name',
-        lookup_url_kwarg='name',
+        lookup_url_kwarg='classes_name',
         parent_lookup_kwargs={
             'module_module_code': 'module__module_code'
         }

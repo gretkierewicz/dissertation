@@ -34,6 +34,9 @@ Local with SQLite DB
 - Updated decorator to be able to get object's parent after posting order data.
   Fixed some issues after messing with last tests upps. All tests for employees and modules pass now.
 - Tests / Basic setup for Orders
+- Orders / Created ViewSet for detail view and removed action from modules list view.
+  Changed URL patterns. Order's details can be now properly displayed, updated and deleted.
+  Converted basic Order view set into two view sets: OrdersList and OrderDetail
 
 ### To be done:
 

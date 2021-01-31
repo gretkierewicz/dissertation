@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 
@@ -58,23 +58,39 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 ## generates:
 # /modules/{module_code}/classes/
 # /modules/{module_code}/classes/{classes_name}
-classes_order_router = NestedDefaultRouter(modules_router, r'classes', lookup='classes')
-classes_order_router.register(r'order/plans', orders_views.PlansViewSet, basename='classes-order-plans')
-# 'order' related url-patterns, as an action in Classes view set (for manipulating OneToOne relation),
-# are not set here directly
+order_plans_router = NestedDefaultRouter(modules_router, r'classes', lookup='classes')
+order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename='classes-order-plans')
 ## gernerates:
 # /modules/{module_code}/classes/{classes_name}/order/plans/
 # /modules/{module_code}/classes/{classes_name}/order/plans/{plans_employee}
 
-router.register(r'orders', orders_views.OrdersViewSet, basename='orders')
+router.register(r'orders', orders_views.OrdersListViewSet, basename='orders')
 ## generates:
 # /orders/
 
 urlpatterns = [
     path('API/', include(router.urls)),
+    re_path(
+        r'^API/modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order/$',
+        orders_views.OrderDetailViewSet.as_view({
+            'get': 'retrieve',
+            'put': 'update',
+            'patch': 'partial_update',
+            'delete': 'destroy'
+        }),
+        name='classes-order-detail'),
+    re_path(
+        r'^API/modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order\.(?P<format>[a-z0-9]+)/?$',
+        orders_views.OrderDetailViewSet.as_view({
+            'get': 'retrieve',
+            'put': 'update',
+            'patch': 'partial_update',
+            'delete': 'destroy'
+        }),
+        name='classes-order-detail'),
+    path('API/', include(order_plans_router.urls)),
     path('API/', include(employees_router.urls)),
     path('API/', include(modules_router.urls)),
-    path('API/', include(classes_order_router.urls)),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
 ]

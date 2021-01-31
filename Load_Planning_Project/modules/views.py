@@ -141,25 +141,3 @@ class ClassViewSet(ModelViewSet):
     def get_queryset(self):
         # kwarg needs to match url kwarg (router lookup + field name)
         return Classes.objects.filter(module__module_code=self.kwargs.get('module_module_code'))
-
-    @action(detail=True, methods=['GET', 'PUT', 'PATCH', 'DELETE'], url_name='order-detail')
-    def order(self, request, **kwargs):
-        """
-        Order View Set nested into Classes one.
-        Create, retrieve, update or delete order for Classes Instance.
-        Orders can be created from action in Modules List View as well.
-        """
-        self.serializer_class = ClassesOrderSerializer
-        instance = getattr(self.get_object(), 'order', None)
-        data = request.data or None
-        if self.request.method == 'GET':
-            serializer = ClassesOrderSerializer(instance=instance, context={'request': request})
-            return Response(serializer.data if instance else None)
-        elif self.request.method == 'DELETE' and instance:
-            instance.delete()
-            return Response(None)
-        else:
-            serializer = ClassesOrderSerializer(data=data, instance=instance, context={'request': request})
-            if serializer.is_valid():
-                serializer.save()
-            return Response(serializer.errors or serializer.data)
