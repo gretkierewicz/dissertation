@@ -73,8 +73,9 @@ urlpatterns = [
     re_path(
         r'^API/modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order/$',
         orders_views.OrderDetailViewSet.as_view({
+            # request's method name relation with ViewSet's method name (custom create_or_update method)
             'get': 'retrieve',
-            'put': 'update',
+            'put': 'create_or_update',
             'patch': 'partial_update',
             'delete': 'destroy'
         }),
@@ -83,7 +84,7 @@ urlpatterns = [
         r'^API/modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order\.(?P<format>[a-z0-9]+)/?$',
         orders_views.OrderDetailViewSet.as_view({
             'get': 'retrieve',
-            'put': 'update',
+            'put': 'create_or_update',
             'patch': 'partial_update',
             'delete': 'destroy'
         }),

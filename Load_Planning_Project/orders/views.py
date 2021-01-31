@@ -14,6 +14,7 @@ class OrdersListViewSet(GenericViewSet,
 
 class OrderDetailViewSet(GenericViewSet,
                          mixins.RetrieveModelMixin,
+                         mixins.CreateModelMixin,
                          mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin):
     serializer_class = ClassesOrderSerializer
@@ -23,6 +24,15 @@ class OrderDetailViewSet(GenericViewSet,
             'classes__module__module_code': self.kwargs.get('module_module_code'),
             'classes__name': self.kwargs.get('classes_name')
         })
+
+    def create_or_update(self, request, *args, **kwargs):
+        # PUT method - create or update instance (proper relation is set in urls patterns)
+        instance = None
+        try:
+            instance = self.get_object()
+        finally:
+            # using mixin's different methods depending on the order's instance existence
+            return super().update(request, *args, **kwargs) if instance else super().create(request, *args, **kwargs)
 
 
 class PlansViewSet(ModelViewSet):

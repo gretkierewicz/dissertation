@@ -39,6 +39,7 @@ Local with SQLite DB
   Converted basic Order view set into two view sets: OrdersList and OrderDetail
 - Tests / Minor tests corrections
 - Plans / plan_hours validation - preventing setting more hours than order's calculated value
+- Orders / Updated PUT method - It will now create or update record from Classes' nested detail view.
 
 ### To be done:
 
