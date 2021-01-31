@@ -33,6 +33,7 @@ Local with SQLite DB
   Created get_obj_with_parent_kwargs decorator for get_obj and get_obj_by_pk methods.
 - Updated decorator to be able to get object's parent after posting order data.
   Fixed some issues after messing with last tests upps. All tests for employees and modules pass now.
+- Tests / Basic setup for Orders
 
 ### To be done:
 
