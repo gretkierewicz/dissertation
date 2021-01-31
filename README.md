@@ -15,7 +15,8 @@ Local with SQLite DB
   Moved plans-related serializer's fields to the nested ClassesOrderSerializer, as there is no use for them in basic one.
   Basic OrdersSerializer stands now only for creating new order from model list view or throwing back form.
   Could be changed in case of importing nested plans' data in orders JSON - needs testing.
-- TESTS / Refactoring code - moving some random functions to Utils module
+- TESTS / Refactoring code - moved some random functions to Utils module
+- TESTS / Refactoring code - moved test cases to Utils tests for more clear sharing with other modules
 
 ### To be done:
 

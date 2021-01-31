@@ -7,16 +7,17 @@ from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer
 
 from employees.models import Degrees, Positions, Employees
-from employees.tests import DegreesTests, EmpFields
+from employees.tests import EmpFields
 
 from utils.random_generators import random_max_len_field_str, random_bool, random_str
+from utils.tests import BasicAPITests
 
 
 client = APIClient()
 factory = APIRequestFactory()
 
 
-class ModuleTests(DegreesTests):
+class ModuleTests(BasicAPITests):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()

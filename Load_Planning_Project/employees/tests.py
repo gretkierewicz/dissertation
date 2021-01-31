@@ -4,7 +4,7 @@ import random
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+from rest_framework.test import APIClient, APIRequestFactory
 
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer, \
@@ -12,6 +12,7 @@ from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerialize
 
 from utils.constants import NA
 from utils.random_generators import random_max_len_field_str, random_str, random_bool
+from utils.tests import BasicAPITests
 
 
 class EmpFields:
@@ -29,7 +30,7 @@ class EmpFields:
     string_fields = (first_name, last_name, abbreviation, e_mail)
 
 
-class DegreesTests(APITestCase):
+class DegreesTests(BasicAPITests):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
@@ -65,235 +66,8 @@ class DegreesTests(APITestCase):
         cls.invalid_put_data_payload = cls.invalid_post_data_payload
         cls.invalid_partial_data = cls.invalid_post_data_payload
 
-    def get_obj(self, data=None):
-        """
-        Try to return obj by data provided or just base self.obj if no data provided
-        params data: (optional) raw dictionary data with field_lookup pointing record - if not provided: return self.obj
-        return: model instance or None if not found
-        """
-        if data:
-            try:
-                return self.model.objects.get(**{self.field_lookup: data[self.field_lookup]})
-            except ObjectDoesNotExist:
-                return None
-        else:
-            return self.obj
 
-    def get_obj_by_pk(self, pk):
-        """
-        Try to return obj by pk provided
-        params pk: pk of the object
-        return: model instance or None if not found
-        """
-        if pk:
-            try:
-                return self.model.objects.get(pk=pk)
-            except ObjectDoesNotExist:
-                return None
-        return None
-
-    def get_kwargs(self, obj=None, valid=True):
-        """
-        Get kwargs to build URL
-        params obj: (optional) model instance - if not provided, self.obj is taken
-        params valid: (optional) flag - return valid kwargs or not
-        return: dictionary of URL kwargs
-        """
-        return {self.lookup: getattr((obj or self.obj), self.lookup)} if valid else {self.lookup: '99999'}
-
-    def test_get_list_code(self):
-        response = self.client.get(reverse(self.basename + '-list'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-
-    def test_get_list_data(self):
-        response = self.client.get(reverse(self.basename + '-list'))
-        self.assertJSONEqual(
-            json.dumps(response.data),
-            self.list_serializer(instance=self.model.objects.all(), many=True, context=self.context).data,
-            response.data)
-
-    def test_get_obj_code(self, obj=None, msg=None):
-        response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)))
-        self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-
-    def test_get_obj_data(self, obj=None, msg=None):
-        response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)))
-        self.assertJSONEqual(
-            json.dumps(response.data), self.serializer(instance=(obj or self.obj), context=self.context).data,
-            (f"{msg}: " if msg else "") + f"{response.data}")
-
-    def test_post_data_payload_raw(self, payload_data=None):
-        for msg, data in (payload_data or self.valid_post_data_payload).items():
-            response = self.client.post(reverse(self.basename + '-list'), data=data)
-            self.assertEqual(
-                response.status_code, status.HTTP_201_CREATED, (f"{msg}: " if msg else "") + f"{response.data}")
-            # try to get created model instance
-            obj = self.get_obj(data)
-            self.assertIsNotNone(obj, msg)
-            # check response code with get method
-            self.test_get_obj_code(obj=obj, msg=msg)
-            # check data integrity of data sent and serialized instance
-            self.assertJSONEqual(
-                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
-
-    def test_post_data_payload_json(self, payload_data=None):
-        for msg, data in (payload_data or self.valid_post_data_payload).items():
-            response = self.client.post(
-                reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
-            self.assertEqual(
-                response.status_code, status.HTTP_201_CREATED, (f"{msg}: " if msg else "") + f"{response.data}")
-            # try to get created model instance
-            obj = self.get_obj(data)
-            self.assertIsNotNone(obj, msg)
-            # check response code with get method
-            self.test_get_obj_code(obj=obj, msg=msg)
-            # check data integrity of data sent and serialized instance
-            self.assertJSONEqual(
-                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
-
-    def test_put_data_payload_raw(self, base_obj=None, payload_data=None):
-        obj = base_obj
-        for msg, data in (payload_data or self.valid_post_data_payload).items():
-            response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)), data=data)
-            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-            # try to get updated model instance
-            obj = self.get_obj(data)
-            self.assertIsNotNone(obj, msg)
-            self.assertEqual(obj.pk, self.obj.pk, msg)
-            # check response code with get method
-            self.test_get_obj_code(obj=obj, msg=msg)
-            # check data integrity of data sent and serialized instance
-            self.assertJSONEqual(
-                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
-
-    def test_put_data_payload_json(self, base_obj=None, payload_data=None):
-        obj = base_obj
-        for msg, data in (payload_data or self.valid_post_data_payload).items():
-            response = self.client.put(
-                reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)), data=json.dumps(data),
-                content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-            # try to get updated model instance
-            obj = self.get_obj(data)
-            self.assertIsNotNone(obj, msg)
-            self.assertEqual(obj.pk, self.obj.pk, msg)
-            # check response code with get method
-            self.test_get_obj_code(obj=obj, msg=msg)
-            # check data integrity of data sent and serialized instance
-            self.assertJSONEqual(
-                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
-
-    def test_patch_data_payload_raw(self, base_obj=None, payload_data=None):
-        obj = base_obj
-        for msg, data in (payload_data or self.valid_partial_data).items():
-            response = self.client.patch(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)), data=data)
-            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-            # try to get updated model instance
-            obj = self.get_obj_by_pk(self.obj.pk)
-            self.assertIsNotNone(obj, msg)
-            # check response code with get method
-            self.test_get_obj_code(obj=obj, msg=msg)
-            # check data integrity of data sent and serialized instance
-            self.assertJSONEqual(
-                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
-
-    def test_patch_data_payload_json(self, base_obj=None, payload_data=None):
-        obj = base_obj
-        for msg, data in (payload_data or self.valid_partial_data).items():
-            response = self.client.patch(
-                reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)), data=json.dumps(data),
-                content_type='application/json')
-            self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-            # try to get updated model instance
-            obj = self.get_obj_by_pk(self.obj.pk)
-            self.assertIsNotNone(obj, msg)
-            # check response code with get method
-            self.test_get_obj_code(obj=obj, msg=msg)
-            # check data integrity of data sent and serialized instance
-            self.assertJSONEqual(
-                json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
-
-    def test_del_data(self, obj=None):
-        response = self.client.delete(reverse(self.basename + '-detail', kwargs=self.get_kwargs(obj)))
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_405_METHOD_NOT_ALLOWED if self.delete_forbidden else status.HTTP_204_NO_CONTENT, response.data)
-        # check if record has/hasn't been deleted
-        if self.delete_forbidden:
-            self.test_get_obj_code(obj)
-        else:
-            self.test_get_invalid(deleted_record=True)
-
-    # INVALID DATA TESTS
-
-    def test_get_invalid(self, deleted_record=False):
-        response = self.client.get(reverse(self.basename + '-detail', kwargs=self.get_kwargs(valid=deleted_record)))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.data)
-
-    def test_post_invalid_data_payload_raw(self, payload_data=None):
-        records = [_.pk for _ in self.model.objects.all()]
-        for msg, data in (payload_data or self.invalid_post_data_payload).items():
-            response = self.client.post(reverse(self.basename + '-list'), data=data)
-            self.assertEqual(
-                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # double check records' pks
-            self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
-
-    def test_post_invalid_data_payload_json(self, payload_data=None):
-        records = [_.pk for _ in self.model.objects.all()]
-        for msg, data in (payload_data or self.invalid_post_data_payload).items():
-            response = self.client.post(
-                reverse(self.basename + '-list'), data=json.dumps(data), content_type='application/json')
-            self.assertEqual(
-                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # double check records' pks
-            self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
-
-    def test_put_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
-        for msg, data in (payload_data or self.invalid_put_data_payload).items():
-            response = self.client.put(reverse(self.basename + '-detail', kwargs=self.get_kwargs(base_obj)), data=data)
-            self.assertEqual(
-                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # check if self.obj was not changed
-            self.test_get_obj_data(obj=base_obj, msg=msg)
-
-    def test_put_invalid_data_payload_json(self, base_obj=None, payload_data=None):
-        for msg, data in (payload_data or self.invalid_put_data_payload).items():
-            response = self.client.put(
-                reverse(self.basename + '-detail', kwargs=self.get_kwargs(base_obj)), data=json.dumps(data),
-                content_type='application/json')
-            self.assertEqual(
-                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # check if self.obj was not changed
-            self.test_get_obj_data(obj=base_obj, msg=msg)
-
-    def test_patch_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
-        for msg, data in (payload_data or self.invalid_partial_data).items():
-            response = self.client.patch(
-                reverse(self.basename + '-detail', kwargs=self.get_kwargs(base_obj)), data=data)
-            self.assertEqual(
-                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # check if self.obj was not changed
-            self.test_get_obj_data(obj=base_obj, msg=msg)
-
-    def test_patch_invalid_data_payload_json(self, base_obj=None, payload_data=None):
-        for msg, data in (payload_data or self.invalid_partial_data).items():
-            response = self.client.patch(
-                reverse(self.basename + '-detail', kwargs=self.get_kwargs(base_obj)), data=json.dumps(data),
-                content_type='application/json')
-            self.assertEqual(
-                response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-            # check if self.obj was not changed
-            self.test_get_obj_data(obj=base_obj, msg=msg)
-
-    def test_del_invalid_data(self):
-        response = self.client.delete(reverse(self.basename + '-detail', kwargs=self.get_kwargs(valid=False)))
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_405_METHOD_NOT_ALLOWED if self.delete_forbidden else status.HTTP_404_NOT_FOUND, response.data)
-
-
-class PositionsTests(DegreesTests):
+class PositionsTests(BasicAPITests):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
@@ -330,7 +104,7 @@ class PositionsTests(DegreesTests):
         cls.invalid_partial_data = cls.invalid_post_data_payload
 
 
-class EmployeesTests(DegreesTests):
+class EmployeesTests(BasicAPITests):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
@@ -411,6 +185,7 @@ class EmployeesTests(DegreesTests):
                 **create_payload_data(), 'abbreviation': cls.obj.abbreviation, 'supervisor': cls.obj.abbreviation
             }
         }
+        cls.invalid_partial_data = {}
         for field in EmpFields.string_fields:
             cls.invalid_partial_data['empty ' + field] = {**create_payload_data(), field: ''}
             cls.invalid_partial_data['too long ' + field] = {
@@ -425,7 +200,7 @@ class EmployeesTests(DegreesTests):
                 field: random_max_len_field_str(cls.model, EmpFields.first_name) + random_str(1)}
 
 
-class PensumTests(DegreesTests):
+class PensumTests(BasicAPITests):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
