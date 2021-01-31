@@ -1,5 +1,5 @@
 import json
-import unittest
+import re
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -9,13 +9,27 @@ from rest_framework.test import APITestCase
 
 
 def get_obj_with_parent_kwargs(func):
+    """
+    Helper decorator for cases of OneToOne relations - getting instance from obj_parent_get_kwargs or lookup
+    obj_parent_get_kwargs must provide lookups and values of main obj in dictionary form.
+    If provided with data, lookup and field_lookup, it should get parent from passed URL in data.
+    This solves problem of getting parent after posting data with URL that do not provide data about it.
+    """
     def wrapper(self, *args, **kwargs):
-        if self.obj_parent_get_kwargs:
+        if hasattr(self, 'obj_parent_get_kwargs') and self.obj_parent_get_kwargs:
+            parent_kwargs = None
+            if len(args) > 0 and self.lookup:
+                # if data dictionary passed
+                parent_kwargs = {}
+                if args[0].get(self.field_lookup):
+                    for key, re_pattern in self.lookup.items():
+                        answ = re.search(re_pattern, args[0].get(self.field_lookup))
+                        parent_kwargs[key] = answ[key]
             try:
-                return self.model.objects.get(**self.obj_parent_get_kwargs)
+                return self.model.objects.get(**(parent_kwargs or self.obj_parent_get_kwargs))
             except ObjectDoesNotExist:
                 return None
-        func(self, *args, **kwargs)
+        return func(self, *args, **kwargs)
     return wrapper
 
 
@@ -65,7 +79,6 @@ class BasicAPITests:
         else:
             return self.obj
 
-    @get_obj_with_parent_kwargs
     def get_obj_by_pk(self, pk):
         """
         Try to return obj by pk provided
@@ -87,10 +100,11 @@ class BasicAPITests:
         return: dictionary of URL kwargs
         """
         if valid:
-            return self.obj_parent_url_kwargs if self.obj_parent_url_kwargs else {
-                self.lookup: getattr((obj or self.obj), self.lookup)}
+            if hasattr(self, 'obj_parent_url_kwargs'):
+                return self.obj_parent_url_kwargs
+            return {self.lookup: getattr((obj or self.obj), self.lookup)}
         # if not valid:
-        if self.obj_parent_url_kwargs:
+        if hasattr(self, 'obj_parent_url_kwargs') and self.obj_parent_url_kwargs:
             return {key: '99999999' for key, _ in self.obj_parent_url_kwargs.items()}
         return {self.lookup or 'pk': '99999'}
 
@@ -169,7 +183,7 @@ class BasicAPITests:
     def test_put_data_payload_raw(self, base_obj=None, payload_data=None):
         if self.client and self.detail_view_name:
             obj = base_obj
-            for msg, data in (payload_data or self.valid_post_data_payload).items():
+            for msg, data in (payload_data or self.valid_put_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.put(
                         reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)), data=data)
@@ -190,7 +204,7 @@ class BasicAPITests:
     def test_put_data_payload_json(self, base_obj=None, payload_data=None):
         if self.client and self.detail_view_name:
             obj = base_obj
-            for msg, data in (payload_data or self.valid_post_data_payload).items():
+            for msg, data in (payload_data or self.valid_put_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.put(
                         reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)),

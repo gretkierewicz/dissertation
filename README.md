@@ -31,6 +31,8 @@ Local with SQLite DB
   Changed basename into list_view_name and detail_view_name to be able to split these for Order tests.
   Created additional properties: obj_parent_url_kwargs and obj_parent_get_kwargs for proper getting OneToOne relation instance.
   Created get_obj_with_parent_kwargs decorator for get_obj and get_obj_by_pk methods.
+- Updated decorator to be able to get object's parent after posting order data.
+  Fixed some issues after messing with last tests upps. All tests for employees and modules pass now.
 
 ### To be done:
 
