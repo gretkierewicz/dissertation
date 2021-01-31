@@ -109,38 +109,39 @@ class BasicAPITests(APITestCase):
     def test_post_data_payload_raw(self, payload_data=None):
         if self.client and self.basename and self.list_suffix:
             for msg, data in (payload_data or self.valid_post_data_payload).items():
-                response = self.client.post(reverse(self.basename + '-' + self.list_suffix), data=data)
-                self.assertEqual(
-                    response.status_code, status.HTTP_201_CREATED, (f"{msg}: " if msg else "") + f"{response.data}")
-                # try to get created model instance
-                obj = self.get_obj(data)
-                self.assertIsNotNone(obj, msg)
-                # check response code with get method
-                self.test_get_obj_code(obj=obj, msg=msg)
-                # check data integrity of data sent and serialized instance
-                if self.serializer:
-                    self.assertJSONEqual(
-                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.post(reverse(self.basename + '-' + self.list_suffix), data=data)
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{response.data}")
+                    # try to get created model instance
+                    obj = self.get_obj(data)
+                    self.assertIsNotNone(obj)
+                    # check response code with get method
+                    self.test_get_obj_code(obj=obj, msg=msg)
+                    # check data integrity of data sent and serialized instance
+                    if self.serializer:
+                        self.assertJSONEqual(
+                            json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_post_data_payload_json(self, payload_data=None):
         if self.client and self.basename and self.list_suffix:
             for msg, data in (payload_data or self.valid_post_data_payload).items():
-                response = self.client.post(
-                    reverse(
-                        self.basename + '-' + self.list_suffix), data=json.dumps(data), content_type='application/json')
-                self.assertEqual(
-                    response.status_code, status.HTTP_201_CREATED, (f"{msg}: " if msg else "") + f"{response.data}")
-                # try to get created model instance
-                obj = self.get_obj(data)
-                self.assertIsNotNone(obj, msg)
-                # check response code with get method
-                self.test_get_obj_code(obj=obj, msg=msg)
-                # check data integrity of data sent and serialized instance
-                if self.serializer:
-                    self.assertJSONEqual(
-                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.post(
+                        reverse(self.basename + '-' + self.list_suffix),
+                        data=json.dumps(data),
+                        content_type='application/json')
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{response.data}")
+                    # try to get created model instance
+                    obj = self.get_obj(data)
+                    self.assertIsNotNone(obj)
+                    # check response code with get method
+                    self.test_get_obj_code(obj=obj, msg=msg)
+                    # check data integrity of data sent and serialized instance
+                    if self.serializer:
+                        self.assertJSONEqual(
+                            json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -148,20 +149,20 @@ class BasicAPITests(APITestCase):
         if self.client and self.basename and self.detail_suffix:
             obj = base_obj
             for msg, data in (payload_data or self.valid_post_data_payload).items():
-                response = self.client.put(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)), data=data)
-                self.assertEqual(
-                    response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-                # try to get updated model instance
-                obj = self.get_obj(data)
-                self.assertIsNotNone(obj, msg)
-                self.assertEqual(obj.pk, self.obj.pk, msg)
-                # check response code with get method
-                self.test_get_obj_code(obj=obj, msg=msg)
-                # check data integrity of data sent and serialized instance
-                if self.serializer:
-                    self.assertJSONEqual(
-                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.put(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)), data=data)
+                    self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
+                    # try to get updated model instance
+                    obj = self.get_obj(data)
+                    self.assertIsNotNone(obj)
+                    self.assertEqual(obj.pk, self.obj.pk)
+                    # check response code with get method
+                    self.test_get_obj_code(obj=obj, msg=msg)
+                    # check data integrity of data sent and serialized instance
+                    if self.serializer:
+                        self.assertJSONEqual(
+                            json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -169,22 +170,22 @@ class BasicAPITests(APITestCase):
         if self.client and self.basename and self.detail_suffix:
             obj = base_obj
             for msg, data in (payload_data or self.valid_post_data_payload).items():
-                response = self.client.put(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)),
-                    data=json.dumps(data),
-                    content_type='application/json')
-                self.assertEqual(
-                    response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-                # try to get updated model instance
-                obj = self.get_obj(data)
-                self.assertIsNotNone(obj, msg)
-                self.assertEqual(obj.pk, self.obj.pk, msg)
-                # check response code with get method
-                self.test_get_obj_code(obj=obj, msg=msg)
-                # check data integrity of data sent and serialized instance
-                if self.serializer:
-                    self.assertJSONEqual(
-                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.put(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)),
+                        data=json.dumps(data),
+                        content_type='application/json')
+                    self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
+                    # try to get updated model instance
+                    obj = self.get_obj(data)
+                    self.assertIsNotNone(obj)
+                    self.assertEqual(obj.pk, self.obj.pk)
+                    # check response code with get method
+                    self.test_get_obj_code(obj=obj, msg=msg)
+                    # check data integrity of data sent and serialized instance
+                    if self.serializer:
+                        self.assertJSONEqual(
+                            json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -192,19 +193,19 @@ class BasicAPITests(APITestCase):
         if self.client and self.basename and self.detail_suffix:
             obj = base_obj
             for msg, data in (payload_data or self.valid_partial_data).items():
-                response = self.client.patch(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)), data=data)
-                self.assertEqual(
-                    response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-                # try to get updated model instance
-                obj = self.get_obj_by_pk(self.obj.pk)
-                self.assertIsNotNone(obj, msg)
-                # check response code with get method
-                self.test_get_obj_code(obj=obj, msg=msg)
-                # check data integrity of data sent and serialized instance
-                if self.serializer:
-                    self.assertJSONEqual(
-                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.patch(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)), data=data)
+                    self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
+                    # try to get updated model instance
+                    obj = self.get_obj_by_pk(self.obj.pk)
+                    self.assertIsNotNone(obj)
+                    # check response code with get method
+                    self.test_get_obj_code(obj=obj, msg=msg)
+                    # check data integrity of data sent and serialized instance
+                    if self.serializer:
+                        self.assertJSONEqual(
+                            json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -212,21 +213,21 @@ class BasicAPITests(APITestCase):
         if self.client and self.basename and self.detail_suffix:
             obj = base_obj
             for msg, data in (payload_data or self.valid_partial_data).items():
-                response = self.client.patch(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)),
-                    data=json.dumps(data),
-                    content_type='application/json')
-                self.assertEqual(
-                    response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
-                # try to get updated model instance
-                obj = self.get_obj_by_pk(self.obj.pk)
-                self.assertIsNotNone(obj, msg)
-                # check response code with get method
-                self.test_get_obj_code(obj=obj, msg=msg)
-                # check data integrity of data sent and serialized instance
-                if self.serializer:
-                    self.assertJSONEqual(
-                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data, msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.patch(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)),
+                        data=json.dumps(data),
+                        content_type='application/json')
+                    self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
+                    # try to get updated model instance
+                    obj = self.get_obj_by_pk(self.obj.pk)
+                    self.assertIsNotNone(obj)
+                    # check response code with get method
+                    self.test_get_obj_code(obj=obj, msg=msg)
+                    # check data integrity of data sent and serialized instance
+                    if self.serializer:
+                        self.assertJSONEqual(
+                            json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -260,11 +261,12 @@ class BasicAPITests(APITestCase):
         if self.client and self.basename and self.list_suffix:
             records = [_.pk for _ in self.model.objects.all()]
             for msg, data in (payload_data or self.invalid_post_data_payload).items():
-                response = self.client.post(reverse(self.basename + '-' + self.list_suffix), data=data)
-                self.assertEqual(
-                    response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-                # double check records' pks
-                self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
+                with APITestCase.subTest(self, msg):
+                    response = self.client.post(reverse(self.basename + '-' + self.list_suffix), data=data)
+                    self.assertEqual(
+                        response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
+                    # double check records' pks
+                    self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -272,66 +274,71 @@ class BasicAPITests(APITestCase):
         if self.client and self.basename and self.list_suffix:
             records = [_.pk for _ in self.model.objects.all()]
             for msg, data in (payload_data or self.invalid_post_data_payload).items():
-                response = self.client.post(
-                    reverse(self.basename + '-' + self.list_suffix),
-                    data=json.dumps(data),
-                    content_type='application/json')
-                self.assertEqual(
-                    response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-                # double check records' pks
-                self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
+                with APITestCase.subTest(self, msg):
+                    response = self.client.post(
+                        reverse(self.basename + '-' + self.list_suffix),
+                        data=json.dumps(data),
+                        content_type='application/json')
+                    self.assertEqual(
+                        response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
+                    # double check records' pks
+                    self.assertEqual(records, [_.pk for _ in self.model.objects.all()])
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_put_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
         if self.client and self.basename and self.detail_suffix:
             for msg, data in (payload_data or self.invalid_put_data_payload).items():
-                response = self.client.put(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)), data=data)
-                self.assertEqual(
-                    response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-                # check if self.obj was not changed
-                self.test_get_obj_data(obj=base_obj, msg=msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.put(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)), data=data)
+                    self.assertEqual(
+                        response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
+                    # check if self.obj was not changed
+                    self.test_get_obj_data(obj=base_obj, msg=msg)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_put_invalid_data_payload_json(self, base_obj=None, payload_data=None):
         if self.client and self.basename and self.detail_suffix:
             for msg, data in (payload_data or self.invalid_put_data_payload).items():
-                response = self.client.put(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)),
-                    data=json.dumps(data),
-                    content_type='application/json')
-                self.assertEqual(
-                    response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-                # check if self.obj was not changed
-                self.test_get_obj_data(obj=base_obj, msg=msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.put(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)),
+                        data=json.dumps(data),
+                        content_type='application/json')
+                    self.assertEqual(
+                        response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
+                    # check if self.obj was not changed
+                    self.test_get_obj_data(obj=base_obj, msg=msg)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_patch_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
         if self.client and self.basename and self.detail_suffix:
             for msg, data in (payload_data or self.invalid_partial_data).items():
-                response = self.client.patch(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)), data=data)
-                self.assertEqual(
-                    response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-                # check if self.obj was not changed
-                self.test_get_obj_data(obj=base_obj, msg=msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.patch(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)), data=data)
+                    self.assertEqual(
+                        response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
+                    # check if self.obj was not changed
+                    self.test_get_obj_data(obj=base_obj, msg=msg)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_patch_invalid_data_payload_json(self, base_obj=None, payload_data=None):
         if self.client and self.basename and self.detail_suffix:
             for msg, data in (payload_data or self.invalid_partial_data).items():
-                response = self.client.patch(
-                    reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)),
-                    data=json.dumps(data),
-                    content_type='application/json')
-                self.assertEqual(
-                    response.status_code, status.HTTP_400_BAD_REQUEST, (f"{msg}: " if msg else "") + f"{response.data}")
-                # check if self.obj was not changed
-                self.test_get_obj_data(obj=base_obj, msg=msg)
+                with APITestCase.subTest(self, msg):
+                    response = self.client.patch(
+                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)),
+                        data=json.dumps(data),
+                        content_type='application/json')
+                    self.assertEqual(
+                        response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
+                    # check if self.obj was not changed
+                    self.test_get_obj_data(obj=base_obj, msg=msg)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 

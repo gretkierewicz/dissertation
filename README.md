@@ -18,6 +18,8 @@ Local with SQLite DB
 - TESTS / Refactoring code - moved some random functions to Utils module
 - TESTS / Refactoring code - moved test cases to Utils tests for more clear sharing with other modules
 - TESTS / Some additional changes so tests are skipped easier regarding provided data.
+- TESTS / Implementing unittests' SubTest method (https://docs.python.org/3/library/unittest.html#distinguishing-test-iterations-using-subtests)
+  Each dictionary case is not tested independently.
 
 ### To be done:
 
