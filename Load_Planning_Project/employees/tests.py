@@ -40,6 +40,8 @@ class DegreesTests(BasicAPITests):
         cls.serializer = DegreeSerializer
         cls.list_serializer = cls.serializer
         cls.basename = 'degrees'
+        cls.list_suffix = 'list'
+        cls.detail_suffix = 'detail'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
         cls.lookup = 'pk'
         cls.field_lookup = 'name'
@@ -77,6 +79,8 @@ class PositionsTests(BasicAPITests):
         cls.serializer = PositionSerializer
         cls.list_serializer = cls.serializer
         cls.basename = 'positions'
+        cls.list_suffix = 'list'
+        cls.detail_suffix = 'detail'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
         cls.lookup = 'pk'
         cls.field_lookup = 'name'
@@ -114,6 +118,8 @@ class EmployeesTests(BasicAPITests):
         cls.serializer = EmployeeSerializer
         cls.list_serializer = EmployeeListSerializer
         cls.basename = 'employees'
+        cls.list_suffix = 'list'
+        cls.detail_suffix = 'detail'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
         cls.lookup = EmpFields.abbreviation
         cls.field_lookup = cls.lookup
@@ -220,6 +226,8 @@ class PensumTests(BasicAPITests):
         cls.serializer = PensumSerializer
         cls.list_serializer = cls.serializer
         cls.basename = 'pensum'
+        cls.list_suffix = 'list'
+        cls.detail_suffix = 'detail'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
         cls.lookup = 'pk'
         cls.field_lookup = name

@@ -17,6 +17,7 @@ Local with SQLite DB
   Could be changed in case of importing nested plans' data in orders JSON - needs testing.
 - TESTS / Refactoring code - moved some random functions to Utils module
 - TESTS / Refactoring code - moved test cases to Utils tests for more clear sharing with other modules
+- TESTS / Some additional changes so tests are skipped easier regarding provided data.
 
 ### To be done:
 

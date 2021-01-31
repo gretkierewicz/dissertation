@@ -32,6 +32,8 @@ class ModuleTests(BasicAPITests):
         cls.serializer = ModuleSerializer
         cls.list_serializer = cls.serializer
         cls.basename = 'modules'
+        cls.list_suffix = 'list'
+        cls.detail_suffix = 'detail'
         cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
         cls.lookup = 'module_code'
         cls.field_lookup = cls.lookup
