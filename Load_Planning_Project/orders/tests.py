@@ -64,7 +64,7 @@ class OrdersTests(BasicAPITests, APITestCase):
         })
         cls.obj_parent_url_kwargs = {
             'module_module_code': module_obj.module_code,
-            'name': classes_obj.name,
+            'classes_name': classes_obj.name,
         }
         cls.obj_parent_get_kwargs = {
             'classes__module__module_code': module_obj.module_code,
@@ -126,16 +126,21 @@ class OrdersTests(BasicAPITests, APITestCase):
 
         cls.invalid_post_data_payload = {
             'negative ' + students_number: {
+                classes: ClassSerializer(instance=classes_obj, context=cls.context).data.get('url'),
                 students_number: -1,
                 order_number: random_max_len_field_str(cls.model, order_number)},
             'empty ' + students_number: {
+                classes: ClassSerializer(instance=classes_obj, context=cls.context).data.get('url'),
                 students_number: '',
                 order_number: random_max_len_field_str(cls.model, order_number)},
             'too long ' + order_number: {
+                classes: ClassSerializer(instance=classes_obj, context=cls.context).data.get('url'),
                 students_number: 12,
                 order_number: random_max_len_field_str(cls.model, order_number) + random_str(1)}
         }
-        cls.invalid_put_data_payload = cls.invalid_post_data_payload
+        cls.invalid_put_data_payload = cls.invalid_post_data_payload.copy()
+        for key in cls.invalid_put_data_payload.keys():
+            cls.invalid_put_data_payload[key].pop('classes')
         cls.invalid_partial_data = {
             'negative ' + students_number: {students_number: -1},
             'empty ' + students_number: {students_number: ''},

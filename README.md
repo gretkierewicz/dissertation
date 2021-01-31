@@ -37,6 +37,7 @@ Local with SQLite DB
 - Orders / Created ViewSet for detail view and removed action from modules list view.
   Changed URL patterns. Order's details can be now properly displayed, updated and deleted.
   Converted basic Order view set into two view sets: OrdersList and OrderDetail
+- Tests / Minor tests corrections
 
 ### To be done:
 
