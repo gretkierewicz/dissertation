@@ -38,6 +38,7 @@ Local with SQLite DB
   Changed URL patterns. Order's details can be now properly displayed, updated and deleted.
   Converted basic Order view set into two view sets: OrdersList and OrderDetail
 - Tests / Minor tests corrections
+- Plans / plan_hours validation - preventing setting more hours than order's calculated value
 
 ### To be done:
 
@@ -48,6 +49,5 @@ Local with SQLite DB
 - Plan constructor view - managing available employees (pensum limit not reached) and not full classes 
   (classes hours not exceeded)
 - Errors output for nested JSON data import
-- Creating orders only as an additional action from modules and classes views.
 - Validators for plans and orders
 - Tests

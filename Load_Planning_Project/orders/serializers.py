@@ -1,6 +1,8 @@
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
-from rest_framework_nested.relations import NestedHyperlinkedRelatedField, NestedHyperlinkedIdentityField
+from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
@@ -40,6 +42,24 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
             'classes_name': 'classes__name',
         }
     )
+
+    def validate_plan_hours(self, data):
+        # prevent exceeding order's hours number by its plans summary hours
+        # TODO: in case of importing orders with nested plans, order instance needs to be passed with initial_data
+        url_kwargs = self.context['request'].resolver_match.kwargs
+        # get filter kwargs from request's URL
+        filter_kwargs = {
+            'classes__module__module_code': url_kwargs['module_module_code'],
+            'classes__name': url_kwargs['classes_name']}
+        # finding parent order instance
+        order = get_object_or_404(Orders, **filter_kwargs)
+        if order.plans_sum_hours - (self.instance.plan_hours if self.instance else 0) + data > order.order_hours:
+            raise ValidationError(
+                f"Order's hours number cannot be exceeded by summary number of its plans hours. "
+                f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
+                f"{order.order_hours - order.plans_sum_hours + (self.instance.plan_hours if self.instance else 0)}"
+            )
+        return data
 
 
 class OrdersSerializer(NestedHyperlinkedModelSerializer):
