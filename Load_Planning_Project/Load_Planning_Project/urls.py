@@ -60,9 +60,15 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 # /modules/{module_code}/classes/{classes_name}
 classes_order_router = NestedDefaultRouter(modules_router, r'classes', lookup='classes')
 classes_order_router.register(r'order/plans', orders_views.PlansViewSet, basename='classes-order-plans')
+# 'order' related url-patterns, as an action in Classes view set (for manipulating OneToOne relation),
+# are not set here directly
 ## gernerates:
 # /modules/{module_code}/classes/{classes_name}/order/plans/
 # /modules/{module_code}/classes/{classes_name}/order/plans/{plans_employee}
+
+router.register(r'orders', orders_views.OrdersViewSet, basename='orders')
+## generates:
+# /orders/
 
 urlpatterns = [
     path('API/', include(router.urls)),

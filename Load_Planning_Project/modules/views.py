@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
 
+from orders.models import Orders
 from orders.serializers import OrdersSerializer, ClassesOrderSerializer
 from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer, SupervisedModuleSerializer, ModuleFlatSerializer
@@ -112,23 +113,6 @@ class ModuleViewSet(ModelViewSet):
                     if serializer.errors:
                         data[file + ' file'][partial_data.get(lookup)] = [serializer.errors]
             return Response(data)
-
-    @action(detail=False, methods=['GET', 'POST'], url_name='order-create')
-    def order(self, request):
-        """
-        Orders View Set nested into Module List view.
-        Create new orders or display form.
-        Orders can be created, retrieved, updated or deleted from Classes Instance nested view.
-        """
-        self.serializer_class = OrdersSerializer
-        if self.request.method == 'GET':
-            # just return Orders form
-            return Response(None)
-        # in case of POST method serialize and return data or errors
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.errors or serializer.data)
 
 
 class EmployeeModuleViewSet(ModuleViewSet):

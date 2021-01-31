@@ -24,6 +24,9 @@ Local with SQLite DB
 - Orders / Set up specific url names for order views: 
   'order-create' for nested module list view (full name: 'modules-order-create')
   'order-detail' for nested classes instance view (full name: 'classes-order-detail')
+- Orders / List and Create views converted back into separated view - Orders.
+  There is no need of nesting it into the modules list view set. At least for now.
+  Minor changes to the OrdersSerializer - added plans' fields.
 
 ### To be done:
 

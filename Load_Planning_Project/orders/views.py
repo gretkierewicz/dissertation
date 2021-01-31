@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
 
 from .models import Orders, Plans
 from .serializers import OrdersSerializer, PlansSerializer, ClassesOrderSerializer
 
 
-class OrdersViewSet(ModelViewSet):
+class OrdersViewSet(GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.CreateModelMixin):
     # return different queryset for nested view and full for not nested
     def get_queryset(self):
         if self.kwargs.get('module_module_code') and self.kwargs.get('class_name'):
