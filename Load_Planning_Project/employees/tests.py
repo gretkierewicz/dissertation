@@ -1,6 +1,5 @@
 import json
 import random
-import string
 
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
@@ -10,7 +9,9 @@ from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 from .models import Degrees, Positions, Employees, Pensum
 from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer, \
     EmployeeListSerializer
+
 from utils.constants import NA
+from utils.random_generators import random_max_len_field_str, random_str, random_bool
 
 
 class EmpFields:
@@ -43,34 +44,26 @@ class DegreesTests(APITestCase):
         cls.field_lookup = 'name'
         cls.delete_forbidden = True
 
-        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup)}
+        cls.obj_data = {cls.field_lookup: random_max_len_field_str(cls.model, cls.field_lookup)}
         cls.obj = cls.model.objects.create(**cls.obj_data)
         for i in range(3):
-            cls.model.objects.create(name=cls.get_random_field_str(cls.model, cls.field_lookup))
+            cls.model.objects.create(name=random_max_len_field_str(cls.model, cls.field_lookup))
 
         cls.valid_post_data_payload = {
-            'max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup)},
-            'short': {'name': cls.get_random_str(1)},
+            'max length': {'name': random_max_len_field_str(cls.model, cls.field_lookup)},
+            'short': {'name': random_str(1)},
         }
 
         cls.valid_put_data_payload = cls.valid_post_data_payload
         cls.valid_partial_data = cls.valid_post_data_payload
 
         cls.invalid_post_data_payload = {
-            'over max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup) + 'x'},
+            'over max length': {'name': random_max_len_field_str(cls.model, cls.field_lookup) + 'x'},
             'empty string': {'name': ''},
         }
 
         cls.invalid_put_data_payload = cls.invalid_post_data_payload
         cls.invalid_partial_data = cls.invalid_post_data_payload
-
-    @classmethod
-    def get_random_str(cls, k):
-        return ''.join(random.choices(string.ascii_letters, k=k))
-
-    @classmethod
-    def get_random_field_str(cls, model, field_name):
-        return ''.join(random.choices(string.ascii_letters, k=getattr(model._meta.get_field(field_name), 'max_length')))
 
     def get_obj(self, data=None):
         """
@@ -315,21 +308,21 @@ class PositionsTests(DegreesTests):
         cls.field_lookup = 'name'
         cls.delete_forbidden = True
 
-        cls.obj_data = {cls.field_lookup: cls.get_random_field_str(cls.model, cls.field_lookup)}
+        cls.obj_data = {cls.field_lookup: random_max_len_field_str(cls.model, cls.field_lookup)}
         cls.obj = cls.model.objects.create(**cls.obj_data)
         for i in range(3):
-            cls.model.objects.create(name=cls.get_random_field_str(cls.model, cls.field_lookup))
+            cls.model.objects.create(name=random_max_len_field_str(cls.model, cls.field_lookup))
 
         cls.valid_post_data_payload = {
-            'max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup)},
-            'short': {'name': cls.get_random_str(1)},
+            'max length': {'name': random_max_len_field_str(cls.model, cls.field_lookup)},
+            'short': {'name': random_str(1)},
         }
 
         cls.valid_put_data_payload = cls.valid_post_data_payload
         cls.valid_partial_data = cls.valid_post_data_payload
 
         cls.invalid_post_data_payload = {
-            'over max length': {'name': cls.get_random_field_str(cls.model, cls.field_lookup) + 'x'},
+            'over max length': {'name': random_max_len_field_str(cls.model, cls.field_lookup) + 'x'},
             'empty string': {'name': ''},
         }
 
@@ -354,12 +347,12 @@ class EmployeesTests(DegreesTests):
 
         def create_model_data():
             return {
-                EmpFields.first_name: cls.get_random_field_str(cls.model, EmpFields.first_name),
-                EmpFields.last_name: cls.get_random_field_str(cls.model, EmpFields.last_name),
-                EmpFields.abbreviation: cls.get_random_field_str(cls.model, EmpFields.abbreviation),
-                EmpFields.e_mail: cls.get_random_field_str(cls.model, EmpFields.e_mail)[:-6] + '@ab.ba',
-                EmpFields.degree: Degrees.objects.create(name=cls.get_random_str(5)),
-                EmpFields.position: Positions.objects.create(name=cls.get_random_str(5))
+                EmpFields.first_name: random_max_len_field_str(cls.model, EmpFields.first_name),
+                EmpFields.last_name: random_max_len_field_str(cls.model, EmpFields.last_name),
+                EmpFields.abbreviation: random_max_len_field_str(cls.model, EmpFields.abbreviation),
+                EmpFields.e_mail: random_max_len_field_str(cls.model, EmpFields.e_mail)[:-6] + '@ab.ba',
+                EmpFields.degree: Degrees.objects.create(name=random_str(5)),
+                EmpFields.position: Positions.objects.create(name=random_str(5))
             }
 
         cls.obj = cls.model.objects.create(**create_model_data())
@@ -368,32 +361,32 @@ class EmployeesTests(DegreesTests):
 
         def create_payload_data():
             return {
-                EmpFields.first_name: cls.get_random_field_str(cls.model, EmpFields.first_name),
-                EmpFields.last_name: cls.get_random_field_str(cls.model, EmpFields.last_name),
-                EmpFields.abbreviation: cls.get_random_field_str(cls.model, EmpFields.abbreviation),
-                EmpFields.e_mail: cls.get_random_field_str(cls.model, EmpFields.e_mail)[:-6] + '@ab.ba',
-                EmpFields.degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
-                EmpFields.position: Positions.objects.create(name=cls.get_random_str(5)).name,
+                EmpFields.first_name: random_max_len_field_str(cls.model, EmpFields.first_name),
+                EmpFields.last_name: random_max_len_field_str(cls.model, EmpFields.last_name),
+                EmpFields.abbreviation: random_max_len_field_str(cls.model, EmpFields.abbreviation),
+                EmpFields.e_mail: random_max_len_field_str(cls.model, EmpFields.e_mail)[:-6] + '@ab.ba',
+                EmpFields.degree: Degrees.objects.create(name=random_str(5)).name,
+                EmpFields.position: Positions.objects.create(name=random_str(5)).name,
                 'supervisor': None,
             }
 
         cls.valid_post_data_payload = {
             'max length': create_payload_data(),
             'short strings': {
-                EmpFields.first_name: cls.get_random_str(1),
-                EmpFields.last_name: cls.get_random_str(1),
-                EmpFields.abbreviation: cls.get_random_str(1),
-                EmpFields.e_mail: cls.get_random_str(1) + '@ab.ba',
-                EmpFields.degree: Degrees.objects.create(name=cls.get_random_str(5)).name,
-                EmpFields.position: Positions.objects.create(name=cls.get_random_str(5)).name,
+                EmpFields.first_name: random_str(1),
+                EmpFields.last_name: random_str(1),
+                EmpFields.abbreviation: random_str(1),
+                EmpFields.e_mail: random_str(1) + '@ab.ba',
+                EmpFields.degree: Degrees.objects.create(name=random_str(5)).name,
+                EmpFields.position: Positions.objects.create(name=random_str(5)).name,
                 EmpFields.supervisor: None,
             },
             'all fields': {
                 **create_payload_data(),
                 EmpFields.supervisor: Employees.objects.create(**create_model_data()).abbreviation,
                 EmpFields.year_of_studies: random.randint(1, 100),
-                EmpFields.is_procedure_for_a_doctoral_degree_approved: random.choices([True, False])[0],
-                EmpFields.has_scholarship: random.choices([True, False])[0],
+                EmpFields.is_procedure_for_a_doctoral_degree_approved: random_bool(),
+                EmpFields.has_scholarship: random_bool(),
             }
         }
         
@@ -401,11 +394,11 @@ class EmployeesTests(DegreesTests):
         
         cls.valid_partial_data = {
             'max length ' + EmpFields.first_name: {
-                EmpFields.first_name: cls.get_random_field_str(cls.model, EmpFields.first_name)
+                EmpFields.first_name: random_max_len_field_str(cls.model, EmpFields.first_name)
             }
         }
 
-        rand_abbreviation = cls.get_random_field_str(cls.model, EmpFields.abbreviation)
+        rand_abbreviation = random_max_len_field_str(cls.model, EmpFields.abbreviation)
         cls.invalid_post_data_payload = {
             'empty ' + EmpFields.first_name: {**create_payload_data(), EmpFields.first_name: ''},
             'self supervising with new abbreviation': {
@@ -422,14 +415,14 @@ class EmployeesTests(DegreesTests):
             cls.invalid_partial_data['empty ' + field] = {**create_payload_data(), field: ''}
             cls.invalid_partial_data['too long ' + field] = {
                 **create_payload_data(),
-                field: cls.get_random_field_str(cls.model, EmpFields.first_name) + cls.get_random_str(1)}
+                field: random_max_len_field_str(cls.model, EmpFields.first_name) + random_str(1)}
 
         cls.invalid_partial_data = {
             'self supervising': {'supervisor': cls.obj.abbreviation}}
         for field in EmpFields.string_fields:
             cls.invalid_partial_data['empty ' + field] = {field: ''}
             cls.invalid_partial_data['too long ' + field] = {
-                field: cls.get_random_field_str(cls.model, EmpFields.first_name) + cls.get_random_str(1)}
+                field: random_max_len_field_str(cls.model, EmpFields.first_name) + random_str(1)}
 
 
 class PensumTests(DegreesTests):
@@ -459,22 +452,22 @@ class PensumTests(DegreesTests):
 
         def create_model_data():
             return {
-                name: cls.get_random_field_str(cls.model, name),
+                name: random_max_len_field_str(cls.model, name),
                 value: random.randint(1, 500),
                 limit: random.randint(501, 1000),
             }
 
         cls.obj = cls.model.objects.create(**create_model_data())
-        cls.obj.degrees.create(name=cls.get_random_str(15))
-        cls.obj.positions.create(name=cls.get_random_str(15))
-        cls.obj.degrees.create(name=cls.get_random_str(15))
-        cls.obj.positions.create(name=cls.get_random_str(15))
+        cls.obj.degrees.create(name=random_str(15))
+        cls.obj.positions.create(name=random_str(15))
+        cls.obj.degrees.create(name=random_str(15))
+        cls.obj.positions.create(name=random_str(15))
         for i in range(3):
             pensum = cls.model.objects.create(**create_model_data())
-            pensum.degrees.create(name=cls.get_random_str(15))
-            pensum.positions.create(name=cls.get_random_str(15))
-            pensum.degrees.create(name=cls.get_random_str(15))
-            pensum.positions.create(name=cls.get_random_str(15))
+            pensum.degrees.create(name=random_str(15))
+            pensum.positions.create(name=random_str(15))
+            pensum.degrees.create(name=random_str(15))
+            pensum.positions.create(name=random_str(15))
 
         active_year_choices = [a for a, b in Pensum.YEAR_CONDITION_CHOICES if a != NA]
         active_procedure_choices = [a for a, b in Pensum.DOCTORAL_PROCEDURE_CHOICES if a != NA]
@@ -483,53 +476,53 @@ class PensumTests(DegreesTests):
         duplicate = cls.model.objects.create(**{
             **create_model_data(),
             year_of_studies: random.randint(1, 20),
-            year_condition: random.choices(active_year_choices)[0],
-            is_procedure_for_a_doctoral_degree_approved: random.choices(active_procedure_choices)[0],
-            has_scholarship: random.choices(active_scholarship_choices)[0],
+            year_condition: random.choice(active_year_choices),
+            is_procedure_for_a_doctoral_degree_approved: random.choice(active_procedure_choices),
+            has_scholarship: random.choice(active_scholarship_choices),
         })
-        duplicate.degrees.create(name=cls.get_random_str(15))
-        duplicate.positions.create(name=cls.get_random_str(15))
+        duplicate.degrees.create(name=random_str(15))
+        duplicate.positions.create(name=random_str(15))
 
         def create_payload_data():
             return {
-                name: cls.get_random_field_str(cls.model, name),
+                name: random_max_len_field_str(cls.model, name),
                 value: random.randint(1, 500),
                 limit: random.randint(501, 1000),
                 degrees: [
-                    Degrees.objects.create(name=cls.get_random_str(15)).name,
-                    Degrees.objects.create(name=cls.get_random_str(15)).name
+                    Degrees.objects.create(name=random_str(15)).name,
+                    Degrees.objects.create(name=random_str(15)).name
                 ],
                 positions: [
-                    Positions.objects.create(name=cls.get_random_str(15)).name,
-                    Positions.objects.create(name=cls.get_random_str(15)).name
+                    Positions.objects.create(name=random_str(15)).name,
+                    Positions.objects.create(name=random_str(15)).name
                 ],
             }
 
         cls.valid_post_data_payload = {
             'max length': {**create_payload_data()},
-            'short': {**create_payload_data(), 'name': cls.get_random_str(1)},
+            'short': {**create_payload_data(), 'name': random_str(1)},
             'same ' + degrees + ' & ' + positions + ' but different ' + year_condition + ' & ' + year_of_studies: {
                 **create_payload_data(),
                 degrees: [_.name for _ in cls.obj.degrees.all()],
                 positions: [_.name for _ in cls.obj.positions.all()],
                 year_of_studies: random.randint(1, 20),
-                year_condition: random.choices(active_year_choices)[0],
+                year_condition: random.choice(active_year_choices),
                 is_procedure_for_a_doctoral_degree_approved: NA,
                 has_scholarship: NA,
             },
             'completed data': {
                 **create_payload_data(),
                 year_of_studies: random.randint(1, 20),
-                year_condition: random.choices(active_year_choices)[0],
-                is_procedure_for_a_doctoral_degree_approved: random.choices(active_procedure_choices)[0],
-                has_scholarship: random.choices(active_scholarship_choices)[0],
+                year_condition: random.choice(active_year_choices),
+                is_procedure_for_a_doctoral_degree_approved: random.choice(active_procedure_choices),
+                has_scholarship: random.choice(active_scholarship_choices),
             }
         }
 
         cls.valid_put_data_payload = cls.valid_post_data_payload
 
         cls.valid_partial_data = {
-            'max length ' + name: {name: cls.get_random_field_str(cls.model, name)},
+            'max length ' + name: {name: random_max_len_field_str(cls.model, name)},
             'min ' + value: {value: 0},
             'min ' + limit: {limit: 1},
             'high ' + limit: {limit: 2000},
@@ -542,7 +535,7 @@ class PensumTests(DegreesTests):
         cls.invalid_post_data_payload = {
             'too long ' + name: {
                 **create_payload_data(),
-                name: cls.get_random_field_str(cls.model, name) + cls.get_random_str(1)},
+                name: random_max_len_field_str(cls.model, name) + random_str(1)},
             'empty ' + name: {**create_payload_data(), name: ''},
             'duplicate ' + degrees + '-' + positions: {
                 **create_payload_data(),
