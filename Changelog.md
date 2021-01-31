@@ -1,3 +1,15 @@
+###30/01/2020
+
+- Added action to create Orders from Module list view.
+  Added a filter so form includes now only classes without order.
+- Orders / deleted main URL. Creating only possible from module list view now.
+  /order/ - added as an action in the Classes ViewSet, for now only with GET method.
+  Utils / Created variation of NestedHyperlinkedIdentityField with prefix: AdvLookup.
+  It allows passing a lookup with double underscore to point nested attributes of instance.
+  Plans are now available from orders view - nested in Classes aswell.
+- Orders / Added PUT PATCH and DELETE methods to the 'order' action nested in Classes Instance View.
+  Small update of ClassesOrderSerializer - URL kwarg for Classes changed to 'name'.
+
 ###29/01/2020
 
 - Plans / Nested Plans into Orders.

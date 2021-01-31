@@ -9,17 +9,12 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###30/01/2020
+###31/01/2020
 
-- Added action to create Orders from Module list view.
-  Added a filter so form includes now only classes without order.
-- Orders / deleted main URL. Creating only possible from module list view now.
-  /order/ - added as an action in the Classes ViewSet, for now only with GET method.
-  Utils / Created variation of NestedHyperlinkedIdentityField with prefix: AdvLookup.
-  It allows passing a lookup with double underscore to point nested attributes of instance.
-  Plans are now available from orders view - nested in Classes aswell.
-- Orders / Added PUT PATCH and DELETE methods to the 'order' action nested in Classes Instance View.
-  Small update of ClassesOrderSerializer - URL kwarg for Classes changed to 'name'.
+- Added plan_sum_hours property to the Order model for future validation purposes.
+  Moved plans-related serializer's fields to the nested ClassesOrderSerializer, as there is no use for them in basic one.
+  Basic OrdersSerializer stands now only for creating new order from model list view or throwing back form.
+  Could be changed in case of importing nested plans' data in orders JSON - needs testing.
 
 ### To be done:
 
@@ -31,3 +26,5 @@ Local with SQLite DB
   (classes hours not exceeded)
 - Errors output for nested JSON data import
 - Creating orders only as an additional action from modules and classes views.
+- Validators for plans and orders
+- Tests

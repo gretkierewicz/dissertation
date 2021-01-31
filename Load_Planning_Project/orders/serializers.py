@@ -11,6 +11,9 @@ from .models import Orders, Plans
 
 
 class PlansSerializer(NestedHyperlinkedModelSerializer):
+    """
+    Plans Serializer - Basic serializer, nested inside Orders Serializer.
+    """
     class Meta:
         model = Plans
         fields = ['url', 'employee', 'plan_hours',
@@ -40,10 +43,12 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
 
 
 class OrdersSerializer(NestedHyperlinkedModelSerializer):
+    """
+    Orders Serializer - basic one used for creating orders from modules list view and displaying created context.
+    """
     class Meta:
         model = Orders
-        fields = ['url', 'classes', 'students_number', 'groups_number', 'order_hours', 'order_number',
-                  'plans_url', 'plans']
+        fields = ['url', 'classes', 'students_number', 'groups_number', 'order_hours', 'order_number']
         extra_kwargs = {
             'students_number': {'min_value': 0}
         }
@@ -60,17 +65,6 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         }
     )
 
-    plans_url = AdvLookupNestedHyperlinkedIdentityField(
-        view_name='classes-order-plans-list',
-        lookup_field='classes__name',
-        lookup_url_kwarg='classes_name',
-        parent_lookup_kwargs={
-            'module_module_code': 'classes__module__module_code'
-        }
-    )
-
-    plans = PlansSerializer(read_only=True, many=True)
-
     classes = NestedHyperlinkedRelatedField(
         queryset=Classes.objects.filter(order__isnull=True),
         view_name='classes-detail',
@@ -83,15 +77,30 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
 
 
 class ClassesOrderSerializer(OrdersSerializer):
+    """
+    Classes Order Serializer - derivative of basic serializer.
+    Created to be nested inside it's OneToOne relation object - CLasses instance
+    """
     class Meta:
         model = Orders
         fields = ['students_number', 'groups_number', 'order_hours', 'order_number',
-                  'plans_url', 'plans',
+                  'plans_url', 'plans_sum_hours', 'plans',
                   # hidden
                   'classes']
         extra_kwargs = {
             'url': {'view_name': 'classes-order'}
         }
+
+    plans_url = AdvLookupNestedHyperlinkedIdentityField(
+        view_name='classes-order-plans-list',
+        lookup_field='classes__name',
+        lookup_url_kwarg='classes_name',
+        parent_lookup_kwargs={
+            'module_module_code': 'classes__module__module_code'
+        }
+    )
+
+    plans = PlansSerializer(read_only=True, many=True)
 
     classes = GetParentHiddenField(
         queryset=Classes.objects.all(),

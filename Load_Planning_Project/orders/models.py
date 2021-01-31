@@ -22,6 +22,10 @@ class Orders(models.Model):
     def order_hours(self):
         return self.groups_number * self.classes.classes_hours
 
+    @property
+    def plans_sum_hours(self):
+        return sum([_.plan_hours for _ in self.plans.all()])
+
     def __str__(self):
         return f"Order of: {self.classes}"
 
