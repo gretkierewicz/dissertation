@@ -37,10 +37,9 @@ class DegreesTests(BasicAPITests, APITestCase):
         cls.model = Degrees
         cls.serializer = DegreeSerializer
         cls.list_serializer = cls.serializer
-        cls.basename = 'degrees'
-        cls.list_suffix = 'list'
-        cls.detail_suffix = 'detail'
-        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.list_view_name = 'degrees-list'
+        cls.detail_view_name = 'degrees-detail'
+        cls.context = {'request': cls.factory.get(reverse(cls.list_view_name), format=json)}
         cls.lookup = 'pk'
         cls.field_lookup = 'name'
         cls.delete_forbidden = True
@@ -76,10 +75,9 @@ class PositionsTests(BasicAPITests, APITestCase):
         cls.model = Positions
         cls.serializer = PositionSerializer
         cls.list_serializer = cls.serializer
-        cls.basename = 'positions'
-        cls.list_suffix = 'list'
-        cls.detail_suffix = 'detail'
-        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.list_view_name = 'positions-list'
+        cls.detail_view_name = 'positions-detail'
+        cls.context = {'request': cls.factory.get(reverse(cls.list_view_name), format=json)}
         cls.lookup = 'pk'
         cls.field_lookup = 'name'
         cls.delete_forbidden = True
@@ -115,10 +113,9 @@ class EmployeesTests(BasicAPITests, APITestCase):
         cls.model = Employees
         cls.serializer = EmployeeSerializer
         cls.list_serializer = EmployeeListSerializer
-        cls.basename = 'employees'
-        cls.list_suffix = 'list'
-        cls.detail_suffix = 'detail'
-        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.list_view_name = 'employees-list'
+        cls.detail_view_name = 'employees-detail'
+        cls.context = {'request': cls.factory.get(reverse(cls.list_view_name), format=json)}
         cls.lookup = EmpFields.abbreviation
         cls.field_lookup = cls.lookup
         cls.delete_forbidden = False
@@ -223,10 +220,9 @@ class PensumTests(BasicAPITests, APITestCase):
         cls.model = Pensum
         cls.serializer = PensumSerializer
         cls.list_serializer = cls.serializer
-        cls.basename = 'pensum'
-        cls.list_suffix = 'list'
-        cls.detail_suffix = 'detail'
-        cls.context = {'request': cls.factory.get(reverse(cls.basename + '-list'), format=json)}
+        cls.list_view_name = 'pensum-list'
+        cls.detail_view_name = 'pensum-detail'
+        cls.context = {'request': cls.factory.get(reverse(cls.list_view_name), format=json)}
         cls.lookup = 'pk'
         cls.field_lookup = name
         cls.delete_forbidden = False

@@ -8,6 +8,17 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 
+def get_obj_with_parent_kwargs(func):
+    def wrapper(self, *args, **kwargs):
+        if self.obj_parent_get_kwargs:
+            try:
+                return self.model.objects.get(**self.obj_parent_get_kwargs)
+            except ObjectDoesNotExist:
+                return None
+        func(self, *args, **kwargs)
+    return wrapper
+
+
 class BasicAPITests:
     @classmethod
     def setUpTestData(cls):
@@ -20,12 +31,13 @@ class BasicAPITests:
         cls.model = None
         cls.serializer = None
         cls.list_serializer = None
-        cls.basename = None
-        cls.list_suffix = 'list'
-        cls.detail_suffix = 'detail'
+        cls.list_view_name = None
+        cls.detail_view_name = None
         cls.context = None
         cls.lookup = None
         cls.field_lookup = None
+        cls.obj_parent_url_kwargs = None
+        cls.obj_parent_get_kwargs = None
         cls.delete_forbidden = False
 
         cls.obj = None
@@ -38,6 +50,7 @@ class BasicAPITests:
         cls.invalid_put_data_payload = cls.invalid_post_data_payload
         cls.invalid_partial_data = cls.invalid_post_data_payload
 
+    @get_obj_with_parent_kwargs
     def get_obj(self, data=None):
         """
         Try to return obj by data provided or just base self.obj if no data provided
@@ -52,6 +65,7 @@ class BasicAPITests:
         else:
             return self.obj
 
+    @get_obj_with_parent_kwargs
     def get_obj_by_pk(self, pk):
         """
         Try to return obj by pk provided
@@ -72,18 +86,24 @@ class BasicAPITests:
         params valid: (optional) flag - return valid kwargs or not
         return: dictionary of URL kwargs
         """
-        return {self.lookup: getattr((obj or self.obj), self.lookup)} if valid else {self.lookup: '99999'}
+        if valid:
+            return self.obj_parent_url_kwargs if self.obj_parent_url_kwargs else {
+                self.lookup: getattr((obj or self.obj), self.lookup)}
+        # if not valid:
+        if self.obj_parent_url_kwargs:
+            return {key: '99999999' for key, _ in self.obj_parent_url_kwargs.items()}
+        return {self.lookup or 'pk': '99999'}
 
     def test_get_list_code(self):
-        if self.client and self.basename and self.list_suffix:
-            response = self.client.get(reverse(self.basename + '-' + self.list_suffix))
+        if self.client and self.list_view_name:
+            response = self.client.get(reverse(self.list_view_name))
             self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_get_list_data(self):
-        if self.client and self.basename and self.model and self.list_serializer and self.list_suffix:
-            response = self.client.get(reverse(self.basename + '-' + self.list_suffix))
+        if self.client and self.list_view_name and self.model and self.list_serializer:
+            response = self.client.get(reverse(self.list_view_name))
             self.assertJSONEqual(
                 json.dumps(response.data),
                 self.list_serializer(instance=self.model.objects.all(), many=True, context=self.context).data,
@@ -92,15 +112,15 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_get_obj_code(self, obj=None, msg=None):
-        if self.client and self.basename and self.detail_suffix:
-            response = self.client.get(reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)))
+        if self.client and self.detail_view_name:
+            response = self.client.get(reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)))
             self.assertEqual(response.status_code, status.HTTP_200_OK, (f"{msg}: " if msg else "") + f"{response.data}")
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_get_obj_data(self, obj=None, msg=None):
-        if self.client and self.basename and self.serializer and self.detail_suffix:
-            response = self.client.get(reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)))
+        if self.client and self.detail_view_name and self.serializer:
+            response = self.client.get(reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)))
             self.assertJSONEqual(
                 json.dumps(response.data), self.serializer(instance=(obj or self.obj), context=self.context).data,
                 (f"{msg}: " if msg else "") + f"{response.data}")
@@ -108,10 +128,10 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_post_data_payload_raw(self, payload_data=None):
-        if self.client and self.basename and self.list_suffix:
+        if self.client and self.list_view_name:
             for msg, data in (payload_data or self.valid_post_data_payload).items():
                 with APITestCase.subTest(self, msg):
-                    response = self.client.post(reverse(self.basename + '-' + self.list_suffix), data=data)
+                    response = self.client.post(reverse(self.list_view_name), data=data)
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{response.data}")
                     # try to get created model instance
                     obj = self.get_obj(data)
@@ -126,11 +146,11 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_post_data_payload_json(self, payload_data=None):
-        if self.client and self.basename and self.list_suffix:
+        if self.client and self.list_view_name:
             for msg, data in (payload_data or self.valid_post_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.post(
-                        reverse(self.basename + '-' + self.list_suffix),
+                        reverse(self.list_view_name),
                         data=json.dumps(data),
                         content_type='application/json')
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED, f"{response.data}")
@@ -147,12 +167,12 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_put_data_payload_raw(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             obj = base_obj
             for msg, data in (payload_data or self.valid_post_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.put(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)), data=data)
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)), data=data)
                     self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
                     # try to get updated model instance
                     obj = self.get_obj(data)
@@ -168,12 +188,12 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_put_data_payload_json(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             obj = base_obj
             for msg, data in (payload_data or self.valid_post_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.put(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)),
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)),
                         data=json.dumps(data),
                         content_type='application/json')
                     self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
@@ -191,12 +211,12 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_patch_data_payload_raw(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             obj = base_obj
             for msg, data in (payload_data or self.valid_partial_data).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.patch(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)), data=data)
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)), data=data)
                     self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
                     # try to get updated model instance
                     obj = self.get_obj_by_pk(self.obj.pk)
@@ -211,12 +231,12 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_patch_data_payload_json(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             obj = base_obj
             for msg, data in (payload_data or self.valid_partial_data).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.patch(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)),
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)),
                         data=json.dumps(data),
                         content_type='application/json')
                     self.assertEqual(response.status_code, status.HTTP_200_OK, f"{response.data}")
@@ -233,9 +253,9 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_del_data(self, obj=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             response = self.client.delete(
-                reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(obj)))
+                reverse(self.detail_view_name, kwargs=self.get_kwargs(obj)))
             self.assertEqual(
                 response.status_code,
                 status.HTTP_405_METHOD_NOT_ALLOWED if self.delete_forbidden else status.HTTP_204_NO_CONTENT,
@@ -251,19 +271,19 @@ class BasicAPITests:
     # INVALID DATA TESTS
 
     def test_get_invalid(self, deleted_record=False):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             response = self.client.get(
-                reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(valid=deleted_record)))
+                reverse(self.detail_view_name, kwargs=self.get_kwargs(valid=deleted_record)))
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, response.data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_post_invalid_data_payload_raw(self, payload_data=None):
-        if self.client and self.basename and self.list_suffix:
+        if self.client and self.list_view_name:
             records = [_.pk for _ in self.model.objects.all()]
             for msg, data in (payload_data or self.invalid_post_data_payload).items():
                 with APITestCase.subTest(self, msg):
-                    response = self.client.post(reverse(self.basename + '-' + self.list_suffix), data=data)
+                    response = self.client.post(reverse(self.list_view_name), data=data)
                     self.assertEqual(
                         response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
                     # double check records' pks
@@ -272,12 +292,12 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_post_invalid_data_payload_json(self, payload_data=None):
-        if self.client and self.basename and self.list_suffix:
+        if self.client and self.list_view_name:
             records = [_.pk for _ in self.model.objects.all()]
             for msg, data in (payload_data or self.invalid_post_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.post(
-                        reverse(self.basename + '-' + self.list_suffix),
+                        reverse(self.list_view_name),
                         data=json.dumps(data),
                         content_type='application/json')
                     self.assertEqual(
@@ -288,11 +308,11 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_put_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             for msg, data in (payload_data or self.invalid_put_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.put(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)), data=data)
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(base_obj)), data=data)
                     self.assertEqual(
                         response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
                     # check if self.obj was not changed
@@ -301,11 +321,11 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_put_invalid_data_payload_json(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             for msg, data in (payload_data or self.invalid_put_data_payload).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.put(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)),
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(base_obj)),
                         data=json.dumps(data),
                         content_type='application/json')
                     self.assertEqual(
@@ -316,11 +336,11 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_patch_invalid_data_payload_raw(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             for msg, data in (payload_data or self.invalid_partial_data).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.patch(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)), data=data)
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(base_obj)), data=data)
                     self.assertEqual(
                         response.status_code, status.HTTP_400_BAD_REQUEST, f"{response.data}")
                     # check if self.obj was not changed
@@ -329,11 +349,11 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_patch_invalid_data_payload_json(self, base_obj=None, payload_data=None):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             for msg, data in (payload_data or self.invalid_partial_data).items():
                 with APITestCase.subTest(self, msg):
                     response = self.client.patch(
-                        reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(base_obj)),
+                        reverse(self.detail_view_name, kwargs=self.get_kwargs(base_obj)),
                         data=json.dumps(data),
                         content_type='application/json')
                     self.assertEqual(
@@ -344,9 +364,9 @@ class BasicAPITests:
             APITestCase.skipTest(self, 'Lack of data')
 
     def test_del_invalid_data(self):
-        if self.client and self.basename and self.detail_suffix:
+        if self.client and self.detail_view_name:
             response = self.client.delete(
-                reverse(self.basename + '-' + self.detail_suffix, kwargs=self.get_kwargs(valid=False)))
+                reverse(self.detail_view_name, kwargs=self.get_kwargs(valid=False)))
             self.assertEqual(
                 response.status_code,
                 status.HTTP_405_METHOD_NOT_ALLOWED if self.delete_forbidden else status.HTTP_404_NOT_FOUND,
