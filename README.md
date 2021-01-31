@@ -21,6 +21,9 @@ Local with SQLite DB
 - TESTS / Implementing unittests' SubTest method (https://docs.python.org/3/library/unittest.html#distinguishing-test-iterations-using-subtests)
   Each dictionary case is not tested independently.
 - TESTS / Changed Utils BasicAPITests not to inherit from APITestCase, so it is not considered in tests.
+- Orders / Set up specific url names for order views: 
+  'order-create' for nested module list view (full name: 'modules-order-create')
+  'order-detail' for nested classes instance view (full name: 'classes-order-detail')
 
 ### To be done:
 

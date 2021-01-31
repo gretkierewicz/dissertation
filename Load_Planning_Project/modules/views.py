@@ -113,8 +113,8 @@ class ModuleViewSet(ModelViewSet):
                         data[file + ' file'][partial_data.get(lookup)] = [serializer.errors]
             return Response(data)
 
-    @action(detail=False, methods=['GET', 'POST'])
-    def create_order(self, request):
+    @action(detail=False, methods=['GET', 'POST'], url_name='order-create')
+    def order(self, request):
         """
         Orders View Set nested into Module List view.
         Create new orders or display form.
@@ -158,7 +158,7 @@ class ClassViewSet(ModelViewSet):
         # kwarg needs to match url kwarg (router lookup + field name)
         return Classes.objects.filter(module__module_code=self.kwargs.get('module_module_code'))
 
-    @action(detail=True, methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+    @action(detail=True, methods=['GET', 'PUT', 'PATCH', 'DELETE'], url_name='order-detail')
     def order(self, request, **kwargs):
         """
         Order View Set nested into Classes one.
