@@ -7,9 +7,8 @@ from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
+from rest_framework_nested.viewsets import NestedViewSetMixin
 
-from orders.models import Orders
-from orders.serializers import OrdersSerializer, ClassesOrderSerializer
 from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer, SupervisedModuleSerializer, ModuleFlatSerializer
 
@@ -115,29 +114,24 @@ class ModuleViewSet(ModelViewSet):
             return Response(data)
 
 
-class EmployeeModuleViewSet(ModuleViewSet):
+class EmployeeModuleViewSet(NestedViewSetMixin, ModuleViewSet):
     """
     Employee/Module View Set
     Create, Retrieve, Update, Delete Employee's modules
     """
+    # with NestedViewSetMixin get_queryset is overridden to include Serializer's parent_lookup_kwargs
+    queryset = Modules.objects.all()
     serializer_class = SupervisedModuleSerializer
-
-    # custom queryset for nested view
-    def get_queryset(self):
-        # employee_abbreviation needs to be set as 'lookup_url_kwarg' in module's hyperlink's parameters
-        return Modules.objects.filter(supervisor__abbreviation=self.kwargs.get('employee_abbreviation'))
+    lookup_field = 'module_code'
 
 
-class ClassViewSet(ModelViewSet):
+class ClassViewSet(NestedViewSetMixin, ModelViewSet):
     """
     Class View Set
     Create, Retrieve, Update, Delete orders
     """
+    # with NestedViewSetMixin get_queryset is overridden to include Serializer's parent_lookup_kwargs
+    queryset = Classes.objects.all()
     serializer_class = ClassSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'name'
-
-    # custom queryset for nested view
-    def get_queryset(self):
-        # kwarg needs to match url kwarg (router lookup + field name)
-        return Classes.objects.filter(module__module_code=self.kwargs.get('module_module_code'))

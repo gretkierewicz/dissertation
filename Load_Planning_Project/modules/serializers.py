@@ -139,11 +139,11 @@ class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSeriali
             'url': {
                 'view_name': 'employee-modules-detail',
                 'lookup_field': 'module_code',
-                'parent_lookup_kwargs': {
-                    'employee_abbreviation': 'supervisor__abbreviation',
-                },
             },
         }
+    parent_lookup_kwargs = {
+        'employee_abbreviation': 'supervisor__abbreviation'
+    }
 
     # Requested URL should point one parent object - in this case supervisor
     supervisor = GetParentHiddenField(

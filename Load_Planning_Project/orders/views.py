@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
+from rest_framework_nested.viewsets import NestedViewSetMixin
 
 from .models import Orders, Plans
 from .serializers import OrdersSerializer, PlansSerializer, ClassesOrderSerializer
@@ -35,16 +36,11 @@ class OrderDetailViewSet(GenericViewSet,
             return super().update(request, *args, **kwargs) if instance else super().create(request, *args, **kwargs)
 
 
-class PlansViewSet(ModelViewSet):
+class PlansViewSet(NestedViewSetMixin, ModelViewSet):
+    # with NestedViewSetMixin get_queryset is overridden to include Serializer's parent_lookup_kwargs
+    queryset = Plans.objects.all()
     serializer_class = PlansSerializer
     lookup_field = 'employee'
-
-    # filtering plans for explicit order (nested view)
-    def get_queryset(self):
-        return Plans.objects.filter(
-            order__classes__name=self.kwargs.get('classes_name'),
-            order__classes__module__module_code=self.kwargs.get('module_module_code')
-        )
 
     # custom object for explicit employee (nested plan's queryset for explicit order - see above)
     def get_object(self):
