@@ -1,6 +1,5 @@
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer
-from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from orders.serializers import ClassesOrderSerializer
@@ -16,7 +15,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours', 'students_limit_per_group', 'order_url', 'order',
+        fields = ['url', 'name', 'classes_hours', 'students_limit_per_group', 'order',
                   # hidden fields:
                   'module']
         extra_kwargs = {
@@ -30,14 +29,6 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         'module_module_code': 'module__module_code',
     }
 
-    order_url = NestedHyperlinkedIdentityField(
-        view_name='classes-order-detail',
-        lookup_field='name',
-        lookup_url_kwarg='classes_name',
-        parent_lookup_kwargs={
-            'module_module_code': 'module__module_code'
-        }
-    )
     order = ClassesOrderSerializer(read_only=True)
 
     # New type of Field made - module should be never provided by the user!

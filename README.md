@@ -17,6 +17,9 @@ Local with SQLite DB
 - FIX / EmployeeModuleViewSet - inherits from ModelViewSet now (was ModuleViewSet before - 'typo')
 - Orders / Detail view - got rid of parent's kwargs raw filtering with help of NestedViewSetMixin.
 - Cleanup / Minor cleanup of the code. Nothing important here.
+- FIX / Moved modified NestedHyperlinkedIdentityField to utils.relations
+  Updated its code to allow lookup_field=None, only passing parent_lookup_kwargs.
+  It simplifies creation of hyper-links for OneToOne relation instances.
 
 ### To be done:
 

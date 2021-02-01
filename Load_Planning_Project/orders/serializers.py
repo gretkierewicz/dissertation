@@ -7,7 +7,8 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from modules.models import Classes
-from utils.serializers import GetParentHiddenField, AdvLookupNestedHyperlinkedIdentityField
+from utils.relations import AdvNestedHyperlinkedIdentityField
+from utils.serializers import GetParentHiddenField
 
 from .models import Orders, Plans
 
@@ -76,22 +77,16 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         'module_module_code': 'classes__module__module_code',
         'classes_name': 'classes__name'
     }
-    url = AdvLookupNestedHyperlinkedIdentityField(
+    url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-order-detail',
-        lookup_field='classes__name',
-        lookup_url_kwarg='classes_name',
-        parent_lookup_kwargs={
-            'module_module_code': 'classes__module__module_code'
-        }
+        lookup_field=None,
+        parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    plans_url = AdvLookupNestedHyperlinkedIdentityField(
+    plans_url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-order-plans-list',
-        lookup_field='classes__name',
-        lookup_url_kwarg='classes_name',
-        parent_lookup_kwargs={
-            'module_module_code': 'classes__module__module_code'
-        }
+        lookup_field=None,
+        parent_lookup_kwargs=parent_lookup_kwargs
     )
 
     plans = PlansSerializer(read_only=True, many=True)
@@ -114,12 +109,11 @@ class ClassesOrderSerializer(OrdersSerializer):
     """
     class Meta:
         model = Orders
-        fields = ['students_number', 'groups_number', 'order_hours', 'order_number',
+        fields = ['url', 'students_number', 'groups_number', 'order_hours', 'order_number',
                   'plans_url', 'plans_sum_hours', 'plans',
                   # hidden
                   'classes']
         extra_kwargs = {
-            'url': {'view_name': 'classes-order'},
             'students_number': {'min_value': 0}
         }
 
