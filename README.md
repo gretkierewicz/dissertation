@@ -20,6 +20,7 @@ Local with SQLite DB
 - FIX / Moved modified NestedHyperlinkedIdentityField to utils.relations
   Updated its code to allow lookup_field=None, only passing parent_lookup_kwargs.
   It simplifies creation of hyper-links for OneToOne relation instances.
+- URLS / Minor update. Url patterns for Order detail will now look much better.
 
 ### To be done:
 
