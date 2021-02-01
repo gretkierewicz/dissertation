@@ -23,7 +23,6 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
                   'order']
         extra_kwargs = {
             'url': {'view_name': 'classes-order-plans-detail', 'lookup_field': 'employee'},
-            'employee': {'lookup_field': 'abbreviation'},
             'plan_hours': {'min_value': 0}
         }
     # setting parents' URL kwargs

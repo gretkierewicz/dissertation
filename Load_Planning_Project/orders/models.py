@@ -1,5 +1,4 @@
 from math import ceil
-
 from django.db import models
 
 from employees.models import Employees
@@ -7,7 +6,7 @@ from modules.models import Classes
 
 
 class Orders(models.Model):
-    classes = models.OneToOneField(Classes, on_delete=models.CASCADE, related_name='order')
+    classes = models.OneToOneField(Classes, on_delete=models.CASCADE, related_name='order', primary_key=True)
     students_number = models.PositiveIntegerField()
     order_number = models.CharField(max_length=50, blank=True, null=True)
 

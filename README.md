@@ -16,6 +16,7 @@ Local with SQLite DB
   parent_lookup_kwargs are get from serializer to filter queryset.
 - FIX / EmployeeModuleViewSet - inherits from ModelViewSet now (was ModuleViewSet before - 'typo')
 - Orders / Detail view - got rid of parent's kwargs raw filtering with help of NestedViewSetMixin.
+- Cleanup / Minor cleanup of the code. Nothing important here.
 
 ### To be done:
 
