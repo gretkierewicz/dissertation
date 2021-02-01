@@ -1,3 +1,16 @@
+###01/02/2020
+
+- Making use of NestedViewSetMixin from rest_framework_nested!
+  No longer need to override get_queryset method. 
+  parent_lookup_kwargs are get from serializer to filter queryset.
+- FIX / EmployeeModuleViewSet - inherits from ModelViewSet now (was ModuleViewSet before - 'typo')
+- Orders / Detail view - got rid of parent's kwargs raw filtering with help of NestedViewSetMixin.
+- Cleanup / Minor cleanup of the code. Nothing important here.
+- FIX / Moved modified NestedHyperlinkedIdentityField to utils.relations
+  Updated its code to allow lookup_field=None, only passing parent_lookup_kwargs.
+  It simplifies creation of hyper-links for OneToOne relation instances.
+- URLS / Minor update. Url patterns for Order detail will now look much better.
+
 ###31/01/2020
 
 - Added plan_sum_hours property to the Order model for future validation purposes.
