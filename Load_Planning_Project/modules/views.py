@@ -114,7 +114,7 @@ class ModuleViewSet(ModelViewSet):
             return Response(data)
 
 
-class EmployeeModuleViewSet(NestedViewSetMixin, ModuleViewSet):
+class EmployeeModuleViewSet(NestedViewSetMixin, ModelViewSet):
     """
     Employee/Module View Set
     Create, Retrieve, Update, Delete Employee's modules

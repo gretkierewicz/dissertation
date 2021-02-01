@@ -14,6 +14,7 @@ Local with SQLite DB
 - Making use of NestedViewSetMixin from rest_framework_nested!
   No longer need to override get_queryset method. 
   parent_lookup_kwargs are get from serializer to filter queryset.
+- FIX / EmployeeModuleViewSet - inherits from ModelViewSet now (was ModuleViewSet before - 'typo')
 
 ### To be done:
 
