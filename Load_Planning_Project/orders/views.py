@@ -13,18 +13,19 @@ class OrdersListViewSet(GenericViewSet,
     queryset = Orders.objects.all()
 
 
-class OrderDetailViewSet(GenericViewSet,
+class OrderDetailViewSet(NestedViewSetMixin,
+                         GenericViewSet,
                          mixins.RetrieveModelMixin,
                          mixins.CreateModelMixin,
                          mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin):
+    # with NestedViewSetMixin get_queryset is overridden to include Serializer's parent_lookup_kwargs
+    queryset = Orders.objects.all()
     serializer_class = ClassesOrderSerializer
 
     def get_object(self):
-        return get_object_or_404(Orders, **{
-            'classes__module__module_code': self.kwargs.get('module_module_code'),
-            'classes__name': self.kwargs.get('classes_name')
-        })
+        # for OneToOne relation - after filtering queryset with parent kwargs there is always one element in it
+        return self.get_queryset().first()
 
     def create_or_update(self, request, *args, **kwargs):
         # PUT method - create or update instance (proper relation is set in urls patterns)

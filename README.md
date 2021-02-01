@@ -15,6 +15,7 @@ Local with SQLite DB
   No longer need to override get_queryset method. 
   parent_lookup_kwargs are get from serializer to filter queryset.
 - FIX / EmployeeModuleViewSet - inherits from ModelViewSet now (was ModuleViewSet before - 'typo')
+- Orders / Detail view - got rid of parent's kwargs raw filtering with help of NestedViewSetMixin.
 
 ### To be done:
 
