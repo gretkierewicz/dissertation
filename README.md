@@ -11,7 +11,7 @@ Local with SQLite DB
 ## Last changes
 ###02/02/2020
 
-- 
+- Tests / Minor update. Nothing important.
 
 ### To be done:
 

@@ -7,7 +7,7 @@ from .models import Modules, Classes
 from .serializers import ModuleSerializer, ClassSerializer
 
 from employees.models import Degrees, Positions, Employees
-from employees.tests import EmpFields
+from employees.tests import EmployeeFields
 
 from utils.random_generators import random_max_len_field_str, random_bool, random_str
 from utils.tests import BasicAPITests
@@ -17,16 +17,18 @@ client = APIClient()
 factory = APIRequestFactory()
 
 
+class ModuleFields:
+    module_code = 'module_code'
+    name = 'name'
+    examination = 'examination'
+    supervisor = 'supervisor'
+
+
 class ModuleTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
         cls.factory = APIRequestFactory()
-
-        module_code = 'module_code'
-        name = 'name'
-        examination = 'examination'
-        supervisor = 'supervisor'
 
         cls.model = Modules
         cls.serializer = ModuleSerializer
@@ -34,25 +36,25 @@ class ModuleTests(BasicAPITests, APITestCase):
         cls.list_view_name = 'modules-list'
         cls.detail_view_name = 'modules-detail'
         cls.context = {'request': cls.factory.get(reverse(cls.list_view_name), format=json)}
-        cls.lookup = 'module_code'
+        cls.lookup = ModuleFields.module_code
         cls.field_lookup = cls.lookup
         cls.delete_forbidden = False
 
         def create_employee():
             return Employees.objects.create(**{
-                EmpFields.first_name: random_max_len_field_str(Employees, EmpFields.first_name),
-                EmpFields.last_name: random_max_len_field_str(Employees, EmpFields.last_name),
-                EmpFields.abbreviation: random_max_len_field_str(Employees, EmpFields.abbreviation),
-                EmpFields.e_mail: random_max_len_field_str(Employees, EmpFields.e_mail)[:-6] + '@ab.ba',
-                EmpFields.degree: Degrees.objects.create(name=random_str(5)),
-                EmpFields.position: Positions.objects.create(name=random_str(5))
+                EmployeeFields.first_name: random_max_len_field_str(Employees, EmployeeFields.first_name),
+                EmployeeFields.last_name: random_max_len_field_str(Employees, EmployeeFields.last_name),
+                EmployeeFields.abbreviation: random_max_len_field_str(Employees, EmployeeFields.abbreviation),
+                EmployeeFields.e_mail: random_max_len_field_str(Employees, EmployeeFields.e_mail)[:-6] + '@ab.ba',
+                EmployeeFields.degree: Degrees.objects.create(name=random_str(5)),
+                EmployeeFields.position: Positions.objects.create(name=random_str(5))
             })
 
         def create_model_data():
             return {
-                module_code: random_max_len_field_str(cls.model, module_code),
-                name: random_max_len_field_str(cls.model, name),
-                supervisor: create_employee(),
+                ModuleFields.module_code: random_max_len_field_str(cls.model, ModuleFields.module_code),
+                ModuleFields.name: random_max_len_field_str(cls.model, ModuleFields.name),
+                ModuleFields.supervisor: create_employee(),
             }
 
         cls.obj = cls.model.objects.create(**create_model_data())
@@ -61,70 +63,73 @@ class ModuleTests(BasicAPITests, APITestCase):
 
         def create_payload_data():
             return {
-                module_code: random_max_len_field_str(cls.model, module_code),
-                name: random_max_len_field_str(cls.model, name),
-                supervisor: create_employee().abbreviation,
+                ModuleFields.module_code: random_max_len_field_str(cls.model, ModuleFields.module_code),
+                ModuleFields.name: random_max_len_field_str(cls.model, ModuleFields.name),
+                ModuleFields.supervisor: create_employee().abbreviation,
             }
 
         cls.valid_post_data_payload = {
             'max length': {**create_payload_data()},
             'short': {
-                module_code: random_str(1),
-                name: random_str(1),
-                supervisor: create_employee().abbreviation,
+                ModuleFields.module_code: random_str(1),
+                ModuleFields.name: random_str(1),
+                ModuleFields.supervisor: create_employee().abbreviation,
             },
             'complete': {
                 **create_payload_data(),
-                examination: random_bool(),
+                ModuleFields.examination: random_bool(),
             }
         }
 
         cls.valid_put_data_payload = cls.valid_post_data_payload
 
         cls.valid_partial_data = {
-            'max length ' + module_code: {module_code: random_max_len_field_str(cls.model, module_code)},
-            'short ' + module_code: {module_code: random_str(1)},
-            'max length ' + name: {name: random_max_len_field_str(cls.model, name)},
-            'short ' + name: {name: random_str(1)},
-            'True ' + examination: {examination: True},
-            'False ' + examination: {examination: False},
-            'new ' + supervisor: {supervisor: create_employee().abbreviation},
-            'not unique ' + supervisor: {
-                supervisor: cls.model.objects.exclude(pk=cls.obj.pk).first().supervisor.abbreviation
+            'max length ' + ModuleFields.module_code: {
+                ModuleFields.module_code: random_max_len_field_str(cls.model, ModuleFields.module_code)},
+            'short ' + ModuleFields.module_code: {ModuleFields.module_code: random_str(1)},
+            'max length ' + ModuleFields.name: {
+                ModuleFields.name: random_max_len_field_str(cls.model, ModuleFields.name)},
+            'short ' + ModuleFields.name: {ModuleFields.name: random_str(1)},
+            'True ' + ModuleFields.examination: {ModuleFields.examination: True},
+            'False ' + ModuleFields.examination: {ModuleFields.examination: False},
+            'new ' + ModuleFields.supervisor: {ModuleFields.supervisor: create_employee().abbreviation},
+            'not unique ' + ModuleFields.supervisor: {
+                ModuleFields.supervisor: cls.model.objects.exclude(pk=cls.obj.pk).first().supervisor.abbreviation
             },
         }
 
         cls.invalid_post_data_payload = {
-            'too long ' + module_code: {
+            'too long ' + ModuleFields.module_code: {
                 **create_payload_data(),
-                module_code: random_max_len_field_str(cls.model, module_code) + random_str(1),
+                ModuleFields.module_code: random_max_len_field_str(cls.model, ModuleFields.module_code) + random_str(1),
             },
-            'empty ' + module_code: {
+            'empty ' + ModuleFields.module_code: {
                 **create_payload_data(),
-                module_code: '',
+                ModuleFields.module_code: '',
             },
-            'too long ' + name: {
+            'too long ' + ModuleFields.name: {
                 **create_payload_data(),
-                name: random_max_len_field_str(cls.model, cls.field_lookup) + random_str(1),
+                ModuleFields.name: random_max_len_field_str(cls.model, cls.field_lookup) + random_str(1),
             },
-            'empty ' + name: {
+            'empty ' + ModuleFields.name: {
                 **create_payload_data(),
-                name: '',
+                ModuleFields.name: '',
             },
         }
 
         cls.invalid_put_data_payload = cls.invalid_post_data_payload
 
         cls.invalid_partial_data = {
-            'too long ' + module_code: {
-                module_code: random_max_len_field_str(cls.model, module_code) + random_str(1),
+            'too long ' + ModuleFields.module_code: {
+                ModuleFields.module_code: random_max_len_field_str(cls.model, ModuleFields.module_code) + random_str(1),
             },
-            'empty ' + module_code: {module_code: ''},
-            'not unique ' + module_code: {module_code: cls.model.objects.exclude(pk=cls.obj.pk).first().module_code},
-            'too long ' + name: {
-                name: random_max_len_field_str(cls.model, cls.field_lookup) + random_str(1)
+            'empty ' + ModuleFields.module_code: {ModuleFields.module_code: ''},
+            'not unique ' + ModuleFields.module_code: {
+                ModuleFields.module_code: cls.model.objects.exclude(pk=cls.obj.pk).first().module_code},
+            'too long ' + ModuleFields.name: {
+                ModuleFields.name: random_max_len_field_str(cls.model, cls.field_lookup) + random_str(1)
             },
-            'empty ' + name: {name: ''},
+            'empty ' + ModuleFields.name: {ModuleFields.name: ''},
             # TODO: Check if empty supervisor is valid or invalid data for module
-            #'empty ' + supervisor: {supervisor: None},
+            #'empty ' + ModuleFields.supervisor: {ModuleFields.supervisor: None},
         }
