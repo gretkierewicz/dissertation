@@ -1,3 +1,7 @@
+###02/02/2020
+
+- Tests / Minor update. Nothing important.
+
 ###01/02/2020
 
 - Making use of NestedViewSetMixin from rest_framework_nested!

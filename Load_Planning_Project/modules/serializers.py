@@ -37,7 +37,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         # queryset that will be filtered
         queryset=Modules.objects.all(),
         # key is a parent_lookup_kwarg, value - a field to filter by
-        matches={'module_module_code': 'module_code'},
+        parent_lookup_kwargs={'module_module_code': 'module_code'},
         # in case of no valid URL (i.e. JSON data upload) look for parent passed in create/update methods
         parent_lookup='module',
     )
@@ -139,5 +139,5 @@ class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSeriali
     # Requested URL should point one parent object - in this case supervisor
     supervisor = GetParentHiddenField(
         queryset=Employees.objects.all(),
-        matches={'employee_abbreviation': 'abbreviation'},
+        parent_lookup_kwargs={'employee_abbreviation': 'abbreviation'},
     )

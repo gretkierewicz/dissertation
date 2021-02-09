@@ -37,7 +37,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     # hidden field to establish current parent from URL
     order = GetParentHiddenField(
         queryset=Orders.objects.all(),
-        matches={
+        parent_lookup_kwargs={
             'module_module_code': 'classes__module__module_code',
             'classes_name': 'classes__name',
         }
@@ -119,7 +119,7 @@ class ClassesOrderSerializer(OrdersSerializer):
 
     classes = GetParentHiddenField(
         queryset=Classes.objects.all(),
-        matches={
+        parent_lookup_kwargs={
             'module_module_code': 'module__module_code',
             'classes_name': 'name'
         }

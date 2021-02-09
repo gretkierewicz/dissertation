@@ -41,9 +41,9 @@ class GetParentHiddenField(HiddenField):
     params: parent_lookup (optional) - lookup key in case of passing model instance with serializer's data
     return: model instance
     """
-    def __init__(self, queryset, matches, parent_lookup=None, **kwargs):
+    def __init__(self, queryset, parent_lookup_kwargs, parent_lookup=None, **kwargs):
         self.queryset = queryset
-        self.matches = matches
+        self.parent_lookup_kwargs = parent_lookup_kwargs
         self.parent_lookup = parent_lookup
         kwargs['write_only'] = True
         kwargs['default'] = None
@@ -55,7 +55,7 @@ class GetParentHiddenField(HiddenField):
             return dictionary.get(self.parent_lookup)
         # change data forwarded to the to_internal_value()
         filter_kwargs = {}
-        for key, value in self.matches.items():
+        for key, value in self.parent_lookup_kwargs.items():
             # getting slug from URL resolver - needs to match parent_lookup_kwarg's names!
             if self.context.get('request'):
                 filter_kwargs[value] = self.context.get('request').resolver_match.kwargs[key]
