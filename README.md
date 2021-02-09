@@ -12,6 +12,7 @@ Local with SQLite DB
 ###09/02/2020
 
 - Minor kwarg name change for GetParentHiddenField
+- Modules / added action 'new_order' to classes viewset
 
 ### To be done:
 
