@@ -22,6 +22,7 @@ from . import views
 from employees import views as employees_views
 from modules import views as modules_views
 from orders import views as orders_views
+from syllabus import views as syllabus_views
 
 router = DefaultRouter()
 router.register(r'degrees', employees_views.DegreeViewSet)
@@ -67,9 +68,14 @@ order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename=
 router.register(r'orders', orders_views.OrdersListViewSet, basename='orders')
 # generates:
 # /orders/
+router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
 
 urlpatterns = [
     path('API/', include(router.urls)),
+    path('API/', include([re_path(
+        r'^syllabus/study_types/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/$',
+        syllabus_views.StudyTypesListView.as_view(),
+        name='syllabus-study_types-list')])),
     path('API/', include([re_path(
         r'^modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order/$',
         orders_views.OrderDetailViewSet.as_view({

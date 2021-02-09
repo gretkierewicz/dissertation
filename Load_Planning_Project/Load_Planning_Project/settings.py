@@ -31,6 +31,7 @@ ALLOWED_HOSTS = HOSTS
 # Application definition
 
 INSTALLED_APPS = [
+    'syllabus.apps.SyllabusConfig',
     'orders.apps.OrdersConfig',
     'modules.apps.ModulesConfig',
     'employees.apps.EmployeesConfig',
