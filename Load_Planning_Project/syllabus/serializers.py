@@ -1,15 +1,17 @@
 import re
 
-from rest_framework.fields import ChoiceField, CharField, SerializerMethodField
+from django.urls import reverse
+from rest_framework.fields import ChoiceField, CharField, SerializerMethodField, IntegerField, BooleanField
 from rest_framework.serializers import Serializer
 
 from utils.constants import ACADEMIC_YEARS, DEPARTMENTS
 
-
+# STUDY TYPES SECTION
 class ProgrammesSerializer(Serializer):
     name_from_slug = SerializerMethodField()
     syllabus_url = CharField()
     slug = SerializerMethodField()
+    study_programme_url = SerializerMethodField()
 
     def to_internal_value(self, data):
         url = data.pop('url')
@@ -35,6 +37,11 @@ class ProgrammesSerializer(Serializer):
             return slug
         return ''
 
+    def get_study_programme_url(self, data):
+        kwargs = self.context.get('request').resolver_match.kwargs
+        kwargs['study_plan'] = self.get_slug(data)
+        return self.context.get('request').build_absolute_uri(reverse('syllabus-study_plans-detail', kwargs=kwargs))
+
 
 class LevelsSerializer(Serializer):
     level = CharField()
@@ -51,3 +58,30 @@ class StudyTypesSerializer(Serializer):
 class SyllabusSerializer(Serializer):
     department = ChoiceField(choices=DEPARTMENTS, required=False)
     academic_year = ChoiceField(choices=ACADEMIC_YEARS, required=False)
+
+# STUDY PLANS SECTION
+class ClassesSerializer(Serializer):
+    name = CharField()
+    classes_hours = IntegerField()
+
+
+class ModulesSerializer(Serializer):
+    module_code = CharField()
+    name = CharField()
+    examination = BooleanField()
+    form_of_classes = ClassesSerializer(many=True)
+
+
+class GroupsSerializer(Serializer):
+    name = CharField()
+    type = CharField()
+    modules = ModulesSerializer(many=True)
+
+
+class SemestersSerializer(Serializer):
+    number = IntegerField()
+    groups = GroupsSerializer(many=True)
+
+
+class StudyPlanSerializer(Serializer):
+    semesters = SemestersSerializer(many=True)

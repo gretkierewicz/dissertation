@@ -73,9 +73,14 @@ router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
 urlpatterns = [
     path('API/', include(router.urls)),
     path('API/', include([re_path(
-        r'^syllabus/study_types/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/$',
-        syllabus_views.StudyTypesListView.as_view(),
-        name='syllabus-study_types-list')])),
+        r'^syllabus/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/study_plans/$',
+        syllabus_views.StudyProgrammesListView.as_view(),
+        name='syllabus-study_plans-list')])),
+    path('API/', include([re_path(
+        r'^syllabus/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/study_plans/'
+        r'(?P<study_plan>[^/.]+)/$',
+        syllabus_views.StudyProgrammesInstanceView.as_view(),
+        name='syllabus-study_plans-detail')])),
     path('API/', include([re_path(
         r'^modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order/$',
         orders_views.OrderDetailViewSet.as_view({
