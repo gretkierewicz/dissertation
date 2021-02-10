@@ -3,7 +3,7 @@ from rest_framework.serializers import HyperlinkedModelSerializer
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from orders.serializers import ClassesOrderSerializer
-from utils.serializers import GetParentHiddenField
+from utils.serializers import ParentsHiddenRelatedField
 
 from .models import Modules, Classes
 from employees.models import Employees
@@ -33,13 +33,11 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
 
     # New type of Field made - module should be never provided by the user!
     # Requested URL should point one parent object - in this case module's code
-    module = GetParentHiddenField(
+    module = ParentsHiddenRelatedField(
         # queryset that will be filtered
         queryset=Modules.objects.all(),
         # key is a parent_lookup_kwarg, value - a field to filter by
         parent_lookup_kwargs={'module_module_code': 'module_code'},
-        # in case of no valid URL (i.e. JSON data upload) look for parent passed in create/update methods
-        parent_lookup='module',
     )
 
 
@@ -137,7 +135,7 @@ class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSeriali
     }
 
     # Requested URL should point one parent object - in this case supervisor
-    supervisor = GetParentHiddenField(
+    supervisor = ParentsHiddenRelatedField(
         queryset=Employees.objects.all(),
         parent_lookup_kwargs={'employee_abbreviation': 'abbreviation'},
     )
