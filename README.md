@@ -23,6 +23,7 @@ Local with SQLite DB
 - Utils / update for GetParentHiddenField - now ParentsHiddenField.
   Removed kwarg: parent_lookup. There is no need of providing it as it should be pointed with field's name.
   Added condition to check if parent's instance is present in provided queryset.
+- Syllabus - small update to serializers and views
 
 ### To be done:
 

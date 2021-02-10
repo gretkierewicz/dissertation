@@ -68,7 +68,10 @@ order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename=
 router.register(r'orders', orders_views.OrdersListViewSet, basename='orders')
 # generates:
 # /orders/
+
 router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
+# generates:
+# /syllabus/
 
 urlpatterns = [
     path('API/', include(router.urls)),
@@ -79,7 +82,7 @@ urlpatterns = [
     path('API/', include([re_path(
         r'^syllabus/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/study_plans/'
         r'(?P<study_plan>[^/.]+)/$',
-        syllabus_views.StudyProgrammesInstanceView.as_view(),
+        syllabus_views.StudyProgrammesDetailView.as_view(),
         name='syllabus-study_plans-detail')])),
     path('API/', include([re_path(
         r'^modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order/$',
