@@ -7,8 +7,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from modules.models import Classes
-from utils.relations import AdvNestedHyperlinkedIdentityField
-from utils.serializers import ParentsHiddenRelatedField
+from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 
 from .models import Orders, Plans
 
@@ -35,7 +34,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     employee = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all())
 
     # hidden field to establish current parent from URL
-    order = ParentsHiddenRelatedField(
+    order = ParentHiddenRelatedField(
         queryset=Orders.objects.all(),
         parent_lookup_kwargs={
             'module_module_code': 'classes__module__module_code',
@@ -117,7 +116,7 @@ class ClassesOrderSerializer(OrdersSerializer):
             'students_number': {'min_value': 0}
         }
 
-    classes = ParentsHiddenRelatedField(
+    classes = ParentHiddenRelatedField(
         queryset=Classes.objects.all(),
         parent_lookup_kwargs={
             'module_module_code': 'module__module_code',
