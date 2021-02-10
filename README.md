@@ -9,12 +9,20 @@ http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB
 
 ## Last changes
-###09/02/2020
+###10/02/2020
 
-- Minor kwarg name change for GetParentHiddenField
-- Modules / added action 'new_order' to classes viewset
-- Syllabus - New app and views/serializers to read study programmes
-- Syllabus - Added views/serializers to read modules/classes for particular study programme
+- Syllabus (late update note):
+  Serializers without model - need to set up fields manually.\
+  If field matches the one from data - it is forwarded.\
+  If there is no match or fields name should be different:
+  - update data inside .to_internal_value() method in case of providing data kwarg to serializer
+  - update instance's data inside .to_representation() if queryset or instance is provided to serializer
+
+  POST'ing department and academic_year only to make reading study plans easier (no spam of links, just one redirection)\
+  Slugs at syllabus are made in a way that providing department, year and slug will get only one study programme.
+- Utils / update for GetParentHiddenField - now ParentsHiddenField.
+  Removed kwarg: parent_lookup. There is no need of providing it as it should be pointed with field's name.
+  Added condition to check if parent's instance is present in provided queryset.
 
 ### To be done:
 

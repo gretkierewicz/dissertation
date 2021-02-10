@@ -1,3 +1,10 @@
+###09/02/2020
+
+- Minor kwarg name change for GetParentHiddenField
+- Modules / added action 'new_order' to classes viewset
+- Syllabus - New app and views/serializers to read study programmes
+- Syllabus - Added views/serializers to read modules/classes for particular study programme
+
 ###02/02/2020
 
 - Tests / Minor update. Nothing important.
