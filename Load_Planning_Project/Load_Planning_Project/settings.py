@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-from .secured_data import SECRET_KEY_SECURED, HOSTS, DB_DICT, STATIC_ROOT, MEDIA_ROOT
-from os import path
+from django.core.management.utils import get_random_secret_key
+from os import path, environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
@@ -20,13 +20,12 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRET_KEY_SECURED
+SECRET_KEY = environ.get('SECRET_KEY', default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(environ.get('DEBUG', default=0))
 
-ALLOWED_HOSTS = HOSTS
-
+ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', ])
 
 # Application definition
 
@@ -80,8 +79,15 @@ WSGI_APPLICATION = 'Load_Planning_Project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = DB_DICT
-
+DATABASES = environ.get(
+    'DATABASES',
+    default={
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -126,5 +132,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = STATIC_ROOT
-MEDIA_ROOT = MEDIA_ROOT
+STATIC_ROOT = path.join(BASE_DIR, 'static')
+MEDIA_ROOT = path.join(BASE_DIR, 'media')
