@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import dj_database_url
 from django.core.management.utils import get_random_secret_key
 from os import path, environ
 
@@ -25,7 +26,7 @@ SECRET_KEY = environ.get('SECRET_KEY', default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(environ.get('DEBUG', default=0))
 
-ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', ])
+ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '.herokuapp.com'])
 
 # Application definition
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,6 +91,11 @@ DATABASES = environ.get(
     }
 )
 
+# get database url from env vars and update DB connection with it
+DATABASE_URL = environ.get('DATABASE_URL')
+db_from_env = dj_database_url.config(default=DATABASE_URL, conn_max_age=500, ssl_require=True)
+DATABASES['default'].update(db_from_env)
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -130,7 +137,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATICFILES_DIRS = (
+    path.join(BASE_DIR, 'static'),
+)
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
 
-STATIC_ROOT = path.join(BASE_DIR, 'static')
-MEDIA_ROOT = path.join(BASE_DIR, 'media')
+STATIC_ROOT = path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

@@ -3,3 +3,9 @@ djangorestframework==3.12.2
 djangorestframework-csv==2.1.0
 drf-nested-routers==0.92.5
 requests==2.25.1
+
+# heroku and docker related
+gunicorn>=20.0.4
+psycopg2>=2.8
+whitenoise>=5.2
+dj-database-url==0.5.0
