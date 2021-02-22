@@ -1,3 +1,9 @@
+###17/02/2020
+
+- settings.py update - much better approach with os.environ for setting environmental variables
+- Moved project data into root folder to be more clear with folder tree
+- Added basic deploy section
+
 ###10/02/2020
 
 - Syllabus (late update note):

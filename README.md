@@ -5,10 +5,12 @@ Project developed with **Python v3.8.6** (changed from Python v3.6.7)
 
 ## Test-site
 
-http://gret.ct8.pl/ with MySQL DB\
-Local with SQLite DB
+Heroku deploy: http://shielded-ocean-48265.herokuapp.com (PostgreSQL)
 
-## Deploy
+~~http://gret.ct8.pl/ with MySQL DB\
+Local with SQLite DB~~
+
+## Deployment
 
 ```bash
 # create folder for project
@@ -18,27 +20,38 @@ cd root_folder
 # get copy of the application's files
 git clone https://github.com/gretkierewicz/dissertation.git .
 
-# install dependencies
-python -m pip install -r requirements.txt
+# build app with docker-compose
+docker-compose build
 
-# create all migrations files
-python manage.py makemigrations
-# run migrations
-python manage.py migrate
+# login with heroku and create app for deployment
+heroku login
+heroku create
+# login to container
+heroku container:login
 
-# collect statics for apps
-python manage.py collectstatic
+# create postgresql DB (this creates DATABASE_URL env variable as well)
+heroku addons:create heroku-postgresql:hobby-dev
 
-# run project (for local/test)
-python manage.py runserver
+# push and release container
+heroku container:push web
+heroku container:release web
+
+# create DB tables for cars app
+heroku run python manage.py migrate cars
+
+# start app in web-browser
+heroku open
 ```
 
-## Last changes
-###17/02/2020
+## Project management
 
-- settings.py update - much better approach with os.environ for setting environmental variables
-- Moved project data into root folder to be more clear with folder tree
-- Added basic deploy section
+https://share.clickup.com/b/h/4-8723336-2/4c4ffb879de82e8
+
+## Last changes
+###22/02/2020
+
+- Containerization with docker-compose and deployment with heroku cloud service for easier changes reloading
+- Started project management with Clickup (free + easy github integration)
 
 ### To be done:
 
