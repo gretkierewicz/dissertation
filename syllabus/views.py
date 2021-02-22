@@ -32,9 +32,10 @@ class StudyProgrammesListView(APIView):
     List of study programmes for particular department and academic year
     """
     def get(self, request, *args, **kwargs):
+        # TODO: Check if turning 'verify' param on is possible (problems with production setup)
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
-            f"{kwargs.get('department')}/study_plans/")
+            f"{kwargs.get('department')}/study_plans/", verify=False)
         try:
             study_types_json_data = json.loads(response.content).get('syllabus').get('study_types')
             serializer = StudyTypesSerializer(data=study_types_json_data, many=True, context={'request': request})
@@ -51,9 +52,11 @@ class StudyProgrammesDetailView(APIView):
     List of study programme's semesters, groups, modules and classes
     """
     def get(self, request, *args, **kwargs):
+        # TODO: Check if turning 'verify' param on is possible (problems with production setup)
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
-            f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/"
+            f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/",
+            verify=False
         )
         try:
             json_data = json.loads(response.content).get('syllabus')

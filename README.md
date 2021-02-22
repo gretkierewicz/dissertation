@@ -52,6 +52,7 @@ https://share.clickup.com/b/h/4-8723336-2/4c4ffb879de82e8
 
 - Containerization with docker-compose and deployment with heroku cloud service for easier changes reloading
 - Started project management with Clickup (free + easy github integration)
+- FIX / turning off verify for requests GET method (no SSL certificate) as it cause problems with production setup
 
 ### To be done:
 
