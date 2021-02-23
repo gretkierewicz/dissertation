@@ -40,9 +40,9 @@ class ModuleViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         # list flat data of each employee for CSV format
         if request.query_params.get('format') == 'csv':
-            serializer = ModuleFlatSerializer(self.queryset, many=True, context={'request': request})
+            serializer = ModuleFlatSerializer(self.get_queryset(), many=True, context={'request': request})
         else:
-            serializer = ModuleSerializer(self.queryset, many=True, context={'request': request})
+            serializer = ModuleSerializer(self.get_queryset(), many=True, context={'request': request})
         return Response(serializer.data)
 
     # Custom retrieve method with different serializers for different formats
@@ -77,7 +77,7 @@ class ModuleViewSet(ModelViewSet):
                         file_data[key] = value if value else None
                     partial_data = OrderedDict(file_data)
                     if request.method == 'PUT':
-                        instance = self.queryset.filter(**{lookup: partial_data[lookup]}).first()
+                        instance = self.get_queryset().filter(**{lookup: partial_data[lookup]}).first()
                         serializer = self.get_serializer(instance, data=partial_data)
                     else:
                         serializer = self.get_serializer(data=partial_data)

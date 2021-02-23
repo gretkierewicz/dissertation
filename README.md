@@ -51,6 +51,8 @@ https://share.clickup.com/b/h/4-8723336-2/4c4ffb879de82e8
 ###23/02/2020
 
 - Docker - added empty folder 'static' so docker-compose can run properly after clone
+- FIX - fixed module's list view as self.queryset was used and self.get_queryset should be 
+  (thx to https://www.django-rest-framework.org/api-guide/generic-views/#attributes)
 
 ### To be done:
 
