@@ -37,7 +37,7 @@ heroku container:push web
 heroku container:release web
 
 # create DB tables for cars app
-heroku run python manage.py migrate cars
+heroku run python manage.py migrate
 
 # start app in web-browser
 heroku open
