@@ -1,3 +1,9 @@
+###22/02/2020
+
+- Containerization with docker-compose and deployment with heroku cloud service for easier updates
+- Started project management with Clickup (free + easy github integration)
+- FIX / turning off verify for requests GET method (no SSL certificate) as it caused problems with production setup
+
 ###17/02/2020
 
 - settings.py update - much better approach with os.environ for setting environmental variables

@@ -48,11 +48,9 @@ heroku open
 https://share.clickup.com/b/h/4-8723336-2/4c4ffb879de82e8
 
 ## Last changes
-###22/02/2020
+###23/02/2020
 
-- Containerization with docker-compose and deployment with heroku cloud service for easier changes reloading
-- Started project management with Clickup (free + easy github integration)
-- FIX / turning off verify for requests GET method (no SSL certificate) as it cause problems with production setup
+- Docker - added empty folder 'static' so docker-compose can run properly after clone
 
 ### To be done:
 
