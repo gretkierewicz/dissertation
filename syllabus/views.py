@@ -2,6 +2,8 @@ import json
 import requests
 
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -31,6 +33,8 @@ class StudyProgrammesListView(APIView):
     """
     List of study programmes for particular department and academic year
     """
+    # cache this view for an hour
+    @method_decorator(cache_page(60*60))
     def get(self, request, *args, **kwargs):
         # TODO: Check if turning 'verify' param on is possible (problems with production setup)
         response = requests.get(
@@ -51,6 +55,8 @@ class StudyProgrammesDetailView(APIView):
     """
     List of study programme's semesters, groups, modules and classes
     """
+    # cache this view for an hour
+    @method_decorator(cache_page(60*60))
     def get(self, request, *args, **kwargs):
         # TODO: Check if turning 'verify' param on is possible (problems with production setup)
         response = requests.get(
