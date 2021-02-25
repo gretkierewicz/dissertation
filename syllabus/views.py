@@ -36,10 +36,9 @@ class StudyProgrammesListView(APIView):
     # cache this view for an hour
     @method_decorator(cache_page(60*60))
     def get(self, request, *args, **kwargs):
-        # TODO: Check if turning 'verify' param on is possible (problems with production setup)
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
-            f"{kwargs.get('department')}/study_plans/", verify=False)
+            f"{kwargs.get('department')}/study_plans/")
         try:
             study_types_json_data = json.loads(response.content).get('syllabus').get('study_types')
             serializer = StudyTypesSerializer(data=study_types_json_data, many=True, context={'request': request})
@@ -58,12 +57,9 @@ class StudyProgrammesDetailView(APIView):
     # cache this view for an hour
     @method_decorator(cache_page(60*60))
     def get(self, request, *args, **kwargs):
-        # TODO: Check if turning 'verify' param on is possible (problems with production setup)
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
-            f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/",
-            verify=False
-        )
+            f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/")
         try:
             json_data = json.loads(response.content).get('syllabus')
             json_data['study_plan'].update({'name': get_name_from_slug(kwargs.get('study_plan'))})

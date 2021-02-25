@@ -1,3 +1,7 @@
+###24/02/2020
+
+- Syllabus - implemented caching for views that get data from external API
+
 ###23/02/2020
 
 - Docker - added empty folder 'static' so docker-compose can run properly after clone

@@ -48,9 +48,10 @@ heroku open
 https://share.clickup.com/b/h/4-8723336-2/4c4ffb879de82e8
 
 ## Last changes
-###24/02/2020
+###25/02/2020
 
-- Syllabus - implemented caching for views that get data from external API
+- Syllabus / requests - throwing out verify=False param. It was unnecessary after all.
+  Wrong data display was caused by differences in syllabus API data provided for different years.
 
 ### To be done:
 
