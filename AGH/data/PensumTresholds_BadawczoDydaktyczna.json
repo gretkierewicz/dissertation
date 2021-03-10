@@ -1,0 +1,18 @@
+[
+  {
+    "positions": ["profesor", "prof."],
+    "value": 180
+  },
+  {
+    "positions": ["profesor uczelni", "prof. AGH"],
+    "value": 210
+  },
+  {
+    "positions": ["adiunkt"],
+    "value": 240
+  },
+  {
+    "positions": ["asystent"],
+    "value": 240
+  }
+]

@@ -1,3 +1,8 @@
+###25/02/2020
+
+- Syllabus / requests - throwing out verify=False param. It was unnecessary after all.
+  Wrong data display was caused by differences in syllabus API data provided for different years.
+
 ###24/02/2020
 
 - Syllabus - implemented caching for views that get data from external API

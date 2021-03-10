@@ -1,0 +1,34 @@
+[
+  {
+    "positions": ["profesor", "prof."],
+    "value": 270
+  },
+  {
+    "positions": ["profesor uczelni", "prof. AGH"],
+    "value": 315
+  },
+  {
+    "positions": ["adiunkt"],
+    "value": 360
+  },
+  {
+    "positions": ["asystent"],
+    "value": 360
+  },
+  {
+    "positions": ["starszy lektor"],
+    "value": 360
+  },
+  {
+    "positions": ["starszy instruktor"],
+    "value": 360
+  },
+  {
+    "positions": ["lektor"],
+    "value": 540
+  },
+  {
+    "positions": ["instruktor"],
+    "value": 540
+  }
+]

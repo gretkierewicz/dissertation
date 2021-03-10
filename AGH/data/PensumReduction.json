@@ -1,0 +1,70 @@
+[
+  {
+    "function": "Rektor",
+    "value": 150
+  },
+  {
+    "function": "Prorektor",
+    "value": 105
+  },
+  {
+    "function": "Dziekan Wydziału",
+    "value": 90
+  },
+  {
+    "function": "Dyrektor Centrum Badawczego",
+    "value": 90
+  },
+  {
+    "function": "Dyrektor Szkoły Doktorskiej",
+    "value": 90
+  },
+  {
+    "function": "Przewodniczący Rady Dyscypliny Naukowej",
+    "value": 60
+  },
+  {
+    "function": "Dyrektor Bentrum Dydaktycznego",
+    "value": 60
+  },
+  {
+    "function": "Prodziekan",
+    "value": 60
+  },
+  {
+    "function": "Zastępca Dyrektora Centrum Badawczego",
+    "value": 45
+  },
+  {
+    "function": "Zastępca Dyrektora Szkoły Doktorskiej",
+    "value": 45
+  },
+  {
+    "function": "Zastępca Przewodniczącego Rady Dyscypliny Naukowej",
+    "value": 30
+  },
+  {
+    "function": "Zastępca Dyrektora Centrum Dydaktycznego",
+    "value": 30
+  },
+  {
+    "function": "Dyrektor Instytutu",
+    "value": 45
+  },
+  {
+    "function": "Kierownik Katedry",
+    "value": 30
+  },
+  {
+    "function": "Pełnomocnik Rektora ds. Jakości Kształcenia",
+    "value": 45
+  },
+  {
+    "function": "Członek Uczelnianego Zespołu Audytu Dydaktycznego",
+    "value": 45
+  },
+  {
+    "function": "Pełnomocnik Dziekana ds. Jakości Kształcenia",
+    "value": 30
+  }
+]
