@@ -12,7 +12,7 @@ from rest_framework_csv.renderers import CSVRenderer
 from rest_framework_nested.viewsets import NestedViewSetMixin
 
 from .models import Modules, Classes
-from .serializers import ModuleSerializer, ClassSerializer, SupervisedModuleSerializer, ModuleFlatSerializer
+from .serializers import ModuleSerializer, ClassSerializer, ModuleFlatSerializer
 
 
 class ModuleRenderer(CSVRenderer):
@@ -25,7 +25,7 @@ class ModuleRenderer(CSVRenderer):
     header = ['module_code', 'name', 'examination', 'supervisor'] + classes_hours
 
 
-class ModuleViewSet(ModelViewSet):
+class ModuleViewSet(NestedViewSetMixin, ModelViewSet):
     """
     Modules View Set
     Create, Retrieve, Update, Delete modules
@@ -114,17 +114,6 @@ class ModuleViewSet(ModelViewSet):
                     if serializer.errors:
                         data[file + ' file'][partial_data.get(lookup)] = [serializer.errors]
             return Response(data)
-
-
-class EmployeeModuleViewSet(NestedViewSetMixin, ModelViewSet):
-    """
-    Employee/Module View Set
-    Create, Retrieve, Update, Delete Employee's modules
-    """
-    # with NestedViewSetMixin get_queryset is overridden to include Serializer's parent_lookup_kwargs
-    queryset = Modules.objects.all()
-    serializer_class = SupervisedModuleSerializer
-    lookup_field = 'module_code'
 
 
 class ClassViewSet(NestedViewSetMixin, ModelViewSet):

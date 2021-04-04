@@ -1,8 +1,9 @@
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
-from rest_framework.serializers import HyperlinkedModelSerializer
+from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from orders.serializers import ClassesOrderSerializer
+from schedules.models import Schedules
 from utils.relations import ParentHiddenRelatedField
 
 from .models import Modules, Classes
@@ -19,15 +20,21 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
                   # hidden fields:
                   'module']
         extra_kwargs = {
-            # url's custom lookup - needs to match lookup set in the view set
-            'url': {'lookup_field': 'name'},
             'classes_hours': {'min_value': 0},
             'students_limit_per_group': {'min_value': 0},
         }
     # for nesting serializer - dict of URL lookups and queryset kwarg keys
     parent_lookup_kwargs = {
+        'schedule_slug': 'module__schedule__slug',
         'module_module_code': 'module__module_code',
     }
+
+    url = NestedHyperlinkedIdentityField(
+        view_name='classes-detail',
+        lookup_field='name',
+        lookup_url_kwarg='name',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
 
     order = ClassesOrderSerializer(read_only=True)
 
@@ -41,7 +48,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     )
 
 
-class ModuleSerializer(HyperlinkedModelSerializer):
+class ModuleSerializer(NestedHyperlinkedModelSerializer):
     """
     Module Serializer - serializer with url, some of the model's fields and additional properties:
     form_of_classes - nested serializer of module's classes
@@ -51,11 +58,23 @@ class ModuleSerializer(HyperlinkedModelSerializer):
         fields = ['url',
                   'module_code', 'name',
                   'supervisor', 'supervisor_url', 'examination',
-                  'classes_url', 'classes']
+                  'classes_url', 'classes',
+                  # hidden
+                  'schedule']
         extra_kwargs = {
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},
         }
+    parent_lookup_kwargs = {
+        'schedule_slug': 'schedule__slug'
+    }
+
+    url = NestedHyperlinkedIdentityField(
+        view_name='modules-detail',
+        lookup_field='module_code',
+        lookup_url_kwarg='module_code',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
 
     supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
     supervisor_url = HyperlinkedIdentityField(
@@ -64,13 +83,21 @@ class ModuleSerializer(HyperlinkedModelSerializer):
         lookup_url_kwarg='abbreviation'
     )
 
-    classes_url = HyperlinkedIdentityField(
+    classes_url = NestedHyperlinkedIdentityField(
         view_name='classes-list',
         lookup_field='module_code',
         lookup_url_kwarg='module_module_code',
+        parent_lookup_kwargs=parent_lookup_kwargs
     )
     # needs parent_lookup_kwargs configured in nested serializer!
     classes = ClassSerializer(read_only=True, many=True)
+
+    schedule = ParentHiddenRelatedField(
+        queryset=Schedules.objects.all(),
+        parent_lookup_kwargs={
+            'schedule_slug': 'slug'
+        }
+    )
 
     # overwrite for handling nested classes (this will not delete missing classes in data)
     def create(self, validated_data):
@@ -111,31 +138,3 @@ class ModuleFlatSerializer(ModuleSerializer):
         fields = ['module_code', 'name', 'examination', 'supervisor',
                   'lectures_hours', 'laboratory_classes_hours', 'auditorium_classes_hours', 'project_classes_hours',
                   'seminar_classes_hours']
-
-
-class SupervisedModuleSerializer(ModuleSerializer, NestedHyperlinkedModelSerializer):
-    """
-    Supervised Module Serializer - helper Serializer for nesting in the Employee Serializer
-    """
-    class Meta:
-        model = Modules
-        fields = ['url',
-                  'module_code', 'name', 'examination',
-                  # hidden fields:
-                  'supervisor']
-        extra_kwargs = {
-            # url's custom lookup - needs to match lookup set in the view set
-            'url': {
-                'view_name': 'employee-modules-detail',
-                'lookup_field': 'module_code',
-            },
-        }
-    parent_lookup_kwargs = {
-        'employee_abbreviation': 'supervisor__abbreviation'
-    }
-
-    # Requested URL should point one parent object - in this case supervisor
-    supervisor = ParentHiddenRelatedField(
-        queryset=Employees.objects.all(),
-        parent_lookup_kwargs={'employee_abbreviation': 'abbreviation'},
-    )

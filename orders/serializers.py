@@ -27,6 +27,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         }
     # setting parents' URL kwargs
     parent_lookup_kwargs = {
+        'schedule_slug': 'order__classes__module__schedule__slug',
         'module_module_code': 'order__classes__module__module_code',
         'classes_name': 'order__classes__name',
     }
@@ -37,6 +38,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     order = ParentHiddenRelatedField(
         queryset=Orders.objects.all(),
         parent_lookup_kwargs={
+            'schedule_slug': 'classes__module__schedule__slug',
             'module_module_code': 'classes__module__module_code',
             'classes_name': 'classes__name',
         }
@@ -73,6 +75,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
             'students_number': {'min_value': 0}
         }
     parent_lookup_kwargs = {
+        'schedule_slug': 'classes__module__schedule__slug',
         'module_module_code': 'classes__module__module_code',
         'classes_name': 'classes__name'
     }
@@ -95,6 +98,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         view_name='classes-detail',
         lookup_field='name',
         parent_lookup_kwargs={
+            'schedule_slug': 'module__schedule__slug',
             'module_module_code': 'module__module_code'
         },
         validators=[UniqueValidator(queryset=Orders.objects.all())],
@@ -119,6 +123,7 @@ class ClassesOrderSerializer(OrdersSerializer):
     classes = ParentHiddenRelatedField(
         queryset=Classes.objects.all(),
         parent_lookup_kwargs={
+            'schedule_slug': 'module__schedule__slug',
             'module_module_code': 'module__module_code',
             'classes_name': 'name'
         }

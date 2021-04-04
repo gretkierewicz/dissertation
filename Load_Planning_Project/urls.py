@@ -29,54 +29,50 @@ router = DefaultRouter()
 router.register(r'degrees', employees_views.DegreeViewSet)
 # generates:
 # /degrees/
-# /degrees/{position_pk}
+# /degrees/{pk}
 
 router.register(r'positions', employees_views.PositionViewSet)
 # generates:
 # /positions/
-# /positions/{position_pk}
+# /positions/{pk}
 
 router.register(r'pensum', employees_views.PensumViewSet)
 # generates
 # /pensum/
-# /pensum/{pensum_pk}
+# /pensum/{pk}
 
 router.register(r'employees', employees_views.EmployeeViewSet)
 # generates:
 # /employees/
-# /employees/{employee_abbreviation}
-employees_router = NestedDefaultRouter(router, r'employees', lookup='employee')
-employees_router.register(r'modules', modules_views.EmployeeModuleViewSet, basename='employee-modules')
-# generates:
-# /employees/{employee_abbreviation}/modules/
-# /employees/{employee_abbreviation}/modules/{module_code}/
-
-router.register(r'modules', modules_views.ModuleViewSet)
-# generates:
-# /modules/
-# /modules/{module_code}
-modules_router = NestedDefaultRouter(router, r'modules', lookup='module')
-modules_router.register(r'classes', modules_views.ClassViewSet, basename='classes')
-# generates:
-# /modules/{module_code}/classes/
-# /modules/{module_code}/classes/{classes_name}
-order_plans_router = NestedDefaultRouter(modules_router, r'classes', lookup='classes')
-order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename='classes-order-plans')
-# gernerates:
-# /modules/{module_code}/classes/{classes_name}/order/plans/
-# /modules/{module_code}/classes/{classes_name}/order/plans/{plans_employee}
-
-router.register(r'orders', orders_views.OrdersListViewSet, basename='orders')
-# generates:
-# /orders/
+# /employees/{abbreviation}
 
 router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
 # generates:
 # /syllabus/
+# /syllabus/academic_year/{academic_year}/department/{department}/study_plans/
+# /syllabus/academic_year/{academic_year}/department/{department}/study_plans/{study_plan}
 
 router.register(r'schedules', schedules_views.SchedulesViewSet, basename='schedules')
 # generates:
 # /schedules/
+# /schedules/{slug}
+schedules_router = NestedDefaultRouter(router, r'schedules', lookup='schedule')
+schedules_router.register(r'modules', modules_views.ModuleViewSet, basename='modules')
+schedules_router.register(r'orders', orders_views.OrdersViewSet, basename='orders')
+# generates:
+# /schedules/{schedule_slug}/modules/
+# /schedules/{schedule_slug}/modules/{module_code}
+# /schedules/{schedule_slug}/orders/
+modules_router = NestedDefaultRouter(schedules_router, r'modules', lookup='module')
+modules_router.register(r'classes', modules_views.ClassViewSet, basename='classes')
+# generates:
+# /schedules/{schedule_slug}/modules/{module_module_code}/classes/
+# /schedules/{schedule_slug}/modules/{module_module_code}/classes/{name}
+order_plans_router = NestedDefaultRouter(modules_router, r'classes', lookup='classes')
+order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename='classes-order-plans')
+# generates:
+# /schedules/{schedule_slug}/modules/{module_module_code}/classes/{classes_name}/order/plans/
+# /schedules/{schedule_slug}/modules/{module_module_code}/classes/{classes_name}/order/plans/{employee}
 
 urlpatterns = [
     path('API/', include(router.urls)),
@@ -90,7 +86,8 @@ urlpatterns = [
         syllabus_views.StudyProgrammesDetailView.as_view(),
         name='syllabus-study_plans-detail')])),
     path('API/', include([re_path(
-        r'^modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order/$',
+        r'^schedules/(?P<schedule_slug>[^/.]+)/modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/'
+        r'order/$',
         orders_views.OrderDetailViewSet.as_view({
             # request's method name relation with ViewSet's method name (custom create_or_update method)
             'get': 'retrieve',
@@ -100,7 +97,8 @@ urlpatterns = [
         }),
         name='classes-order-detail')])),
     path('API/', include([re_path(
-        r'^modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/order\.(?P<format>[a-z0-9]+)/?$',
+        r'^schedules/(?P<schedule_slug>[^/.]+)/modules/(?P<module_module_code>[^/.]+)/classes/(?P<classes_name>[^/.]+)/'
+        r'order\.(?P<format>[a-z0-9]+)/?$',
         orders_views.OrderDetailViewSet.as_view({
             'get': 'retrieve',
             'put': 'create_or_update',
@@ -108,8 +106,8 @@ urlpatterns = [
             'delete': 'destroy'
         }),
         name='classes-order-detail')])),
+    path('API/', include(schedules_router.urls)),
     path('API/', include(order_plans_router.urls)),
-    path('API/', include(employees_router.urls)),
     path('API/', include(modules_router.urls)),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),

@@ -3,7 +3,6 @@ from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializ
 from rest_framework.serializers import ValidationError
 
 from .models import Degrees, Positions, Employees, Pensum
-from modules.serializers import SupervisedModuleSerializer
 from utils.constants import NA
 
 
@@ -117,7 +116,7 @@ class EmployeeSerializer(ModelSerializer):
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position',
                   'pensum_name', 'pensum_value', 'pensum_limit',
-                  'supervised_modules_url', 'supervised_modules', 'supervisor_url', 'supervisor', 'subordinates',
+                  'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
             'year_of_studies': {'min_value': 0}
@@ -128,10 +127,6 @@ class EmployeeSerializer(ModelSerializer):
     degree = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all())
     position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
     supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
-
-    supervised_modules_url = HyperlinkedIdentityField(
-        view_name='employee-modules-list', lookup_field='abbreviation', lookup_url_kwarg='employee_abbreviation')
-    supervised_modules = SupervisedModuleSerializer(read_only=True, many=True)
 
     supervisor_url = HyperlinkedIdentityField(
         view_name='employees-detail', lookup_field='supervisor', lookup_url_kwarg='abbreviation')

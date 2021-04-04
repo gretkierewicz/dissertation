@@ -50,6 +50,7 @@ heroku open
   as some data in syllabus appear to have empty lists in it.
 - Schedules - new app for custom schedule creation procedure
 - Schedules - minor update
+- Schedules - Modules and Orders are no longer independent resources. Moved into schedules as nested ones.
 
 ### To be done:
 

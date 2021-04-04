@@ -6,11 +6,13 @@ from .models import Orders, Plans
 from .serializers import OrdersSerializer, PlansSerializer, ClassesOrderSerializer
 
 
-class OrdersListViewSet(GenericViewSet,
-                        mixins.ListModelMixin,
-                        mixins.CreateModelMixin):
+class OrdersViewSet(GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.CreateModelMixin):
     serializer_class = OrdersSerializer
-    queryset = Orders.objects.all()
+
+    def get_queryset(self):
+        return Orders.objects.filter(classes__module__schedule__slug=self.kwargs.get('schedule_slug'))
 
 
 class OrderDetailViewSet(NestedViewSetMixin,

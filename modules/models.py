@@ -1,6 +1,7 @@
 from django.db import models
 
 from employees.models import Employees
+from schedules.models import Schedules
 
 
 CLASSES_NAMES = ['Lectures', 'Laboratory classes', 'Auditorium classes', 'Project classes', 'Seminar classes']
@@ -9,11 +10,13 @@ CLASSES_NAMES = ['Lectures', 'Laboratory classes', 'Auditorium classes', 'Projec
 class Modules(models.Model):
     class Meta:
         ordering = ['module_code']
+        unique_together = (('module_code', 'schedule'), )
 
-    module_code = models.SlugField(max_length=45, unique=True)
+    module_code = models.SlugField(max_length=45)
     name = models.CharField(max_length=45)
     examination = models.BooleanField(default=False)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
+    schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='modules')
 
     def __str__(self):
         return f"{self.name} (Code: {self.module_code})"
