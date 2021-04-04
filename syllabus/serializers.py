@@ -23,7 +23,7 @@ class ProgrammesSerializer(Serializer):
     name_from_slug = SerializerMethodField()
     syllabus_url = CharField()
     slug = SerializerMethodField()
-    study_programmes_detail_url = SerializerMethodField()
+    study_programmes_detail_url = SerializerMethodField(required=False)
 
     def to_internal_value(self, data):
         url = data.pop('url')
@@ -51,13 +51,13 @@ class ProgrammesSerializer(Serializer):
 class LevelsSerializer(Serializer):
     level = CharField()
     code = CharField()
-    study_programmes = ProgrammesSerializer(many=True)
+    study_programmes = ProgrammesSerializer(many=True, required=False)
 
 
 class StudyTypesSerializer(Serializer):
     type = CharField()
     code = CharField()
-    levels = LevelsSerializer(many=True)
+    levels = LevelsSerializer(many=True, required=False)
 
 
 class SyllabusSerializer(Serializer):
@@ -74,23 +74,23 @@ class ModulesSerializer(Serializer):
     module_code = CharField()
     name = CharField()
     examination = BooleanField()
-    form_of_classes = ClassesSerializer(many=True)
+    form_of_classes = ClassesSerializer(many=True, required=False)
 
 
 class GroupsSerializer(Serializer):
     name = CharField()
     type = CharField()
-    modules = ModulesSerializer(many=True)
+    modules = ModulesSerializer(many=True, required=False)
 
 
 class SemestersSerializer(Serializer):
     number = IntegerField()
-    groups = GroupsSerializer(many=True)
+    groups = GroupsSerializer(many=True, required=False)
 
 
 class StudyPlanSerializer(Serializer):
     name = CharField()
-    semesters = SemestersSerializer(many=True)
+    semesters = SemestersSerializer(many=True, required=False)
 
 class ProgrammeSerializer(Serializer):
     study_plan = StudyPlanSerializer()

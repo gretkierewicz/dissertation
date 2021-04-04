@@ -1,3 +1,10 @@
+###10/03/2020
+
+- Pensum / Based on: https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf
+  Created an additional module with AGH data and functions. 
+  JSON data to enable easy data manipulation for users in the future. 
+  Functions to read that JSON data and use within the app. 
+
 ###25/02/2020
 
 - Syllabus / requests - throwing out verify=False param. It was unnecessary after all.
