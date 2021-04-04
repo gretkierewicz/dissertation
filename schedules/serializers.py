@@ -11,3 +11,4 @@ class ScheduleSerializer(ModuleSerializer):
         fields = ['url', 'slug', ]
 
     url = HyperlinkedIdentityField(view_name='schedules-detail', lookup_field='slug')
+

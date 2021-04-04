@@ -49,6 +49,7 @@ heroku open
 - Syllabus / FIX - putting required=False for nested serializers, 
   as some data in syllabus appear to have empty lists in it.
 - Schedules - new app for custom schedule creation procedure
+- Schedules - minor update
 
 ### To be done:
 
