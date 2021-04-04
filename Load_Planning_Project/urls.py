@@ -22,6 +22,7 @@ from . import views
 from employees import views as employees_views
 from modules import views as modules_views
 from orders import views as orders_views
+from schedules import views as schedules_views
 from syllabus import views as syllabus_views
 
 router = DefaultRouter()
@@ -72,6 +73,10 @@ router.register(r'orders', orders_views.OrdersListViewSet, basename='orders')
 router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
 # generates:
 # /syllabus/
+
+router.register(r'schedules', schedules_views.SchedulesViewSet, basename='schedules')
+# generates:
+# /schedules/
 
 urlpatterns = [
     path('API/', include(router.urls)),

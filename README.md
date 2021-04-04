@@ -43,15 +43,12 @@ heroku run python manage.py migrate
 heroku open
 ```
 
-## Project management
-
-https://share.clickup.com/b/h/4-8723336-2/4c4ffb879de82e8
-
 ## Last changes
 ###04/04/2020
 
 - Syllabus / FIX - putting required=False for nested serializers, 
   as some data in syllabus appear to have empty lists in it.
+- Schedules - new app for custom schedule creation procedure
 
 ### To be done:
 

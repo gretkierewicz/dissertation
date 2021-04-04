@@ -31,6 +31,7 @@ ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 
 # Application definition
 
 INSTALLED_APPS = [
+    'schedules.apps.SchedulesConfig',
     'syllabus.apps.SyllabusConfig',
     'orders.apps.OrdersConfig',
     'modules.apps.ModulesConfig',
