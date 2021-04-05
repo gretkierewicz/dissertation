@@ -48,6 +48,8 @@ heroku open
 
 - AGH / Fixed typo with a threshold.
 - Employees / removed Pensum model as it has to be nested into the Schedule resource
+- Plans / Fixed validation for plan_hours - filtering with schedule slug was missing.
+- Pensum / Model rewritten inside Schedule. Added factors that can be manually inserted.
 
 ### To be done:
 

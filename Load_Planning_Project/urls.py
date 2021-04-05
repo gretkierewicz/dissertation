@@ -36,11 +36,6 @@ router.register(r'positions', employees_views.PositionViewSet)
 # /positions/
 # /positions/{pk}
 
-router.register(r'pensum', employees_views.PensumViewSet)
-# generates
-# /pensum/
-# /pensum/{pk}
-
 router.register(r'employees', employees_views.EmployeeViewSet)
 # generates:
 # /employees/
@@ -58,21 +53,28 @@ router.register(r'schedules', schedules_views.SchedulesViewSet, basename='schedu
 # /schedules/{slug}
 schedules_router = NestedDefaultRouter(router, r'schedules', lookup='schedule')
 schedules_router.register(r'modules', modules_views.ModuleViewSet, basename='modules')
-schedules_router.register(r'orders', orders_views.OrdersViewSet, basename='orders')
 # generates:
 # /schedules/{schedule_slug}/modules/
 # /schedules/{schedule_slug}/modules/{module_code}
-# /schedules/{schedule_slug}/orders/
 modules_router = NestedDefaultRouter(schedules_router, r'modules', lookup='module')
 modules_router.register(r'classes', modules_views.ClassViewSet, basename='classes')
 # generates:
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/{name}
+schedules_router.register(r'orders', orders_views.OrdersViewSet, basename='orders')
+# generates:
+# /schedules/{schedule_slug}/orders/
 order_plans_router = NestedDefaultRouter(modules_router, r'classes', lookup='classes')
 order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename='classes-order-plans')
 # generates:
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/{classes_name}/order/plans/
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/{classes_name}/order/plans/{employee}
+schedules_router.register(r'pensums', schedules_views.PensumViewSet, basename='pensums')
+# generates:
+# /schedules/{schedule_slug}/pensum/
+# /schedules/{schedule_slug}/pensum/{pk}
+pensum_router = NestedDefaultRouter(schedules_router, r'pensums', lookup='pensums')
+pensum_router.register(r'factors', schedules_views.PensumFactorsViewSet, basename='pensum-factors')
 
 urlpatterns = [
     path('API/', include(router.urls)),
@@ -106,6 +108,7 @@ urlpatterns = [
             'delete': 'destroy'
         }),
         name='classes-order-detail')])),
+    path('API/', include(pensum_router.urls)),
     path('API/', include(schedules_router.urls)),
     path('API/', include(order_plans_router.urls)),
     path('API/', include(modules_router.urls)),
