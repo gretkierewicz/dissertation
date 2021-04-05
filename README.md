@@ -44,13 +44,10 @@ heroku open
 ```
 
 ## Last changes
-###04/04/2020
+###05/04/2020
 
-- Syllabus / FIX - putting required=False for nested serializers, 
-  as some data in syllabus appear to have empty lists in it.
-- Schedules - new app for custom schedule creation procedure
-- Schedules - minor update
-- Schedules - Modules and Orders are no longer independent resources. Moved into schedules as nested ones.
+- AGH / Fixed typo with a threshold.
+- Employees / removed Pensum model as it has to be nested into the Schedule resource
 
 ### To be done:
 

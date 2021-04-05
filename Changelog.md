@@ -1,3 +1,11 @@
+###04/04/2020
+
+- Syllabus / FIX - putting required=False for nested serializers, 
+  as some data in syllabus appear to have empty lists in it.
+- Schedules - new app for custom schedule creation procedure
+- Schedules - minor update
+- Schedules - Modules and Orders are no longer independent resources. Moved into schedules as nested ones.
+
 ###10/03/2020
 
 - Pensum / Based on: https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf

@@ -6,9 +6,8 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework_csv.renderers import CSVRenderer
 
 from utils.serializers import read_csv_files
-from .models import Degrees, Positions, Employees, Pensum
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeListSerializer, EmployeeSerializer, \
-    PensumSerializer
+from .models import Degrees, Positions, Employees
+from .serializers import DegreeSerializer, PositionSerializer, EmployeeListSerializer, EmployeeSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -69,11 +68,6 @@ class PositionViewSet(mixins.CreateModelMixin,
         POST method will try to create new records.
         """
         return read_csv_files(self=self, request=request, model=Positions, lookup='name')
-
-
-class PensumViewSet(ModelViewSet):
-    queryset = Pensum.objects.all()
-    serializer_class = PensumSerializer
 
 
 class EmployeeRenderer(CSVRenderer):
