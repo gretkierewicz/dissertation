@@ -12,20 +12,20 @@ dydaktyczna = 'dydaktyczna'
 def get_pensum(position, group=dydaktyczna):
     """
     get_pensum function to read pensum value of Group-Position pair based on JSON data:
-    data/PensumTresholds_BadawczoDydaktyczna.json and data/PensumTresholds_Dydaktyczna.json files
+    data/PensumThresholds_BadawczoDydaktyczna.json and data/PensumThresholds_Dydaktyczna.json files
     position: name of employee's position
     group: (optional, def='dydaktyczna')) name of pensum group
     return: pensum value if position-group mathup is found in JSON data, None otherwise
     """
     base_path = os.path.dirname(__file__)
     with open(
-            os.path.join(base_path, "data/PensumTresholds_BadawczoDydaktyczna.json"), 'r', encoding='utf8'
+            os.path.join(base_path, "data/PensumThresholds_BadawczoDydaktyczna.json"), 'r', encoding='utf8'
     ) as json_file:
         for item in json.load(json_file):
             if (position.lower() in [x.lower() for x in item.get('positions')]) and (group == badawczo_dydaktyczna):
                 return item.get('value')
     with open(
-            os.path.join(base_path, "data/PensumTresholds_Dydaktyczna.json"), 'r', encoding='utf8'
+            os.path.join(base_path, "data/PensumThresholds_Dydaktyczna.json"), 'r', encoding='utf8'
     ) as json_file:
         for item in json.load(json_file):
             if (position.lower() in [x.lower() for x in item.get('positions')]) and (group == dydaktyczna):
