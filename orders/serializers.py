@@ -50,6 +50,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         url_kwargs = self.context['request'].resolver_match.kwargs
         # get filter kwargs from request's URL
         filter_kwargs = {
+            'classes__module__schedule__slug': url_kwargs['schedule_slug'],
             'classes__module__module_code': url_kwargs['module_module_code'],
             'classes__name': url_kwargs['classes_name']}
         # finding parent order instance
