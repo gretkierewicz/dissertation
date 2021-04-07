@@ -48,6 +48,7 @@ heroku open
 
 - Pensum / Added feature to pick role/function based on AGH/AGH/PensumReduction.json file
   that reduces basic pensum value
+- URLS / updated comments with generated endpoints
 
 ### To be done:
 

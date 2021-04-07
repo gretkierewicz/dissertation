@@ -72,10 +72,16 @@ order_plans_router.register(r'order/plans', orders_views.PlansViewSet, basename=
 schedules_router.register(r'pensums', schedules_views.PensumViewSet, basename='pensums')
 # generates:
 # /schedules/{schedule_slug}/pensum/
-# /schedules/{schedule_slug}/pensum/{pk}
+# /schedules/{schedule_slug}/pensum/{employee}
 pensum_router = NestedDefaultRouter(schedules_router, r'pensums', lookup='pensums')
 pensum_router.register(r'factors', schedules_views.PensumFactorsViewSet, basename='pensum-factors')
+# generates:
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/{pk}
 pensum_router.register(r'reductions', schedules_views.PensumReductionViewSet, basename='pensum-reductions')
+# generates:
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/reductions/
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/reductions/{pk}
 
 urlpatterns = [
     path('API/', include(router.urls)),
