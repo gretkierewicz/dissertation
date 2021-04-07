@@ -4,7 +4,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from utils.relations import ParentHiddenRelatedField
-from .models import Schedules, Pensum, PensumFactors
+from .models import Schedules, Pensum, PensumFactors, PensumReductions
 from modules.serializers import ModuleSerializer
 
 
@@ -58,11 +58,38 @@ class PensumFactorSerializer(NestedHyperlinkedModelSerializer):
     )
 
 
+class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
+    class Meta:
+        model = PensumReductions
+        fields = ['url', 'function', 'reduction_value',
+                  # hidden
+                  'pensum']
+
+    parent_lookup_kwargs = {
+        'schedule_slug': 'pensum__schedule__slug',
+        'pensums_employee': 'pensum__employee__abbreviation'
+    }
+    url = NestedHyperlinkedIdentityField(
+        view_name='pensum-reductions-detail',
+        lookup_field='pk',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+
+    pensum = ParentHiddenRelatedField(
+        queryset=Pensum.objects.all(),
+        parent_lookup_kwargs={
+            'schedule_slug': 'schedule__slug',
+            'pensums_employee': 'employee__abbreviation'
+        }
+    )
+
+
 class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
         fields = ['url', 'employee_url', 'employee', 'planned_pensum_hours',
-                  'calculated_threshold', 'basic_threshold', 'factors_url', 'factors',
+                  'calculated_threshold', 'basic_threshold',
+                  'factors_url', 'factors', 'reductions_url', 'reductions',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -91,6 +118,14 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
     factors = PensumFactorSerializer(read_only=True, many=True)
+
+    reductions_url = NestedHyperlinkedIdentityField(
+        view_name='pensum-reductions-list',
+        lookup_field='employee',
+        lookup_url_kwarg='pensums_employee',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+    reductions = PensumReductionSerializer(read_only=True, many=True)
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),

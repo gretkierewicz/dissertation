@@ -75,6 +75,7 @@ schedules_router.register(r'pensums', schedules_views.PensumViewSet, basename='p
 # /schedules/{schedule_slug}/pensum/{pk}
 pensum_router = NestedDefaultRouter(schedules_router, r'pensums', lookup='pensums')
 pensum_router.register(r'factors', schedules_views.PensumFactorsViewSet, basename='pensum-factors')
+pensum_router.register(r'reductions', schedules_views.PensumReductionViewSet, basename='pensum-reductions')
 
 urlpatterns = [
     path('API/', include(router.urls)),

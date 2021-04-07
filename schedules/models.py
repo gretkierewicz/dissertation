@@ -1,5 +1,6 @@
 from django.db import models
 
+from AGH.AGH_utils import get_pensum_function_names, get_pensum_reduction_value
 from employees.models import Employees
 
 
@@ -20,7 +21,14 @@ class Pensum(models.Model):
 
     @property
     def calculated_threshold(self):
+        # TODO: check if reduction should be calculated at first
         ret = self.basic_threshold
+        for function in self.reductions.all():
+            ret -= function.reduction_value
+        # pass factors if reduction zeros calculated threshold
+        if ret < 0:
+            return 0
+
         for factor in self.factors.all():
             ret = factor.calculate_value(ret)
         return ret
@@ -48,3 +56,17 @@ class PensumFactors(models.Model):
             return value + self.value
         if self.factor_type == self.MUL:
             return value * self.value
+
+
+class PensumReductions(models.Model):
+    class Meta:
+        unique_together = (('pensum', 'function'), )
+
+    ROLES = [(name, name) for name in get_pensum_function_names()]
+
+    pensum = models.ForeignKey(Pensum, on_delete=models.CASCADE, related_name='reductions')
+    function = models.CharField(max_length=max([len(name) for name in get_pensum_function_names()]), choices=ROLES)
+
+    @property
+    def reduction_value(self):
+        return get_pensum_reduction_value(self.function)
