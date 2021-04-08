@@ -64,7 +64,7 @@ class PensumReductions(models.Model):
 
     ROLES = [(name, name) for name in get_pensum_function_names()]
 
-    pensum = models.ForeignKey(Pensum, on_delete=models.CASCADE, related_name='reductions')
+    pensum = models.OneToOneField(Pensum, on_delete=models.CASCADE, related_name='reduction')
     function = models.CharField(max_length=max([len(name) for name in get_pensum_function_names()]), choices=ROLES)
 
     @property

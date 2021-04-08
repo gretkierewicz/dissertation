@@ -78,13 +78,28 @@ pensum_router.register(r'factors', schedules_views.PensumFactorsViewSet, basenam
 # generates:
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/{pk}
-pensum_router.register(r'reductions', schedules_views.PensumReductionViewSet, basename='pensum-reductions')
-# generates:
-# /schedules/{schedule_slug}/pensum/{pensums_employee}/reductions/
-# /schedules/{schedule_slug}/pensum/{pensums_employee}/reductions/{pk}
 
 urlpatterns = [
     path('API/', include(router.urls)),
+    path('API/', include([re_path(
+        r'^schedules/(?P<schedule_slug>[^/.]+)/pensums/(?P<pensums_employee>[^/.]+)/reduction/$',
+        schedules_views.PensumReductionViewSet.as_view({
+            # request's method name relation with ViewSet's method name (custom create_or_update method)
+            'get': 'retrieve',
+            'put': 'create_or_update',
+            'patch': 'partial_update',
+            'delete': 'destroy'
+        }),
+        name='pensum-reduction-detail')])),
+    path('API/', include([re_path(
+        r'^schedules/(?P<schedule_slug>[^/.]+)/pensums/(?P<pensums_employee>[^/.]+)/reduction/$',
+        schedules_views.PensumReductionViewSet.as_view({
+            'get': 'retrieve',
+            'put': 'create_or_update',
+            'patch': 'partial_update',
+            'delete': 'destroy'
+        }),
+        name='pensum-reduction-detail')])),
     path('API/', include([re_path(
         r'^syllabus/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/study_plans/$',
         syllabus_views.StudyProgrammesListView.as_view(),

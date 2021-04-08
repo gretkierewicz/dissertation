@@ -47,6 +47,8 @@ heroku open
 ###08/04/2020
 
 - Utils / OneToOneRelationViewSet - new ViewSet to make this relation easier to setup.
+- Pensum Reduction / Changed Reduction to be One-to-One relation. 
+  Refactored view, model, serializer and url patterns.
 
 ### To be done:
 

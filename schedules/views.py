@@ -5,6 +5,7 @@ from rest_framework_nested.viewsets import NestedViewSetMixin
 
 from AGH.AGH_utils import get_pensum
 from employees.models import Employees
+from utils.ViewSets import OneToOneRelationViewSet
 from .models import Schedules, Pensum, PensumFactors, PensumReductions
 from .serializers import ScheduleSerializer, PensumSerializer, PensumFactorSerializer, PensumReductionSerializer
 
@@ -63,7 +64,7 @@ class PensumFactorsViewSet(ModelViewSet):
     serializer_class = PensumFactorSerializer
 
 
-class PensumReductionViewSet(ModelViewSet):
+class PensumReductionViewSet(OneToOneRelationViewSet):
     """
     Pensum Reductions View Set - reduces pensum threshold at basis of AGH/PensumReduction.json file.
     """

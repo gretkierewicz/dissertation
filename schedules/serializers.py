@@ -61,7 +61,7 @@ class PensumFactorSerializer(NestedHyperlinkedModelSerializer):
 class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = PensumReductions
-        fields = ['url', 'function', 'reduction_value',
+        fields = ['function', 'reduction_value',
                   # hidden
                   'pensum']
 
@@ -69,11 +69,6 @@ class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
         'schedule_slug': 'pensum__schedule__slug',
         'pensums_employee': 'pensum__employee__abbreviation'
     }
-    url = NestedHyperlinkedIdentityField(
-        view_name='pensum-reductions-detail',
-        lookup_field='pk',
-        parent_lookup_kwargs=parent_lookup_kwargs
-    )
 
     pensum = ParentHiddenRelatedField(
         queryset=Pensum.objects.all(),
@@ -89,7 +84,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         model = Pensum
         fields = ['url', 'employee_url', 'employee', 'planned_pensum_hours',
                   'calculated_threshold', 'basic_threshold',
-                  'factors_url', 'factors', 'reductions_url', 'reductions',
+                  'factors_url', 'factors', 'reduction_url', 'reduction',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -119,13 +114,13 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     )
     factors = PensumFactorSerializer(read_only=True, many=True)
 
-    reductions_url = NestedHyperlinkedIdentityField(
-        view_name='pensum-reductions-list',
+    reduction_url = NestedHyperlinkedIdentityField(
+        view_name='pensum-reduction-detail',
         lookup_field='employee',
         lookup_url_kwarg='pensums_employee',
         parent_lookup_kwargs=parent_lookup_kwargs
     )
-    reductions = PensumReductionSerializer(read_only=True, many=True)
+    reduction = PensumReductionSerializer(read_only=True)
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),
