@@ -1,8 +1,6 @@
 import re
 from collections import OrderedDict
 
-from django.shortcuts import redirect
-from django.urls import reverse
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
@@ -126,9 +124,3 @@ class ClassViewSet(NestedViewSetMixin, ModelViewSet):
     serializer_class = ClassSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'name'
-
-    @action(detail=True)
-    # additional action to make creation of order easier accessible
-    def new_order(self, *args, **kwargs):
-        kwargs['classes_name'] = kwargs.pop('name')
-        return redirect(reverse(viewname='classes-order-detail', kwargs=kwargs))

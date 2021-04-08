@@ -51,6 +51,7 @@ heroku open
   Refactored view, model, serializer and url patterns.
 - Order - Refactored view set with new utils' class.
 - Modules/Order - Moved order url link to parent.
+- Modules - Removed action (useless after moving url links)
 
 ### To be done:
 
