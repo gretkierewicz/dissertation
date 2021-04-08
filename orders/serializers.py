@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-from rest_framework.relations import SlugRelatedField
+from rest_framework.relations import SlugRelatedField, HyperlinkedIdentityField
 from rest_framework.validators import UniqueValidator
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
@@ -18,7 +18,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Plans
-        fields = ['url', 'employee', 'plan_hours',
+        fields = ['url', 'employee_url', 'employee', 'plan_hours',
                   # hidden
                   'order']
         extra_kwargs = {
@@ -32,6 +32,11 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         'classes_name': 'order__classes__name',
     }
 
+    employee_url = HyperlinkedIdentityField(
+        view_name='employees-detail',
+        lookup_field='employee',
+        lookup_url_kwarg='abbreviation'
+    )
     employee = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all())
 
     # hidden field to establish current parent from URL

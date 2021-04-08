@@ -52,6 +52,7 @@ heroku open
 - Order - Refactored view set with new utils' class.
 - Modules/Order - Moved order url link to parent.
 - Modules - Removed action (useless after moving url links)
+- Plans - added employee's url field
 
 ### To be done:
 
