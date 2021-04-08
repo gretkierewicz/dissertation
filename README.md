@@ -50,6 +50,7 @@ heroku open
 - Pensum Reduction / Changed Reduction to be One-to-One relation. 
   Refactored view, model, serializer and url patterns.
 - Order - Refactored view set with new utils' class.
+- Modules/Order - Moved order url link to parent.
 
 ### To be done:
 

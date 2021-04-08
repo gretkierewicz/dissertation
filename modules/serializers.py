@@ -16,7 +16,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     class Meta:
         model = Classes
-        fields = ['url', 'name', 'classes_hours', 'students_limit_per_group', 'order',
+        fields = ['url', 'name', 'classes_hours', 'students_limit_per_group', 'order_url', 'order',
                   # hidden fields:
                   'module']
         extra_kwargs = {
@@ -36,6 +36,12 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
+    order_url = NestedHyperlinkedIdentityField(
+        view_name='classes-order-detail',
+        lookup_field='name',
+        lookup_url_kwarg='classes_name',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
     order = ClassesOrderSerializer(read_only=True)
 
     # New type of Field made - module should be never provided by the user!
