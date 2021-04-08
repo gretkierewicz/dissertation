@@ -1,3 +1,9 @@
+###07/04/2020
+
+- Pensum / Added feature to pick role/function based on AGH/AGH/PensumReduction.json file
+  that reduces basic pensum value
+- URLS / updated comments with generated endpoints
+
 ###05/04/2020
 
 - AGH / Fixed typo with a threshold.

@@ -44,11 +44,9 @@ heroku open
 ```
 
 ## Last changes
-###07/04/2020
+###08/04/2020
 
-- Pensum / Added feature to pick role/function based on AGH/AGH/PensumReduction.json file
-  that reduces basic pensum value
-- URLS / updated comments with generated endpoints
+- Utils / OneToOneRelationViewSet - new ViewSet to make this relation easier to setup.
 
 ### To be done:
 
