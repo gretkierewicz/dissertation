@@ -7,9 +7,34 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from modules.models import Classes
+from schedules.models import Schedules
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 
 from .models import Orders, Plans
+
+
+class ScheduledEmployeesField(SlugRelatedField):
+    """
+    Schedules Employees Field to filter queryset for proper employees from current schedule
+    """
+    def get_queryset(self):
+        # get plans filtered with url kwargs
+        plans = Plans.objects.filter(
+            order__classes__module__schedule__slug=self.context.get('request').resolver_match.kwargs.get(
+                'schedule_slug'),
+            order__classes__module__module_code=self.context.get('request').resolver_match.kwargs.get(
+                'module_module_code'),
+            order__classes__name=self.context.get('request').resolver_match.kwargs.get(
+                'classes_name')
+        )
+        # exclude plan's instance so it's employee can be present in Form
+        if self.root.instance:
+            plans = plans.exclude(employee=self.root.instance.employee)
+        pensums = Schedules.objects.get(
+            slug=self.context.get('request').resolver_match.kwargs.get('schedule_slug')
+        ).pensums.all()
+        # return only employees possible to be choose
+        return Employees.objects.filter(pensums__in=pensums).exclude(plans__in=plans)
 
 
 class PlansSerializer(NestedHyperlinkedModelSerializer):
@@ -37,7 +62,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         lookup_field='employee',
         lookup_url_kwarg='abbreviation'
     )
-    employee = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all())
+    employee = ScheduledEmployeesField(slug_field='abbreviation', queryset=Employees.objects.all())
 
     # hidden field to establish current parent from URL
     order = ParentHiddenRelatedField(

@@ -1,3 +1,13 @@
+###08/04/2020
+
+- Utils / OneToOneRelationViewSet - new ViewSet to make this relation easier to setup.
+- Pensum Reduction / Changed Reduction to be One-to-One relation. 
+  Refactored view, model, serializer and url patterns.
+- Order - Refactored view set with new utils' class.
+- Modules/Order - Moved order url link to parent.
+- Modules - Removed action (useless after moving url links)
+- Plans - added employee's url field
+
 ###07/04/2020
 
 - Pensum / Added feature to pick role/function based on AGH/AGH/PensumReduction.json file
