@@ -52,6 +52,7 @@ heroku open
 - Employee / Exchanging supervisor validation with custom SupervisorField that excludes employee's instance from list
 - Pensum / New action for updating value and update of old one
 - Module / Minor update for a name of the classes back reference
+- Urls / cleanup
 
 ### To be done:
 
