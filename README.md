@@ -48,6 +48,7 @@ heroku open
 
 - Plans / Customization of employee's queryset with custom Field
 - Utils / FIX for urls without instance + update of employee/supervisor url fields
+- Plans / ScheduledEmployeesField minor correction, to use queryset param in exchange for absolute model
 
 ### To be done:
 

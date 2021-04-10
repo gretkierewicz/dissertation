@@ -34,7 +34,7 @@ class ScheduledEmployeesField(SlugRelatedField):
             slug=self.context.get('request').resolver_match.kwargs.get('schedule_slug')
         ).pensums.all()
         # return only employees possible to be choose
-        return Employees.objects.filter(pensums__in=pensums).exclude(plans__in=plans)
+        return self.queryset.filter(pensums__in=pensums).exclude(plans__in=plans)
 
 
 class PlansSerializer(NestedHyperlinkedModelSerializer):
