@@ -50,6 +50,7 @@ heroku open
 - Utils / FIX for urls without instance + update of employee/supervisor url fields
 - Plans / ScheduledEmployeesField minor correction, to use queryset param in exchange for absolute model
 - Employee / Exchanging supervisor validation with custom SupervisorField that excludes employee's instance from list
+- Pensum / New action for updating value and update of old one
 
 ### To be done:
 
