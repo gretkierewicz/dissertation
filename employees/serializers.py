@@ -41,6 +41,14 @@ class PositionSerializer(HyperlinkedModelSerializer):
     employees = EmployeeListSerializer(read_only=True, many=True)
 
 
+class SupervisorField(SlugRelatedField):
+    """
+    Supervisor Field to filter instance of employee from basic queryset
+    """
+    def get_queryset(self):
+        return self.queryset.exclude(pk=self.root.instance.pk) if self.root.instance else self.queryset
+
+
 class EmployeeSerializer(ModelSerializer):
     """
     Employee Serializer - Extended Employee Serializer with additional urls and nested serializers
@@ -58,7 +66,7 @@ class EmployeeSerializer(ModelSerializer):
 
     degree = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all())
     position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
-    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
+    supervisor = SupervisorField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
 
     supervisor_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',
@@ -68,10 +76,3 @@ class EmployeeSerializer(ModelSerializer):
         }
     )
     subordinates = EmployeeListSerializer(read_only=True, many=True)
-
-    # custom validator for supervisor field - not allowing setting employee as it's supervisor
-    def validate_supervisor(self, data):
-        abbreviation = self.initial_data.get('abbreviation') or (self.instance.abbreviation if self.instance else None)
-        if data and abbreviation and abbreviation == data.abbreviation:
-            raise ValidationError("Employee cannot be it's own Supervisor")
-        return data
