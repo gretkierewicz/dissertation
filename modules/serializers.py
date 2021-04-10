@@ -4,7 +4,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from orders.serializers import ClassesOrderSerializer
 from schedules.models import Schedules
-from utils.relations import ParentHiddenRelatedField
+from utils.relations import ParentHiddenRelatedField, AdvNestedHyperlinkedIdentityField
 
 from .models import Modules, Classes
 from employees.models import Employees
@@ -82,12 +82,14 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
-    supervisor_url = HyperlinkedIdentityField(
+    supervisor_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',
-        lookup_field='supervisor',
-        lookup_url_kwarg='abbreviation'
+        lookup_field=None,
+        parent_lookup_kwargs={
+            'abbreviation': 'supervisor__abbreviation'
+        }
     )
+    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
 
     classes_url = NestedHyperlinkedIdentityField(
         view_name='classes-list',

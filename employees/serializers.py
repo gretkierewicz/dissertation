@@ -2,6 +2,7 @@ from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 from rest_framework.serializers import ValidationError
 
+from utils.relations import AdvNestedHyperlinkedIdentityField
 from .models import Degrees, Positions, Employees
 
 
@@ -59,8 +60,13 @@ class EmployeeSerializer(ModelSerializer):
     position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
     supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
 
-    supervisor_url = HyperlinkedIdentityField(
-        view_name='employees-detail', lookup_field='supervisor', lookup_url_kwarg='abbreviation')
+    supervisor_url = AdvNestedHyperlinkedIdentityField(
+        view_name='employees-detail',
+        lookup_field=None,
+        parent_lookup_kwargs={
+            'abbreviation': 'supervisor__abbreviation'
+        }
+    )
     subordinates = EmployeeListSerializer(read_only=True, many=True)
 
     # custom validator for supervisor field - not allowing setting employee as it's supervisor

@@ -3,7 +3,7 @@ from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
-from utils.relations import ParentHiddenRelatedField
+from utils.relations import ParentHiddenRelatedField, AdvNestedHyperlinkedIdentityField
 from .models import Schedules, Pensum, PensumFactors, PensumReductions
 from modules.serializers import ModuleSerializer
 
@@ -99,10 +99,12 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    employee_url = HyperlinkedIdentityField(
+    employee_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',
-        lookup_field='employee',
-        lookup_url_kwarg='abbreviation'
+        lookup_field=None,
+        parent_lookup_kwargs={
+            'abbreviation': 'employee__abbreviation'
+        }
     )
     employee = SlugRelatedField(queryset=Employees.objects.all(), slug_field='abbreviation')
 

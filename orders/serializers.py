@@ -57,10 +57,12 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         'classes_name': 'order__classes__name',
     }
 
-    employee_url = HyperlinkedIdentityField(
+    employee_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',
-        lookup_field='employee',
-        lookup_url_kwarg='abbreviation'
+        lookup_field=None,
+        parent_lookup_kwargs={
+            'abbreviation': 'employee__abbreviation'
+        }
     )
     employee = ScheduledEmployeesField(slug_field='abbreviation', queryset=Employees.objects.all())
 

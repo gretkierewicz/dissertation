@@ -29,7 +29,10 @@ class AdvNestedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
             lookups = underscored_lookup.split('__')
 
             # use the Django ORM to lookup this value, e.g., obj.parent.pk
-            lookup_value = reduce(getattr, [obj] + lookups)
+            try:
+                lookup_value = reduce(getattr, [obj] + lookups)
+            except AttributeError:
+                return None
 
             # store the lookup_name and value in kwargs, which is later passed to the reverse method
             kwargs.update({parent_lookup_kwarg: lookup_value})

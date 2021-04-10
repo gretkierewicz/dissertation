@@ -47,6 +47,7 @@ heroku open
 ###10/04/2020
 
 - Plans / Customization of employee's queryset with custom Field
+- Utils / FIX for urls without instance + update of employee/supervisor url fields
 
 ### To be done:
 
