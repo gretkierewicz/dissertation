@@ -51,6 +51,7 @@ heroku open
 - Plans / ScheduledEmployeesField minor correction, to use queryset param in exchange for absolute model
 - Employee / Exchanging supervisor validation with custom SupervisorField that excludes employee's instance from list
 - Pensum / New action for updating value and update of old one
+- Module / Minor update for a name of the classes back reference
 
 ### To be done:
 

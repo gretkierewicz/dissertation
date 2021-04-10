@@ -1,4 +1,4 @@
-from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
+from rest_framework.relations import SlugRelatedField
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
@@ -64,7 +64,7 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         fields = ['url',
                   'module_code', 'name',
                   'supervisor', 'supervisor_url', 'examination',
-                  'classes_url', 'classes',
+                  'form_of_classes_url', 'form_of_classes',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -91,14 +91,14 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
     )
     supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
 
-    classes_url = NestedHyperlinkedIdentityField(
+    form_of_classes_url = NestedHyperlinkedIdentityField(
         view_name='classes-list',
         lookup_field='module_code',
         lookup_url_kwarg='module_module_code',
         parent_lookup_kwargs=parent_lookup_kwargs
     )
     # needs parent_lookup_kwargs configured in nested serializer!
-    classes = ClassSerializer(read_only=True, many=True)
+    form_of_classes = ClassSerializer(read_only=True, many=True)
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),

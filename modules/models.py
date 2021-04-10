@@ -58,7 +58,7 @@ class Classes(models.Model):
 
     NAME_CHOICES = [(_, _) for _ in CLASSES_NAMES]
 
-    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='classes')
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='form_of_classes')
     name = models.CharField(max_length=18, choices=NAME_CHOICES, default=CLASSES_NAMES[0])
     classes_hours = models.PositiveIntegerField()
     students_limit_per_group = models.PositiveIntegerField(null=True)
