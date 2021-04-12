@@ -44,15 +44,11 @@ heroku open
 ```
 
 ## Last changes
-###10/04/2020
+###12/04/2020
 
-- Plans / Customization of employee's queryset with custom Field
-- Utils / FIX for urls without instance + update of employee/supervisor url fields
-- Plans / ScheduledEmployeesField minor correction, to use queryset param in exchange for absolute model
-- Employee / Exchanging supervisor validation with custom SupervisorField that excludes employee's instance from list
-- Pensum / New action for updating value and update of old one
-- Module / Minor update for a name of the classes back reference
-- Urls / cleanup
+- Modules + Syllabus / Making Madules serializer compatible with syllabus data.
+  Changing syllabus serializer to throw pure modules list
+- Schedule / FIX for a terrible typo - Schedule now inherits from ModelSerializer!
 
 ### To be done:
 
