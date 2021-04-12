@@ -4,7 +4,16 @@ from employees.models import Employees
 from schedules.models import Schedules
 
 
-CLASSES_NAMES = ['Lectures', 'Laboratory classes', 'Auditorium classes', 'Project classes', 'Seminar classes']
+CLASSES_NAMES = [
+    'Lectures',
+    'Laboratory classes',
+    'Auditorium classes',
+    'Project classes',
+    'Seminar classes',
+    'Practical classes',
+    'Lektorat',
+    'Zajęcia z wychowania fizycznego'
+]
 
 
 class Modules(models.Model):
@@ -13,7 +22,7 @@ class Modules(models.Model):
         unique_together = (('module_code', 'schedule'), )
 
     module_code = models.SlugField(max_length=45)
-    name = models.CharField(max_length=45)
+    name = models.CharField(max_length=124)
     examination = models.BooleanField(default=False)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
     schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='modules')
@@ -59,7 +68,7 @@ class Classes(models.Model):
     NAME_CHOICES = [(_, _) for _ in CLASSES_NAMES]
 
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='form_of_classes')
-    name = models.CharField(max_length=18, choices=NAME_CHOICES, default=CLASSES_NAMES[0])
+    name = models.CharField(max_length=31, choices=NAME_CHOICES, default=CLASSES_NAMES[0])
     classes_hours = models.PositiveIntegerField()
     students_limit_per_group = models.PositiveIntegerField(null=True)
 

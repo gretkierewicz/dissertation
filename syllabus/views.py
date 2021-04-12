@@ -1,4 +1,5 @@
 import json
+
 import requests
 
 from django.shortcuts import redirect
@@ -9,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from .serializers import SyllabusSerializer, StudyTypesSerializer, ProgrammeSerializer, get_name_from_slug
+from .serializers import SyllabusSerializer, StudyTypesSerializer
 
 
 class SyllabusView(GenericViewSet):
@@ -62,11 +63,11 @@ class StudyProgrammesDetailView(APIView):
             f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/")
         try:
             json_data = json.loads(response.content).get('syllabus')
-            json_data['study_plan'].update({'name': get_name_from_slug(kwargs.get('study_plan'))})
-            serializer = ProgrammeSerializer(data=json_data)
-            if serializer.is_valid():
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors)
+            modules = []
+            for semester in json_data.get('study_plan').get('semesters'):
+                for group in semester.get('groups'):
+                    for module in group.get('modules'):
+                        modules.append(module)
+            return Response(modules)
         except json.JSONDecodeError:
             return Response({'Syllabus': {'content': response.content}}, status=status.HTTP_404_NOT_FOUND)

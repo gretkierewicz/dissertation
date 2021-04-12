@@ -13,11 +13,11 @@ class AdvNestedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
         if hasattr(obj, 'pk') and obj.pk in (None, ''):
             return None
 
-        if self.lookup_field:
+        try:
             # default lookup from rest_framework.relations.HyperlinkedRelatedField
             lookup_value = getattr(obj, self.lookup_field)
             kwargs = {self.lookup_url_kwarg: lookup_value}
-        else:
+        except Exception:
             kwargs = {}
 
         # multi-level lookup

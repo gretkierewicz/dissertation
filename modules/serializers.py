@@ -1,5 +1,4 @@
 from rest_framework.relations import SlugRelatedField
-from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from orders.serializers import ClassesOrderSerializer
@@ -29,14 +28,14 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         'module_module_code': 'module__module_code',
     }
 
-    url = NestedHyperlinkedIdentityField(
+    url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-detail',
         lookup_field='name',
         lookup_url_kwarg='name',
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    order_url = NestedHyperlinkedIdentityField(
+    order_url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-order-detail',
         lookup_field='name',
         lookup_url_kwarg='classes_name',
@@ -51,6 +50,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
         queryset=Modules.objects.all(),
         # key is a parent_lookup_kwarg, value - a field to filter by
         parent_lookup_kwargs={'module_module_code': 'module_code'},
+        allow_null=True
     )
 
 
@@ -75,7 +75,7 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         'schedule_slug': 'schedule__slug'
     }
 
-    url = NestedHyperlinkedIdentityField(
+    url = AdvNestedHyperlinkedIdentityField(
         view_name='modules-detail',
         lookup_field='module_code',
         lookup_url_kwarg='module_code',
@@ -91,14 +91,14 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
     )
     supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
 
-    form_of_classes_url = NestedHyperlinkedIdentityField(
+    form_of_classes_url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-list',
         lookup_field='module_code',
         lookup_url_kwarg='module_module_code',
         parent_lookup_kwargs=parent_lookup_kwargs
     )
     # needs parent_lookup_kwargs configured in nested serializer!
-    form_of_classes = ClassSerializer(read_only=True, many=True)
+    form_of_classes = ClassSerializer(read_only=False, many=True)
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),
@@ -107,36 +107,24 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         }
     )
 
-    # overwrite for handling nested classes (this will not delete missing classes in data)
-    def create(self, validated_data):
-        module = super().create(validated_data)
-        if self.initial_data.get('classes'):
-            for classes_data in self.initial_data.get('classes'):
-                # additionally passing module instance for classes hidden field
-                classes_data['module'] = module
-                serializer = ClassSerializer(instance=module.classes.filter(name=classes_data.get('name')).first(),
-                                             data=classes_data)
-                if serializer.is_valid():
-                    serializer.save()
-                else:
-                    # TODO: need to pass this somehow to user:
-                    print(serializer.errors)
-        return module
+    def validate_empty_values(self, data):
+        # as syllabus data has no field named supervisor
+        if isinstance(data, list):
+            for sub_data in data:
+                if not sub_data.get('supervisor'):
+                    sub_data['supervisor'] = None
+        else:
+            if not data.get('supervisor'):
+                data['supervisor'] = None
+        return super().validate_empty_values(data)
 
     # overwrite for handling nested classes (this will not delete missing classes in data)
-    def update(self, instance, validated_data):
-        module = super().update(instance, validated_data)
-        if self.initial_data.get('classes'):
-            for classes_data in self.initial_data.get('classes'):
-                # additionally passing module instance for classes hidden field
-                classes_data['module'] = module
-                serializer = ClassSerializer(instance=module.classes.filter(name=classes_data.get('name')).first(),
-                                             data=classes_data)
-                if serializer.is_valid():
-                    serializer.save()
-                else:
-                    # TODO: need to pass this somehow to user:
-                    print(serializer.errors)
+    def create(self, validated_data):
+        form_of_classes = validated_data.pop('form_of_classes')
+        module = Modules.objects.create(**validated_data)
+        for classes_data in form_of_classes:
+            classes_data['module'] = module
+            Classes.objects.create(**classes_data)
         return module
 
 

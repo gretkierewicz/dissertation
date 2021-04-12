@@ -52,6 +52,12 @@ class ModuleViewSet(NestedViewSetMixin, ModelViewSet):
             serializer = ModuleSerializer(instance=self.get_object(), context={'request': request})
         return Response(serializer.data)
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=isinstance(request.data, list))
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.errors or serializer.data)
+
     @action(detail=False, methods=['PUT', 'POST'])
     def csv_files_upload(self, request):
         """
