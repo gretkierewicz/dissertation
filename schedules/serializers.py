@@ -1,14 +1,14 @@
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
+from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from utils.relations import ParentHiddenRelatedField, AdvNestedHyperlinkedIdentityField
 from .models import Schedules, Pensum, PensumFactors, PensumReductions
-from modules.serializers import ModuleSerializer
 
 
-class ScheduleSerializer(ModuleSerializer):
+class ScheduleSerializer(ModelSerializer):
     class Meta:
         model = Schedules
         fields = ['url', 'slug', 'modules_url', 'orders_url', 'pensums_url']
