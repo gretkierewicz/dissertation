@@ -1,3 +1,9 @@
+###12/04/2020
+
+- Modules + Syllabus / Making Madules serializer compatible with syllabus data.
+  Changing syllabus serializer to throw pure modules list
+- Schedule / FIX for a terrible typo - Schedule now inherits from ModelSerializer!
+
 ###10/04/2020
 
 - Plans / Customization of employee's queryset with custom Field

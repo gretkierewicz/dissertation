@@ -44,11 +44,9 @@ heroku open
 ```
 
 ## Last changes
-###12/04/2020
+###18/04/2020
 
-- Modules + Syllabus / Making Madules serializer compatible with syllabus data.
-  Changing syllabus serializer to throw pure modules list
-- Schedule / FIX for a terrible typo - Schedule now inherits from ModelSerializer!
+- 
 
 ### To be done:
 
