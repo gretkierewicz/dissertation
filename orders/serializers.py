@@ -136,6 +136,16 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         validators=[UniqueValidator(queryset=Orders.objects.all())],
     )
 
+    # this is magic method for FORM auto-generation
+    def __iter__(self):
+        # Additional filtering for classes' list:
+        if self.fields.get('classes'):
+            self.fields['classes'].queryset = self.fields['classes'].queryset.filter(
+                module__schedule__slug=self.context['request'].resolver_match.kwargs.get('schedule_slug'))
+        # standard procedure:
+        for field in self.fields.values():
+            yield self[field.field_name]
+
 
 class ClassesOrderSerializer(OrdersSerializer):
     """

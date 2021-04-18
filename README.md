@@ -53,6 +53,7 @@ heroku open
 - Modules / Moved Classes_names into AGH/data
 - Cleanup / Pycharm reformatting with import optimize
 - Modules / Minor change for classes' display str
+- Orders / FIX: classes' list within form is now properly filtered with schedule's slug
 
 ### To be done:
 
