@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework.fields import ChoiceField, CharField, SerializerMethodField, IntegerField, BooleanField
 from rest_framework.serializers import Serializer
 
-from utils.constants import ACADEMIC_YEARS, DEPARTMENTS
+from AGH.constants import ACADEMIC_YEARS, DEPARTMENTS
 
 
 def get_name_from_slug(slug):

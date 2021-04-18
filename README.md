@@ -46,7 +46,7 @@ heroku open
 ## Last changes
 ###18/04/2020
 
-- 
+- Utils / moved constants.py to the AGH module
 
 ### To be done:
 
