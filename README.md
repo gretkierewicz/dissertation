@@ -47,6 +47,7 @@ heroku open
 ###18/04/2020
 
 - Utils / moved constants.py to the AGH module
+- Syllabus / Refactoring view + created new serializer to make import of modules easier
 
 ### To be done:
 

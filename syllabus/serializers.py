@@ -2,8 +2,10 @@ import re
 
 from django.urls import reverse
 from rest_framework.fields import ChoiceField, CharField, SerializerMethodField, IntegerField, BooleanField
+from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 
+from schedules.models import Schedules
 from AGH.constants import ACADEMIC_YEARS, DEPARTMENTS
 
 
@@ -92,5 +94,10 @@ class StudyPlanSerializer(Serializer):
     name = CharField()
     semesters = SemestersSerializer(many=True, required=False)
 
+
 class ProgrammeSerializer(Serializer):
     study_plan = StudyPlanSerializer()
+
+
+class ImportModulesSerializer(Serializer):
+    schedule = SlugRelatedField(queryset=Schedules.objects.all(), slug_field='slug')

@@ -103,7 +103,7 @@ syllabus_paths = [
             name='syllabus-study_plans-list'),
     re_path(r'^syllabus/academic_year/(?P<academic_year>[^/.]+)/department/(?P<department>[^/.]+)/study_plans/'
             r'(?P<study_plan>[^/.]+)/$',
-            syllabus_views.StudyProgrammesDetailView.as_view(),
+            syllabus_views.StudyProgrammesImportView.as_view({'get': 'get', 'post': 'post'}),
             name='syllabus-study_plans-detail')]
 # /syllabus/academic_year/{academic_year}/department/{department}/study_plans/
 # /syllabus/academic_year/{academic_year}/department/{department}/study_plans/{study_plan}

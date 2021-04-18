@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from .serializers import SyllabusSerializer, StudyTypesSerializer
+from modules.serializers import ModuleSerializer
+from schedules.models import Schedules
+from .serializers import SyllabusSerializer, StudyTypesSerializer, ImportModulesSerializer
 
 
 class SyllabusView(GenericViewSet):
@@ -51,10 +53,12 @@ class StudyProgrammesListView(APIView):
             return Response({'Syllabus': {'content': response.content}}, status=status.HTTP_404_NOT_FOUND)
 
 
-class StudyProgrammesDetailView(APIView):
+class StudyProgrammesImportView(GenericViewSet):
     """
     List of study programme's semesters, groups, modules and classes
     """
+    serializer_class = ImportModulesSerializer
+
     # cache this view for an hour
     @method_decorator(cache_page(60*60))
     def get(self, request, *args, **kwargs):
@@ -71,3 +75,21 @@ class StudyProgrammesDetailView(APIView):
             return Response(modules)
         except json.JSONDecodeError:
             return Response({'Syllabus': {'content': response.content}}, status=status.HTTP_404_NOT_FOUND)
+        except TypeError:
+            return Response({'error': 'No valid data to display'})
+
+    # required by GenericViewSet with post() method
+    def get_queryset(self):
+        pass
+
+    def post(self, request, *args, **kwargs):
+        data = self.get(request, *args, **kwargs).data
+        data = data if isinstance(data, list) else [data]
+        schedule = Schedules.objects.get(slug=request.data.get('schedule'))
+        for sub_data in data:
+            sub_data['schedule'] = schedule
+        serializer = ModuleSerializer(data=data, many=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
