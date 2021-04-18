@@ -12,7 +12,10 @@ CLASSES_NAMES = [
     'Seminar classes',
     'Practical classes',
     'Lektorat',
-    'Zajęcia z wychowania fizycznego'
+    'Zajęcia z wychowania fizycznego',
+    'Prace kontrolne i przejściowe',
+    'Conversation seminar',
+    'Workshops'
 ]
 
 
@@ -22,7 +25,7 @@ class Modules(models.Model):
         unique_together = (('module_code', 'schedule'), )
 
     module_code = models.SlugField(max_length=45)
-    name = models.CharField(max_length=124)
+    name = models.CharField(max_length=256)
     examination = models.BooleanField(default=False)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
     schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='modules')
