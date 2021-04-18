@@ -1,15 +1,15 @@
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
-from rest_framework.serializers import ValidationError
 
 from utils.relations import AdvNestedHyperlinkedIdentityField
-from .models import Degrees, Positions, Employees
+from .models import Degrees, Employees, Positions
 
 
 class EmployeeListSerializer(HyperlinkedModelSerializer):
     """
     Employee Short Serializer - simple serializer with url and very basic model fields
     """
+
     class Meta:
         model = Employees
         fields = ['url',
@@ -23,6 +23,7 @@ class DegreeSerializer(HyperlinkedModelSerializer):
     """
     Degree Serializer - serializer with url, model's field and additional employee list
     """
+
     class Meta:
         model = Degrees
         fields = ['url', 'name', 'employees']
@@ -34,6 +35,7 @@ class PositionSerializer(HyperlinkedModelSerializer):
     """
     Position Serializer - serializer with url, model's field and additional employee list
     """
+
     class Meta:
         model = Positions
         fields = ['url', 'name', 'employees']
@@ -45,6 +47,7 @@ class SupervisorField(SlugRelatedField):
     """
     Supervisor Field to filter instance of employee from basic queryset
     """
+
     def get_queryset(self):
         return self.queryset.exclude(pk=self.root.instance.pk) if self.root.instance else self.queryset
 
@@ -53,6 +56,7 @@ class EmployeeSerializer(ModelSerializer):
     """
     Employee Serializer - Extended Employee Serializer with additional urls and nested serializers
     """
+
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position',

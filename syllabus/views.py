@@ -1,7 +1,6 @@
 import json
 
 import requests
-
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -12,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from modules.serializers import ModuleSerializer
 from schedules.models import Schedules
-from .serializers import SyllabusSerializer, StudyTypesSerializer, ImportModulesSerializer
+from .serializers import ImportModulesSerializer, StudyTypesSerializer, SyllabusSerializer
 
 
 class SyllabusView(GenericViewSet):
@@ -36,8 +35,9 @@ class StudyProgrammesListView(APIView):
     """
     List of study programmes for particular department and academic year
     """
+
     # cache this view for an hour
-    @method_decorator(cache_page(60*60))
+    @method_decorator(cache_page(60 * 60))
     def get(self, request, *args, **kwargs):
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
@@ -60,7 +60,7 @@ class StudyProgrammesImportView(GenericViewSet):
     serializer_class = ImportModulesSerializer
 
     # cache this view for an hour
-    @method_decorator(cache_page(60*60))
+    @method_decorator(cache_page(60 * 60))
     def get(self, request, *args, **kwargs):
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"

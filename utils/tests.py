@@ -2,7 +2,6 @@ import json
 import re
 
 from django.core.exceptions import ObjectDoesNotExist
-
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -15,6 +14,7 @@ def get_obj_with_parent_kwargs(func):
     If provided with data, lookup and field_lookup, it should get parent from passed URL in data.
     This solves problem of getting parent after posting data with URL that do not provide data about it.
     """
+
     def wrapper(self, *args, **kwargs):
         if hasattr(self, 'obj_parent_get_kwargs') and self.obj_parent_get_kwargs:
             parent_kwargs = None
@@ -30,6 +30,7 @@ def get_obj_with_parent_kwargs(func):
             except ObjectDoesNotExist:
                 return None
         return func(self, *args, **kwargs)
+
     return wrapper
 
 

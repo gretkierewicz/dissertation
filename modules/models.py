@@ -1,15 +1,14 @@
 from django.db import models
 
+from AGH.data.Classes_names import CLASSES_NAMES
 from employees.models import Employees
 from schedules.models import Schedules
-
-from AGH.data.Classes_names import CLASSES_NAMES
 
 
 class Modules(models.Model):
     class Meta:
         ordering = ['module_code']
-        unique_together = (('module_code', 'schedule'), )
+        unique_together = (('module_code', 'schedule'),)
 
     module_code = models.SlugField(max_length=45)
     name = models.CharField(max_length=256)
@@ -53,7 +52,7 @@ class Modules(models.Model):
 class Classes(models.Model):
     class Meta:
         ordering = ['module', 'name']
-        unique_together = (('module', 'name'), )
+        unique_together = (('module', 'name'),)
 
     NAME_CHOICES = [(_, _) for _ in CLASSES_NAMES]
 

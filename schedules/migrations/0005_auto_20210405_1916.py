@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('schedules', '0004_auto_20210405_1912'),
     ]
@@ -21,6 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pensumfactors',
             name='factor_type',
-            field=models.CharField(choices=[('Addition', 'Addition'), ('Multiplication', 'Multiplication')], default='Addition', max_length=14),
+            field=models.CharField(choices=[('Addition', 'Addition'), ('Multiplication', 'Multiplication')],
+                                   default='Addition', max_length=14),
         ),
     ]

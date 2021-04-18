@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('modules', '0005_auto_20210412_2023'),
     ]
@@ -13,6 +12,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='classes',
             name='name',
-            field=models.CharField(choices=[('Lectures', 'Lectures'), ('Laboratory classes', 'Laboratory classes'), ('Auditorium classes', 'Auditorium classes'), ('Project classes', 'Project classes'), ('Seminar classes', 'Seminar classes'), ('Practical classes', 'Practical classes'), ('Lektorat', 'Lektorat'), ('Zajęcia z wychowania fizycznego', 'Zajęcia z wychowania fizycznego')], default='Lectures', max_length=31),
+            field=models.CharField(choices=[('Lectures', 'Lectures'), ('Laboratory classes', 'Laboratory classes'),
+                                            ('Auditorium classes', 'Auditorium classes'),
+                                            ('Project classes', 'Project classes'),
+                                            ('Seminar classes', 'Seminar classes'),
+                                            ('Practical classes', 'Practical classes'), ('Lektorat', 'Lektorat'),
+                                            ('Zajęcia z wychowania fizycznego', 'Zajęcia z wychowania fizycznego')],
+                                   default='Lectures', max_length=31),
         ),
     ]

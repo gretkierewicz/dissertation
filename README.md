@@ -44,18 +44,20 @@ heroku open
 ```
 
 ## Last changes
-###18/04/2020
+
+### 18/04/2020
 
 - Utils / moved constants.py to the AGH module
 - Syllabus / Refactoring view + created new serializer to make import of modules easier
 - Modules / Modules model changes: new classes names entries and longer name
 - Modules / Moved Classes_names into AGH/data
+- Cleanup / Pycharm reformatting with import optimize
 
 ### To be done:
 
 - Implement custom filters, sorting or search
 - Custom query-sets for forms (if possible)
-- Change upload CSV files method for employees - it should first create employees without supervisors, and then save 
+- Change upload CSV files method for employees - it should first create employees without supervisors, and then save
   supervisors to it (so employees added from list could be set as supervisors for previously added employees)
 - Errors output for nested JSON data import
 - Tests

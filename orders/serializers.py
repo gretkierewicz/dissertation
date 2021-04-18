@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-from rest_framework.relations import SlugRelatedField, HyperlinkedIdentityField
+from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
@@ -9,7 +9,6 @@ from employees.models import Employees
 from modules.models import Classes
 from schedules.models import Schedules
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
-
 from .models import Orders, Plans
 
 
@@ -17,6 +16,7 @@ class ScheduledEmployeesField(SlugRelatedField):
     """
     Schedules Employees Field to filter queryset for proper employees from current schedule
     """
+
     def get_queryset(self):
         # get plans filtered with url kwargs
         plans = Plans.objects.filter(
@@ -41,6 +41,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     """
     Plans Serializer - Basic serializer, nested inside Orders Serializer.
     """
+
     class Meta:
         model = Plans
         fields = ['url', 'employee_url', 'employee', 'plan_hours',
@@ -50,6 +51,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
             'url': {'view_name': 'classes-order-plans-detail', 'lookup_field': 'employee'},
             'plan_hours': {'min_value': 0}
         }
+
     # setting parents' URL kwargs
     parent_lookup_kwargs = {
         'schedule_slug': 'order__classes__module__schedule__slug',
@@ -100,6 +102,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
     """
     Orders Serializer - basic one used for creating orders from modules list view and displaying created context.
     """
+
     class Meta:
         model = Orders
         fields = ['classes', 'students_number', 'groups_number', 'order_hours', 'order_number',
@@ -107,6 +110,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         extra_kwargs = {
             'students_number': {'min_value': 0}
         }
+
     parent_lookup_kwargs = {
         'schedule_slug': 'classes__module__schedule__slug',
         'module_module_code': 'classes__module__module_code',
@@ -138,6 +142,7 @@ class ClassesOrderSerializer(OrdersSerializer):
     Classes Order Serializer - derivative of basic serializer.
     Created to be nested inside it's OneToOne relation object - CLasses instance
     """
+
     class Meta:
         model = Orders
         fields = ['students_number', 'groups_number', 'order_hours', 'order_number',

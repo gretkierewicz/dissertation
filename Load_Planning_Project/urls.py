@@ -14,16 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
-
+from django.urls import include, path, re_path
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 
-from . import views
 from employees import views as employees_views
 from modules import views as modules_views
 from orders import views as orders_views
 from schedules import views as schedules_views
 from syllabus import views as syllabus_views
+from . import views
 
 router = DefaultRouter()
 router.register(r'degrees', employees_views.DegreeViewSet)
@@ -53,7 +52,7 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 # generates:
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/{name}
-classes_order_paths=[
+classes_order_paths = [
     re_path(r'^schedules/(?P<schedule_slug>[^/.]+)/modules/(?P<module_module_code>[^/.]+)/'
             r'classes/(?P<classes_name>[^/.]+)/order/$',
             orders_views.OrderDetailViewSet.as_view({

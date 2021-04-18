@@ -1,4 +1,5 @@
 from math import ceil
+
 from django.db import models
 
 from employees.models import Employees

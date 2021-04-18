@@ -3,14 +3,13 @@ import random
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory, APITestCase
-
-from .models import Degrees, Positions, Employees, Pensum
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeSerializer, PensumSerializer, \
-    EmployeeListSerializer
-
 from utils.constants import NA
-from utils.random_generators import random_max_len_field_str, random_str, random_bool
+
+from utils.random_generators import random_bool, random_max_len_field_str, random_str
 from utils.tests import BasicAPITests
+from .models import Degrees, Employees, Pensum, Positions
+from .serializers import DegreeSerializer, EmployeeListSerializer, EmployeeSerializer, PensumSerializer, \
+    PositionSerializer
 
 
 class DegreeFields:
@@ -184,9 +183,9 @@ class EmployeesTests(BasicAPITests, APITestCase):
                 EmployeeFields.has_scholarship: random_bool(),
             }
         }
-        
+
         cls.valid_put_data_payload = cls.valid_post_data_payload
-        
+
         cls.valid_partial_data = {
             'max length ' + EmployeeFields.first_name: {
                 EmployeeFields.first_name: random_max_len_field_str(cls.model, EmployeeFields.first_name)

@@ -1,34 +1,53 @@
 [
   {
-    "positions": ["profesor", "prof."],
+    "positions": [
+      "profesor",
+      "prof."
+    ],
     "value": 270
   },
   {
-    "positions": ["profesor uczelni", "prof. AGH"],
+    "positions": [
+      "profesor uczelni",
+      "prof. AGH"
+    ],
     "value": 315
   },
   {
-    "positions": ["adiunkt"],
+    "positions": [
+      "adiunkt"
+    ],
     "value": 360
   },
   {
-    "positions": ["asystent", "doktorant"],
+    "positions": [
+      "asystent",
+      "doktorant"
+    ],
     "value": 360
   },
   {
-    "positions": ["starszy lektor"],
+    "positions": [
+      "starszy lektor"
+    ],
     "value": 360
   },
   {
-    "positions": ["starszy instruktor"],
+    "positions": [
+      "starszy instruktor"
+    ],
     "value": 360
   },
   {
-    "positions": ["lektor"],
+    "positions": [
+      "lektor"
+    ],
     "value": 540
   },
   {
-    "positions": ["instruktor"],
+    "positions": [
+      "instruktor"
+    ],
     "value": 540
   }
 ]

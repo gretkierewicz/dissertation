@@ -4,6 +4,10 @@ from rest_framework.fields import HiddenField
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 
 
+def remove_polish_chars(s: str) -> str:
+    return s.translate(str.maketrans('żółćęśąźńŻÓŁĆĘŚĄŹŃ', 'zolcesaznZOLCESAZN'))
+
+
 class AdvNestedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
     def get_url(self, obj, view_name, request, format):
         """
@@ -47,6 +51,7 @@ class ParentHiddenRelatedField(HiddenField):
     params: parent_lookup_kwargs - parent's lookup URL kwargs names (keys) and fields (values)
     return: model instance
     """
+
     def __init__(self, queryset, parent_lookup_kwargs, **kwargs):
         self.queryset = queryset
         self.parent_lookup_kwargs = parent_lookup_kwargs

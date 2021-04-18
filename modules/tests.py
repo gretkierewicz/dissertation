@@ -3,15 +3,12 @@ import json
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 
-from .models import Modules, Classes
-from .serializers import ModuleSerializer, ClassSerializer
-
-from employees.models import Degrees, Positions, Employees
+from employees.models import Degrees, Employees, Positions
 from employees.tests import EmployeeFields
-
-from utils.random_generators import random_max_len_field_str, random_bool, random_str
+from utils.random_generators import random_bool, random_max_len_field_str, random_str
 from utils.tests import BasicAPITests
-
+from .models import Modules
+from .serializers import ModuleSerializer
 
 client = APIClient()
 factory = APIRequestFactory()
@@ -131,5 +128,5 @@ class ModuleTests(BasicAPITests, APITestCase):
             },
             'empty ' + ModuleFields.name: {ModuleFields.name: ''},
             # TODO: Check if empty supervisor is valid or invalid data for module
-            #'empty ' + ModuleFields.supervisor: {ModuleFields.supervisor: None},
+            # 'empty ' + ModuleFields.supervisor: {ModuleFields.supervisor: None},
         }

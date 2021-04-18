@@ -9,8 +9,8 @@ from rest_framework_csv.parsers import CSVParser
 from rest_framework_csv.renderers import CSVRenderer
 from rest_framework_nested.viewsets import NestedViewSetMixin
 
-from .models import Modules, Classes
-from .serializers import ModuleSerializer, ClassSerializer, ModuleFlatSerializer
+from .models import Classes, Modules
+from .serializers import ClassSerializer, ModuleFlatSerializer, ModuleSerializer
 
 
 class ModuleRenderer(CSVRenderer):
@@ -30,7 +30,7 @@ class ModuleViewSet(NestedViewSetMixin, ModelViewSet):
     """
     queryset = Modules.objects.all()
     serializer_class = ModuleSerializer
-    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (ModuleRenderer, )
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (ModuleRenderer,)
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'module_code'
 

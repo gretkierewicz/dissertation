@@ -2,12 +2,12 @@ from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_csv.renderers import CSVRenderer
 
 from utils.serializers import read_csv_files
-from .models import Degrees, Positions, Employees
-from .serializers import DegreeSerializer, PositionSerializer, EmployeeListSerializer, EmployeeSerializer
+from .models import Degrees, Employees, Positions
+from .serializers import DegreeSerializer, EmployeeListSerializer, EmployeeSerializer, PositionSerializer
 
 
 class DegreeViewSet(mixins.CreateModelMixin,
@@ -22,7 +22,7 @@ class DegreeViewSet(mixins.CreateModelMixin,
     """
     queryset = Degrees.objects.all()
     serializer_class = DegreeSerializer
-    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer, )
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer,)
 
     # Customizing header for CSV format
     def get_renderer_context(self):
@@ -52,7 +52,7 @@ class PositionViewSet(mixins.CreateModelMixin,
     """
     queryset = Positions.objects.all()
     serializer_class = PositionSerializer
-    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer, )
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (CSVRenderer,)
 
     # Customizing header for CSV format
     def get_renderer_context(self):
@@ -86,7 +86,7 @@ class EmployeeViewSet(ModelViewSet):
     """
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
-    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (EmployeeRenderer, )
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (EmployeeRenderer,)
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'abbreviation'
 

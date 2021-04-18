@@ -6,8 +6,8 @@ from rest_framework_nested.viewsets import NestedViewSetMixin
 from AGH.AGH_utils import get_pensum
 from employees.models import Employees
 from utils.ViewSets import OneToOneRelationViewSet
-from .models import Schedules, Pensum, PensumFactors, PensumReductions
-from .serializers import ScheduleSerializer, PensumSerializer, PensumFactorSerializer, PensumReductionSerializer
+from .models import Pensum, PensumFactors, PensumReductions, Schedules
+from .serializers import PensumFactorSerializer, PensumReductionSerializer, PensumSerializer, ScheduleSerializer
 
 
 class SchedulesViewSet(ModelViewSet):
@@ -68,7 +68,8 @@ class PensumViewSet(NestedViewSetMixin, ModelViewSet):
                 pensum.save()
                 ret.append(
                     {
-                        'employee': ' '.join([pensum.employee.first_name, pensum.employee.last_name, f'({pensum.employee.abbreviation})']),
+                        'employee': ' '.join([pensum.employee.first_name, pensum.employee.last_name,
+                                              f'({pensum.employee.abbreviation})']),
                         'position': pensum.employee.position.name,
                         'pensum status': f'new pensum basic threshold set ({pensum.basic_threshold})'
                     },
@@ -76,7 +77,8 @@ class PensumViewSet(NestedViewSetMixin, ModelViewSet):
             else:
                 ret.append(
                     {
-                        'employee': ' '.join([pensum.employee.first_name, pensum.employee.last_name, f'({pensum.employee.abbreviation})']),
+                        'employee': ' '.join([pensum.employee.first_name, pensum.employee.last_name,
+                                              f'({pensum.employee.abbreviation})']),
                         'position': pensum.employee.position.name,
                         'pensum status': f'no change fo pensum basic threshold ({pensum.basic_threshold})'
                     },

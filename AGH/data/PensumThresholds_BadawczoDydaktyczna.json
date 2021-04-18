@@ -1,18 +1,28 @@
 [
   {
-    "positions": ["profesor", "prof."],
+    "positions": [
+      "profesor",
+      "prof."
+    ],
     "value": 180
   },
   {
-    "positions": ["profesor uczelni", "prof. AGH"],
+    "positions": [
+      "profesor uczelni",
+      "prof. AGH"
+    ],
     "value": 210
   },
   {
-    "positions": ["adiunkt"],
+    "positions": [
+      "adiunkt"
+    ],
     "value": 240
   },
   {
-    "positions": ["asystent"],
+    "positions": [
+      "asystent"
+    ],
     "value": 240
   }
 ]

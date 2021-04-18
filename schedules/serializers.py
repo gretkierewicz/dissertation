@@ -4,8 +4,8 @@ from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
-from utils.relations import ParentHiddenRelatedField, AdvNestedHyperlinkedIdentityField
-from .models import Schedules, Pensum, PensumFactors, PensumReductions
+from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
+from .models import Pensum, PensumFactors, PensumReductions, Schedules
 
 
 class ScheduleSerializer(ModelSerializer):
@@ -90,6 +90,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         extra_kwargs = {
             'value': {'read_only': True}
         }
+
     parent_lookup_kwargs = {
         'schedule_slug': 'schedule__slug'
     }

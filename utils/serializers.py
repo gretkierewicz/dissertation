@@ -38,6 +38,7 @@ class SerializerLambdaField(SerializerMethodField):
     SerializerLambdaField - Custom Serializer Method Field
     Allows use of lambda function as parameter
     """
+
     def bind(self, field_name, parent):
         super(SerializerMethodField, self).bind(field_name, parent)
 

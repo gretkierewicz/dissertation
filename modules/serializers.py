@@ -1,18 +1,18 @@
 from rest_framework.relations import SlugRelatedField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
+from employees.models import Employees
 from orders.serializers import ClassesOrderSerializer
 from schedules.models import Schedules
-from utils.relations import ParentHiddenRelatedField, AdvNestedHyperlinkedIdentityField
-
-from .models import Modules, Classes
-from employees.models import Employees
+from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
+from .models import Classes, Modules
 
 
 class ClassSerializer(NestedHyperlinkedModelSerializer):
     """
     Class Serializer - only for nesting in the Module Serializer
     """
+
     class Meta:
         model = Classes
         fields = ['url', 'name', 'classes_hours', 'students_limit_per_group', 'order_url', 'order',
@@ -22,6 +22,7 @@ class ClassSerializer(NestedHyperlinkedModelSerializer):
             'classes_hours': {'min_value': 0},
             'students_limit_per_group': {'min_value': 0},
         }
+
     # for nesting serializer - dict of URL lookups and queryset kwarg keys
     parent_lookup_kwargs = {
         'schedule_slug': 'module__schedule__slug',
@@ -59,6 +60,7 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
     Module Serializer - serializer with url, some of the model's fields and additional properties:
     form_of_classes - nested serializer of module's classes
     """
+
     class Meta:
         model = Modules
         fields = ['url',
@@ -71,6 +73,7 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
             # url's custom lookup - needs to match lookup set in the view set
             'url': {'lookup_field': 'module_code'},
         }
+
     parent_lookup_kwargs = {
         'schedule_slug': 'schedule__slug'
     }

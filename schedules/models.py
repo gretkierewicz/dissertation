@@ -13,7 +13,7 @@ class Schedules(models.Model):
 
 class Pensum(models.Model):
     class Meta:
-        unique_together = (('schedule', 'employee'), )
+        unique_together = (('schedule', 'employee'),)
 
     schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='pensums')
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='pensums')
@@ -60,7 +60,7 @@ class PensumFactors(models.Model):
 
 class PensumReductions(models.Model):
     class Meta:
-        unique_together = (('pensum', 'function'), )
+        unique_together = (('pensum', 'function'),)
 
     ROLES = [(name, name) for name in get_pensum_function_names()]
 

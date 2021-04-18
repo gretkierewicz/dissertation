@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.viewsets import ModelViewSet, GenericViewSet, mixins
+from rest_framework.viewsets import GenericViewSet, ModelViewSet, mixins
 from rest_framework_nested.viewsets import NestedViewSetMixin
 
 from utils.ViewSets import OneToOneRelationViewSet
 from .models import Orders, Plans
-from .serializers import OrdersSerializer, PlansSerializer, ClassesOrderSerializer
+from .serializers import ClassesOrderSerializer, OrdersSerializer, PlansSerializer
 
 
 class OrdersViewSet(GenericViewSet,

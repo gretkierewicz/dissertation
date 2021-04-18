@@ -1,12 +1,12 @@
 import re
 
 from django.urls import reverse
-from rest_framework.fields import ChoiceField, CharField, SerializerMethodField, IntegerField, BooleanField
+from rest_framework.fields import BooleanField, CharField, ChoiceField, IntegerField, SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 
-from schedules.models import Schedules
 from AGH.constants import ACADEMIC_YEARS, DEPARTMENTS
+from schedules.models import Schedules
 
 
 def get_name_from_slug(slug):
@@ -65,6 +65,7 @@ class StudyTypesSerializer(Serializer):
 class SyllabusSerializer(Serializer):
     department = ChoiceField(choices=DEPARTMENTS, required=False)
     academic_year = ChoiceField(choices=ACADEMIC_YEARS, required=False)
+
 
 # STUDY PLANS SECTION
 class ClassesSerializer(Serializer):
