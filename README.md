@@ -52,6 +52,7 @@ heroku open
 - Modules / Modules model changes: new classes names entries and longer name
 - Modules / Moved Classes_names into AGH/data
 - Cleanup / Pycharm reformatting with import optimize
+- Modules / Minor change for classes' display str
 
 ### To be done:
 

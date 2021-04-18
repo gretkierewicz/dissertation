@@ -62,7 +62,7 @@ class Classes(models.Model):
     students_limit_per_group = models.PositiveIntegerField(null=True)
 
     def __str__(self):
-        return f"{self.module.module_code} ({self.module.name}): {self.name}"
+        return f'{self.module.module_code} - {self.name}: "{self.module.name}"'
 
     def __repr__(self):
         return f"{self.module.module_code}: {self.name}"
