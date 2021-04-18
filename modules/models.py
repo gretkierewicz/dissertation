@@ -3,20 +3,7 @@ from django.db import models
 from employees.models import Employees
 from schedules.models import Schedules
 
-
-CLASSES_NAMES = [
-    'Lectures',
-    'Laboratory classes',
-    'Auditorium classes',
-    'Project classes',
-    'Seminar classes',
-    'Practical classes',
-    'Lektorat',
-    'Zajęcia z wychowania fizycznego',
-    'Prace kontrolne i przejściowe',
-    'Conversation seminar',
-    'Workshops'
-]
+from AGH.data.Classes_names import CLASSES_NAMES
 
 
 class Modules(models.Model):

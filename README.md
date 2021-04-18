@@ -49,6 +49,7 @@ heroku open
 - Utils / moved constants.py to the AGH module
 - Syllabus / Refactoring view + created new serializer to make import of modules easier
 - Modules / Modules model changes: new classes names entries and longer name
+- Modules / Moved Classes_names into AGH/data
 
 ### To be done:
 
