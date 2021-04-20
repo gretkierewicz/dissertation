@@ -1,3 +1,13 @@
+### 18/04/2020
+
+- Utils / moved constants.py to the AGH module
+- Syllabus / Refactoring view + created new serializer to make import of modules easier
+- Modules / Modules model changes: new classes names entries and longer name
+- Modules / Moved Classes_names into AGH/data
+- Cleanup / Pycharm reformatting with import optimize
+- Modules / Minor change for classes' display str
+- Orders / FIX: classes' list within form is now properly filtered with schedule's slug
+
 ### 12/04/2020
 
 - Modules + Syllabus / Making Madules serializer compatible with syllabus data. Changing syllabus serializer to throw

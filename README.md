@@ -45,20 +45,22 @@ heroku open
 
 ## Last changes
 
-### 18/04/2020
+### 19/04/2020
 
-- Utils / moved constants.py to the AGH module
-- Syllabus / Refactoring view + created new serializer to make import of modules easier
-- Modules / Modules model changes: new classes names entries and longer name
-- Modules / Moved Classes_names into AGH/data
-- Cleanup / Pycharm reformatting with import optimize
-- Modules / Minor change for classes' display str
-- Orders / FIX: classes' list within form is now properly filtered with schedule's slug
+- 
 
 ### To be done:
 
+Major
+- Remove 'employee' field from pensum instance -> 
+  Additional fields: employee's f_name, l_name, abb, e-mail or any other - all read-only!
+- List of Employees' plans nested into pensum's endpoint
+- Additional data for non-contact hours that should be counted into pensum
+- Getting language of each module for modifying hours factor before adding into pensum
+- Setting up limits and pensum value and filters for employees possible to choose for plans/etc
+
+Minor
 - Implement custom filters, sorting or search
-- Custom query-sets for forms (if possible)
 - Change upload CSV files method for employees - it should first create employees without supervisors, and then save
   supervisors to it (so employees added from list could be set as supervisors for previously added employees)
 - Errors output for nested JSON data import
