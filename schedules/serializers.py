@@ -1,8 +1,10 @@
-from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
+from employees.models import Employees
+from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 from .models import Pensum, PensumFactors, PensumReductions, Schedules
 
@@ -81,7 +83,7 @@ class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
 class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
-        fields = ['url', 'employee_url', 'first_name', 'last_name', 'abbreviation', 'e_mail',
+        fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'plans',
                   'planned_pensum_hours', 'calculated_threshold', 'basic_threshold',
                   'factors_url', 'factors', 'reduction_url', 'reduction',
                   # hidden
@@ -106,6 +108,9 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
             'abbreviation': 'employee__abbreviation'
         }
     )
+    employee = SlugRelatedField(queryset=Employees.objects.all(), slug_field='abbreviation')
+
+    plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
 
     factors_url = NestedHyperlinkedIdentityField(
         view_name='pensum-factors-list',

@@ -50,11 +50,11 @@ heroku open
 - Pensum / Remove 'employee' field from pensum instance ->
   Additional fields: employee's f_name, l_name, abb, e-mail or any other - all read-only!
 - Minor cleanup
+- Pensum / Implemented nested serializer to display employee's plans
 
 ### To be done:
 
 Major
-- List of Employees' plans nested into pensum's endpoint
 - Additional data for non-contact hours that should be counted into pensum
 - Getting language of each module for modifying hours factor before adding into pensum
 - Setting up limits and pensum value and filters for employees possible to choose for plans/etc
