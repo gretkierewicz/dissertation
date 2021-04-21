@@ -1,9 +1,8 @@
-from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
+from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from employees.models import Employees
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 from .models import Pensum, PensumFactors, PensumReductions, Schedules
 

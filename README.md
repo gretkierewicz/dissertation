@@ -47,8 +47,9 @@ heroku open
 
 ### 19/04/2020
 
-- Pensum / Remove 'employee' field from pensum instance -> 
+- Pensum / Remove 'employee' field from pensum instance ->
   Additional fields: employee's f_name, l_name, abb, e-mail or any other - all read-only!
+- Minor cleanup
 
 ### To be done:
 
