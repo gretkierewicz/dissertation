@@ -47,13 +47,12 @@ heroku open
 
 ### 19/04/2020
 
-- 
+- Pensum / Remove 'employee' field from pensum instance -> 
+  Additional fields: employee's f_name, l_name, abb, e-mail or any other - all read-only!
 
 ### To be done:
 
 Major
-- Remove 'employee' field from pensum instance -> 
-  Additional fields: employee's f_name, l_name, abb, e-mail or any other - all read-only!
 - List of Employees' plans nested into pensum's endpoint
 - Additional data for non-contact hours that should be counted into pensum
 - Getting language of each module for modifying hours factor before adding into pensum
