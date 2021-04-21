@@ -50,6 +50,7 @@ heroku open
 - Pensum / Remove 'employee' field from pensum instance ->
   Additional fields: employee's f_name, l_name, abb, e-mail or any other - all read-only!
 - Minor cleanup
+- Pensum / Implemented nested serializer to display employee's plans
 
 ### To be done:
 

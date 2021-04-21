@@ -9,6 +9,7 @@ from employees.models import Employees
 from modules.models import Classes
 from schedules.models import Schedules
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
+from utils.serializers import SerializerLambdaField
 from .models import Orders, Plans
 
 
@@ -171,3 +172,18 @@ class ClassesOrderSerializer(OrdersSerializer):
             'classes_name': 'name'
         }
     )
+
+
+class EmployeePlansSerializer(PlansSerializer):
+    class Meta:
+        model = Plans
+        fields = ['url', 'module_code', 'classes_name', 'order_hours', 'plans_sum_hours', 'employee_plan_hours']
+        extra_kwargs = {
+            'url': {'view_name': 'classes-order-plans-detail', 'lookup_field': 'employee'},
+        }
+
+    module_code = SerializerLambdaField(lambda obj: obj.order.classes.module.module_code)
+    classes_name = SerializerLambdaField(lambda obj: obj.order.classes.name)
+    order_hours = SerializerLambdaField(lambda obj: obj.order.order_hours)
+    plans_sum_hours = SerializerLambdaField(lambda obj: obj.order.plans_sum_hours)
+    employee_plan_hours = SerializerLambdaField(lambda obj: obj.plan_hours)
