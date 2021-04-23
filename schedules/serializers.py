@@ -1,4 +1,4 @@
-from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
+from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField, StringRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
@@ -83,7 +83,7 @@ class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
 class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
-        fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'plans',
+        fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group', 'plans',
                   'planned_pensum_hours', 'calculated_threshold', 'basic_threshold',
                   'factors_url', 'factors', 'reduction_url', 'reduction',
                   # hidden
@@ -100,6 +100,8 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         lookup_field='employee',
         parent_lookup_kwargs=parent_lookup_kwargs
     )
+
+    pensum_group = StringRelatedField(read_only=True, source='employee.pensum_group')
 
     employee_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',

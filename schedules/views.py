@@ -46,8 +46,8 @@ class PensumViewSet(NestedViewSetMixin, ModelViewSet):
                 schedule=Schedules.objects.get(slug=kwargs.get('schedule_slug')),
                 employee=employee
             )
-            if pensum.basic_threshold != get_pensum(employee.position.name):
-                pensum.basic_threshold = get_pensum(employee.position.name) or 0
+            if pensum.basic_threshold != get_pensum(employee.position.name, employee.pensum_group):
+                pensum.basic_threshold = get_pensum(employee.position.name, employee.pensum_group) or 0
                 pensum.save()
             ret.append(
                 {
@@ -63,8 +63,8 @@ class PensumViewSet(NestedViewSetMixin, ModelViewSet):
     def recalculate_pensum_values_for_employees_of_current_schedule(self, request, *args, **kwargs):
         ret = []
         for pensum in Pensum.objects.filter(schedule__slug=kwargs.get('schedule_slug')):
-            if pensum.basic_threshold != get_pensum(pensum.employee.position.name):
-                pensum.basic_threshold = get_pensum(pensum.employee.position.name) or 0
+            if pensum.basic_threshold != get_pensum(pensum.employee.position.name, pensum.employee.pensum_group):
+                pensum.basic_threshold = get_pensum(pensum.employee.position.name, pensum.employee.pensum_group) or 0
                 pensum.save()
                 ret.append(
                     {
