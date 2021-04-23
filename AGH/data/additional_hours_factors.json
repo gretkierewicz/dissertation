@@ -1,0 +1,110 @@
+{
+  "factors": [
+    {
+      "factor ID": "congress language",
+      "factor description": "dodatkowe godziny za prowadzenie zajęć w języku kongresowym",
+      "value": 0.3
+    },
+    {
+      "factor ID": "min contact hours",
+      "factor description": "minimum godz. żywych (kontaktowych)/etat",
+      "value": 0.5
+    },
+    {
+      "factor ID": "part-job limit",
+      "factor description": "limit/etat dla części etatu",
+      "value": 1.5
+    },
+    {
+      "factor ID": "full-job limit contact only",
+      "factor description": "limit/etat dla pełnego etatu (godz. żywe)",
+      "value": 1.7
+    },
+    {
+      "factor ID": "full-job limit all PL",
+      "factor description": "limit/etat dla pełnego etatu (wszystko j.pol.)",
+      "value": 2.0
+    },
+    {
+      "factor ID": "full-job limit all EN",
+      "factor description": "limit/etat dla pełnego etatu (wszystko j.ang.)",
+      "value": 2.2
+    },
+    {
+      "factor ID": "bachelor thesis",
+      "factor description": "opieka nad pracą dyplomową na studiach inżynierskich lub licencjackich",
+      "limit per unit": 10,
+      "group ID": "bachelors"
+    },
+    {
+      "factor ID": "multi bachelor thesis",
+      "factor description": "opieka nad zespołową pracą dyplomową na studiach inżynierskich lub licencjackich",
+      "limit per unit": 15,
+      "group ID": "bachelors"
+    },
+    {
+      "factor ID": "master thesis",
+      "factor description": "opieka nad pracą dyplomową na studiach magisterskich",
+      "limit per unit": 15,
+      "group ID": "masters"
+    },
+    {
+      "factor ID": "multi master thesis",
+      "factor description": "opieka nad zespołową pracą dyplomową na studiach magisterskich",
+      "limit per unit": 30,
+      "group ID": "masters"
+    },
+    {
+      "factor ID": "doctoral student before opening procedure for PhD",
+      "factor description": "opieka nad doktorantem przed otwarciem przewodu",
+      "limit per year": 15
+    },
+    {
+      "factor ID": "doctoral student after opening procedure for PhD",
+      "factor description": "opieka nad doktorantem po otwarciu przewodu",
+      "limit per year": 30
+    },
+    {
+      "factor ID": "individual program student",
+      "factor description": "opieka nad studentem studiującym w ramach indywidualnej organizacji studiów",
+      "limit per semester": 10
+    },
+    {
+      "factor ID": "student research group",
+      "factor description": "opieka nad kołem naukowym",
+      "limit per year": 45
+    },
+    {
+      "factor ID": "international program student",
+      "factor description": "opieka nad studentem, stażystą lub stypendystą odbywającym kształcenie w ramach programów krajowych lub międzynarodowych",
+      "limit per semester": 10
+    }
+  ],
+  "groups": [
+    {
+      "group ID": "bachelors",
+      "limit per year": 12
+    },
+    {
+      "group ID": "masters",
+      "limit per year": 12
+    }
+  ],
+  "exams": [
+    {
+      "factor ID": "k",
+      "factor description": "współczynnik ze zbioru: [0; 0,05; 0,1; 0,15; 0,2; 0,25; 0,3]",
+      "value": 0.3
+    },
+    {
+      "factor ID": "N_min",
+      "factor description": "minimalna liczba egzaminowanych studentów powyżej której dodatkowo rozliczane są godziny za przeprowadzenie egzaminu",
+      "value": 0
+    },
+    {
+      "factor ID": "sum_max",
+      "factor description": "limit sumarycznej liczby dodatkowych godzin z tytułu przeprowadzenia egzaminu",
+      "limit per year": 60
+    }
+  ]
+}
