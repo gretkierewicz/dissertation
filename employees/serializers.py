@@ -60,10 +60,11 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position', 'pensum_group',
-                  'supervisor_url', 'supervisor', 'subordinates',
+                  'part_of_job_time', 'supervisor_url', 'supervisor', 'subordinates',
                   'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
         extra_kwargs = {
-            'year_of_studies': {'min_value': 0}
+            'year_of_studies': {'min_value': 0},
+            'part_of_job_time': {'min_value': 0, 'max_value': 1}
         }
 
     url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')

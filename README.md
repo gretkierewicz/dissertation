@@ -54,11 +54,12 @@ heroku open
 - AGH / JSON data file with additional hours factors based on: 
   https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf
   chapters 47-54
+- Employees / Additional field to be able of setting up part-time job factor
 
 ### To be done:
 
 Major
-- Additional data for non-contact hours that should be counted into pensum
+- Calculating additional and non-contact hours
 - Getting language of each module for modifying hours factor before adding into pensum
 - Setting up limits and pensum value and filters for employees possible to choose for plans/etc
 

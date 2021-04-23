@@ -54,6 +54,7 @@ class Employees(models.Model):
         choices=PENSUM_GROUPS_CHOICES,
         default=dydaktyczna
     )
+    part_of_job_time = models.FloatField(default=1)
 
     def __str__(self):
         return self.abbreviation
