@@ -83,8 +83,8 @@ class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
 class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
-        fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group', 'plans',
-                  'planned_pensum_hours', 'calculated_threshold', 'basic_threshold',
+        fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
+                  'plans', 'planned_pensum_hours', 'calculated_threshold', 'basic_threshold',
                   'factors_url', 'factors', 'reduction_url', 'reduction',
                   # hidden
                   'schedule']
@@ -101,8 +101,6 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    pensum_group = StringRelatedField(read_only=True, source='employee.pensum_group')
-
     employee_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',
         lookup_field=None,
@@ -110,7 +108,11 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
             'abbreviation': 'employee__abbreviation'
         }
     )
+    first_name = StringRelatedField(read_only=True, source='employee.first_name')
+    last_name = StringRelatedField(read_only=True, source='employee.last_name')
     employee = SlugRelatedField(queryset=Employees.objects.all(), slug_field='abbreviation')
+    e_mail = StringRelatedField(read_only=True, source='employee.e_mail')
+    pensum_group = StringRelatedField(read_only=True, source='employee.pensum_group')
 
     plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
 

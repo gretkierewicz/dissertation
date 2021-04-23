@@ -37,23 +37,6 @@ class Pensum(models.Model):
     def planned_pensum_hours(self):
         return sum([plan.plan_hours for plan in self.employee.plans.all()])
 
-    # employee's data section
-    @property
-    def first_name(self):
-        return self.employee.first_name
-
-    @property
-    def last_name(self):
-        return self.employee.last_name
-
-    @property
-    def abbreviation(self):
-        return self.employee.abbreviation
-
-    @property
-    def e_mail(self):
-        return self.employee.e_mail
-
 
 class PensumFactors(models.Model):
     ADD = 'Addition'

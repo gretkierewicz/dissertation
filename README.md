@@ -48,6 +48,7 @@ heroku open
 ### 23/04/2020
 
 - Employees / Added pensum group field. Additional field to serializer and Pensum endpoint added as well.
+- Pensum / Refactoring of employee's serializer fields - much more readable
 
 ### To be done:
 
