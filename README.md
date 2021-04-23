@@ -50,6 +50,7 @@ heroku open
 - Employees / Added pensum group field. Additional field to serializer and Pensum endpoint added as well.
 - Pensum / Refactoring of employee's serializer fields - much more readable
 - Pensum / Moved logic from model to serializer and rearranged fields
+- Pensum / FIX for factors to filter when at List view
 
 ### To be done:
 

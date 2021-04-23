@@ -86,7 +86,7 @@ class PensumViewSet(NestedViewSetMixin, ModelViewSet):
         return Response(ret)
 
 
-class PensumFactorsViewSet(ModelViewSet):
+class PensumFactorsViewSet(NestedViewSetMixin, ModelViewSet):
     """
     Pensum Factors View Set - remember that factors are calculated in order (pk).
     """
