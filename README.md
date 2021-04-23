@@ -57,6 +57,7 @@ heroku open
 - Employees / Additional field to be able of setting up part-time job factor
 - Pensum / Moving properties back into model (will need them out of serializer too in near future)
   Including part-time factor in calculations
+- AGH / Minor cleanup of additional hours' data file
 
 ### To be done:
 

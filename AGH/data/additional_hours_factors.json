@@ -1,5 +1,5 @@
 {
-  "factors": [
+  "major factors": [
     {
       "factor ID": "congress language",
       "factor description": "dodatkowe godziny za prowadzenie zajęć w języku kongresowym",
@@ -29,7 +29,9 @@
       "factor ID": "full-job limit all EN",
       "factor description": "limit/etat dla pełnego etatu (wszystko j.ang.)",
       "value": 2.2
-    },
+    }
+  ],
+  "additional hours factors": [
     {
       "factor ID": "bachelor thesis",
       "factor description": "opieka nad pracą dyplomową na studiach inżynierskich lub licencjackich",
