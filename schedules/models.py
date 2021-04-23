@@ -19,24 +19,6 @@ class Pensum(models.Model):
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='pensums')
     basic_threshold = models.FloatField(default=0)
 
-    @property
-    def calculated_threshold(self):
-        # TODO: check if reduction should be calculated at first
-        ret = self.basic_threshold
-        for function in self.reductions.all():
-            ret -= function.reduction_value
-        # pass factors if reduction zeros calculated threshold
-        if ret < 0:
-            return 0
-
-        for factor in self.factors.all():
-            ret = factor.calculate_value(ret)
-        return ret
-
-    @property
-    def planned_pensum_hours(self):
-        return sum([plan.plan_hours for plan in self.employee.plans.all()])
-
 
 class PensumFactors(models.Model):
     ADD = 'Addition'

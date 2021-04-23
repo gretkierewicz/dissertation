@@ -1,3 +1,4 @@
+from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField, StringRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
@@ -6,6 +7,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from employees.models import Employees
 from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
+from utils.serializers import SerializerLambdaField
 from .models import Pensum, PensumFactors, PensumReductions, Schedules
 
 
@@ -84,8 +86,8 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
-                  'plans', 'planned_pensum_hours', 'calculated_threshold', 'basic_threshold',
-                  'factors_url', 'factors', 'reduction_url', 'reduction',
+                  'reduction_url', 'reduction', 'factors_url', 'factors',
+                  'basic_threshold', 'calculated_threshold', 'planned_pensum_hours', 'plans',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -114,8 +116,13 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     e_mail = StringRelatedField(read_only=True, source='employee.e_mail')
     pensum_group = StringRelatedField(read_only=True, source='employee.pensum_group')
 
-    plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
-
+    reduction_url = NestedHyperlinkedIdentityField(
+        view_name='pensum-reduction-detail',
+        lookup_field='employee',
+        lookup_url_kwarg='pensums_employee',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+    reduction = PensumReductionSerializer(read_only=True)
     factors_url = NestedHyperlinkedIdentityField(
         view_name='pensum-factors-list',
         lookup_field='employee',
@@ -124,13 +131,10 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     )
     factors = PensumFactorSerializer(read_only=True, many=True)
 
-    reduction_url = NestedHyperlinkedIdentityField(
-        view_name='pensum-reduction-detail',
-        lookup_field='employee',
-        lookup_url_kwarg='pensums_employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
-    )
-    reduction = PensumReductionSerializer(read_only=True)
+    planned_pensum_hours = SerializerLambdaField(
+        lambda obj: sum([plan.plan_hours for plan in obj.employee.plans.all()]))
+    calculated_threshold = SerializerMethodField()
+    plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),
@@ -138,3 +142,16 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
             'schedule_slug': 'slug'
         },
     )
+
+    def get_calculated_threshold(self, instance):
+        ret = instance.basic_threshold
+        # TODO: check if reduction should be calculated at first
+        try:
+            ret -= instance.reduction.reduction_value
+        except Exception:
+            # if instance has no reduction set
+            pass
+
+        for factor in instance.factors.all():
+            ret = factor.calculate_value(ret)
+        return ret
