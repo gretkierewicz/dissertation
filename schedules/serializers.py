@@ -87,7 +87,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
                   'reduction_url', 'reduction', 'factors_url', 'factors',
-                  'basic_threshold', 'calculated_threshold', 'planned_pensum_hours', 'plans',
+                  'part_of_job_time', 'basic_threshold', 'calculated_threshold', 'planned_pensum_hours', 'plans',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -131,9 +131,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     )
     factors = PensumFactorSerializer(read_only=True, many=True)
 
-    planned_pensum_hours = SerializerLambdaField(
-        lambda obj: sum([plan.plan_hours for plan in obj.employee.plans.all()]))
-    calculated_threshold = SerializerMethodField()
+    part_of_job_time = StringRelatedField(read_only=True, source='employee.part_of_job_time')
     plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
 
     schedule = ParentHiddenRelatedField(
@@ -142,16 +140,3 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
             'schedule_slug': 'slug'
         },
     )
-
-    def get_calculated_threshold(self, instance):
-        ret = instance.basic_threshold
-        # TODO: check if reduction should be calculated at first
-        try:
-            ret -= instance.reduction.reduction_value
-        except Exception:
-            # if instance has no reduction set
-            pass
-
-        for factor in instance.factors.all():
-            ret = factor.calculate_value(ret)
-        return ret

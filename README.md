@@ -55,6 +55,8 @@ heroku open
   https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf
   chapters 47-54
 - Employees / Additional field to be able of setting up part-time job factor
+- Pensum / Moving properties back into model (will need them out of serializer too in near future)
+  Including part-time factor in calculations
 
 ### To be done:
 
