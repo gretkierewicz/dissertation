@@ -65,7 +65,7 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         model = Modules
         fields = ['url',
                   'module_code', 'name',
-                  'supervisor', 'supervisor_url', 'examination',
+                  'supervisor', 'supervisor_url', 'examination', 'language',
                   'form_of_classes_url', 'form_of_classes',
                   # hidden
                   'schedule']

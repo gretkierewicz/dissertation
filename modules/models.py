@@ -15,6 +15,7 @@ class Modules(models.Model):
     examination = models.BooleanField(default=False)
     supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
     schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='modules')
+    language = models.CharField(max_length=2, default='pl')
 
     def __str__(self):
         return f"{self.name} (Code: {self.module_code})"

@@ -48,6 +48,7 @@ heroku open
 ### 24/04/2020
 
 - Syllabus / Added language to data provided with Study Programme Import View
+- Modules / Added language field
 
 ### To be done:
 
