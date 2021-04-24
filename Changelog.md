@@ -4,7 +4,7 @@
 - Pensum / Refactoring of employee's serializer fields - much more readable
 - Pensum / Moved logic from model to serializer and rearranged fields
 - Pensum / FIX for factors to filter when at List view
-- AGH / JSON data file with additional hours factors based on: 
+- AGH / JSON data file with additional hours factors based on:
   https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf
   chapters 47-54
 - Employees / Additional field to be able of setting up part-time job factor

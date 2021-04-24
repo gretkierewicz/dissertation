@@ -1,6 +1,6 @@
 from django.db import models
 
-from AGH.AGH_utils import get_pensum_function_names, get_pensum_reduction_value, get_additional_hours_factors_choices
+from AGH.AGH_utils import get_additional_hours_factors_choices, get_pensum_function_names, get_pensum_reduction_value
 from employees.models import Employees
 
 

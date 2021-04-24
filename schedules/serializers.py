@@ -1,5 +1,4 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField, StringRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
@@ -9,7 +8,6 @@ from AGH.AGH_utils import AdditionalHoursFactorData
 from employees.models import Employees
 from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
-from utils.serializers import SerializerLambdaField
 from .models import Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, PensumReductions, Schedules
 
 

@@ -7,8 +7,8 @@ from AGH.AGH_utils import get_pensum
 from employees.models import Employees
 from utils.ViewSets import OneToOneRelationViewSet
 from .models import Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, PensumReductions, Schedules
-from .serializers import PensumAdditionalHoursFactorsSerializer, PensumBasicThresholdFactorSerializer, PensumReductionSerializer, \
-    PensumSerializer, ScheduleSerializer
+from .serializers import PensumAdditionalHoursFactorsSerializer, PensumBasicThresholdFactorSerializer, \
+    PensumReductionSerializer, PensumSerializer, ScheduleSerializer
 
 
 class SchedulesViewSet(ModelViewSet):
