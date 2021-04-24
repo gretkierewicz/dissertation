@@ -1,9 +1,11 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField, StringRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
+from AGH.AGH_utils import AdditionalHoursFactorData
 from employees.models import Employees
 from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
@@ -110,6 +112,64 @@ class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
             'pensums_employee': 'employee__abbreviation'
         }
     )
+
+    def validate_value_per_unit(self, value):
+        # create class with additional data regarding name of the factor
+        factor_data = AdditionalHoursFactorData(self.initial_data.get('name'))
+        if not factor_data.group_ID:
+            # get filter kwargs from request's URL and search for similar factors for this pensum
+            url_kwargs = self.context['request'].resolver_match.kwargs
+            filter_kwargs = {
+                'pensum__schedule__slug': url_kwargs['schedule_slug'],
+                'pensum__employee__abbreviation': url_kwargs['pensums_employee'],
+                'name': self.initial_data.get('name'),
+            }
+            other_factors = PensumAdditionalHoursFactors.objects.filter(**filter_kwargs)
+            if self.instance:
+                other_factors = other_factors.exclude(pk=self.instance.pk)
+            similar_factors_hours = sum([item.amount * item.value_per_unit for item in other_factors])
+
+            limit = factor_data.limit_per_unit
+            # TODO: consider replacing this simple logic of doubling semester limits
+            if factor_data.limit_key_name.split()[-1] == 'semester':
+                limit *= 2
+
+            if value * int(self.initial_data.get('amount')) > limit - similar_factors_hours:
+                raise ValidationError(
+                    f"Value exceeds limit per year for this factor. Maximum value to be set with this amount: "
+                    f"{(limit - similar_factors_hours) // int(self.initial_data.get('amount'))}. "
+                    f"Hours until limit (value * amount): {limit - similar_factors_hours}."
+                )
+        if value > factor_data.limit_per_unit:
+            raise ValidationError(
+                f"Value exceeds limit per unit for this factor. Maximum value to be set: "
+                f"{factor_data.limit_per_unit}"
+            )
+        return value
+
+    def validate_amount(self, value):
+        # create class with additional data regarding name of the factor
+        factor_data = AdditionalHoursFactorData(self.initial_data.get('name'))
+        if factor_data.group_ID:
+            # get filter kwargs from request's URL and search for similar factors for this pensum
+            url_kwargs = self.context['request'].resolver_match.kwargs
+            filter_kwargs = {
+                'pensum__schedule__slug': url_kwargs['schedule_slug'],
+                'pensum__employee__abbreviation': url_kwargs['pensums_employee'],
+                'name': self.initial_data.get('name'),
+            }
+            other_factors = PensumAdditionalHoursFactors.objects.filter(**filter_kwargs)
+            if self.instance:
+                other_factors = other_factors.exclude(pk=self.instance.pk)
+
+            similar_factors_amount = sum([item.amount for item in other_factors])
+            free_amount_to_use = factor_data.max_amount_for_group - similar_factors_amount
+            if value > free_amount_to_use:
+                raise ValidationError(
+                    f"Value exceeds limit per year for this factor's group. Maximum value to be set: "
+                    f"{free_amount_to_use}"
+                )
+        return value
 
 
 class PensumSerializer(NestedHyperlinkedModelSerializer):

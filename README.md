@@ -54,6 +54,7 @@ heroku open
 - Pensum Factors renamed to Pensum Basic Threshold Factors
 - Pensum Basic Factors / FIX in recalculating threshold value
 - Pensum / Serializer's fields rearrangement
+- Pensum Additional Hours Factors / Added validation for value per unit and amount
 
 ### To be done:
 

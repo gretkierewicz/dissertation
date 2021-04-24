@@ -75,3 +75,22 @@ def get_additional_hours_factors_choices():
             ]
         except IndexError:
             return None
+
+
+class AdditionalHoursFactorData:
+    def __init__(self, factor_ID):
+        base_path = os.path.dirname(__file__)
+        with open(os.path.join(base_path, "data/additional_hours_factors.json"), 'r', encoding='utf8') as json_file:
+            self.__json_data = json.load(json_file)
+        factors = self.__json_data.get('additional hours factors')
+        groups = self.__json_data.get('groups')
+        factor_data = next((item for item in factors if item["factor ID"] == factor_ID), None)
+
+        self.factor_ID = factor_ID
+        self.group_ID = factor_data.get('group ID')
+
+        group = next((item for item in groups if item["group ID"] == self.group_ID), None)
+
+        self.limit_key_name = next(item for item in factor_data.keys() if item.startswith('limit per '))
+        self.limit_per_unit = factor_data.get(self.limit_key_name)
+        self.max_amount_for_group = group['limit per year'] if group else None
