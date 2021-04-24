@@ -1,3 +1,17 @@
+### 23/04/2020
+
+- Employees / Added pensum group field. Additional field to serializer and Pensum endpoint added as well.
+- Pensum / Refactoring of employee's serializer fields - much more readable
+- Pensum / Moved logic from model to serializer and rearranged fields
+- Pensum / FIX for factors to filter when at List view
+- AGH / JSON data file with additional hours factors based on: 
+  https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf
+  chapters 47-54
+- Employees / Additional field to be able of setting up part-time job factor
+- Pensum / Moving properties back into model (will need them out of serializer too in near future)
+  Including part-time factor in calculations
+- AGH / Minor cleanup of additional hours' data file
+
 ### 19/04/2020
 
 - Pensum / Remove 'employee' field from pensum instance ->

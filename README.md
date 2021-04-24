@@ -45,26 +45,16 @@ heroku open
 
 ## Last changes
 
-### 23/04/2020
+### 24/04/2020
 
-- Employees / Added pensum group field. Additional field to serializer and Pensum endpoint added as well.
-- Pensum / Refactoring of employee's serializer fields - much more readable
-- Pensum / Moved logic from model to serializer and rearranged fields
-- Pensum / FIX for factors to filter when at List view
-- AGH / JSON data file with additional hours factors based on: 
-  https://www.cok.agh.edu.pl/fileadmin/_migrated/COK/DUSOS/pliki_pensum_akty_prawne/Regulamin_PRACY_tj..pdf
-  chapters 47-54
-- Employees / Additional field to be able of setting up part-time job factor
-- Pensum / Moving properties back into model (will need them out of serializer too in near future)
-  Including part-time factor in calculations
-- AGH / Minor cleanup of additional hours' data file
+- 
 
 ### To be done:
 
 Major
 - Calculating additional and non-contact hours
 - Getting language of each module for modifying hours factor before adding into pensum
-- Setting up limits and pensum value and filters for employees possible to choose for plans/etc
+- Setting up limits, pensum value and filters for employees possible to choose for plans/etc
 
 Minor
 - Implement custom filters, sorting or search
