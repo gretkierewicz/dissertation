@@ -57,3 +57,21 @@ def get_pensum_reduction_value(function):
             return [item.get('value') for item in json.load(json_file) if item.get('function') == function].pop()
         except IndexError:
             return None
+
+
+def get_additional_hours_factors_choices():
+    """
+    get_additional_hours_factors_choices returns list of tuples (key, display_name), based on data in JSON file:
+    data/additional_hours_factors.json
+    """
+    base_path = os.path.dirname(__file__)
+    with open(
+            os.path.join(base_path, "data/additional_hours_factors.json"), 'r', encoding='utf8'
+    ) as json_file:
+        try:
+            return [
+                (item.get('factor ID'), item.get('factor description'))
+                for item in json.load(json_file).get('additional hours factors')
+            ]
+        except IndexError:
+            return None

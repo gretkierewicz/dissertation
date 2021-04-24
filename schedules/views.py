@@ -6,8 +6,9 @@ from rest_framework_nested.viewsets import NestedViewSetMixin
 from AGH.AGH_utils import get_pensum
 from employees.models import Employees
 from utils.ViewSets import OneToOneRelationViewSet
-from .models import Pensum, PensumFactors, PensumReductions, Schedules
-from .serializers import PensumFactorSerializer, PensumReductionSerializer, PensumSerializer, ScheduleSerializer
+from .models import Pensum, PensumAdditionalHoursFactors, PensumFactors, PensumReductions, Schedules
+from .serializers import PensumAdditionalHoursFactorsSerializer, PensumFactorSerializer, PensumReductionSerializer, \
+    PensumSerializer, ScheduleSerializer
 
 
 class SchedulesViewSet(ModelViewSet):
@@ -100,3 +101,11 @@ class PensumReductionViewSet(OneToOneRelationViewSet):
     """
     queryset = PensumReductions.objects.all()
     serializer_class = PensumReductionSerializer
+
+
+class PensumAdditionalHoursFactorsViewSet(NestedViewSetMixin, ModelViewSet):
+    """
+    Pensum Additional Hours Factors View Set
+    """
+    queryset = PensumAdditionalHoursFactors.objects.all()
+    serializer_class = PensumAdditionalHoursFactorsSerializer

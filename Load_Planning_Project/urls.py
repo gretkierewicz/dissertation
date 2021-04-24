@@ -92,6 +92,13 @@ pensum_router.register(r'factors', schedules_views.PensumFactorsViewSet, basenam
 # generates:
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/{pk}
+pensum_router.register(
+    r'additional_hours_factors',
+    schedules_views.PensumAdditionalHoursFactorsViewSet,
+    basename='pensum-additional_hours_factors')
+# generates:
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/additional_hours_factors/
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/additional_hours_factors/{pk}
 
 router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
 # generates:

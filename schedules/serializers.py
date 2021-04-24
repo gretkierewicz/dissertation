@@ -8,7 +8,7 @@ from employees.models import Employees
 from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 from utils.serializers import SerializerLambdaField
-from .models import Pensum, PensumFactors, PensumReductions, Schedules
+from .models import Pensum, PensumAdditionalHoursFactors, PensumFactors, PensumReductions, Schedules
 
 
 class ScheduleSerializer(ModelSerializer):
@@ -82,12 +82,43 @@ class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
     )
 
 
+class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
+    class Meta:
+        model = PensumAdditionalHoursFactors
+        fields = ['url', 'name', 'value_per_unit', 'amount', 'description',
+                  # hidden
+                  'pensum']
+        extra_kwargs = {
+            'value_per_unit': {'min_value': 1},
+            'amount': {'min_value': 1, 'initial': 1}
+        }
+
+    parent_lookup_kwargs = {
+        'schedule_slug': 'pensum__schedule__slug',
+        'pensums_employee': 'pensum__employee__abbreviation'
+    }
+    url = NestedHyperlinkedIdentityField(
+        view_name='pensum-additional_hours_factors-detail',
+        lookup_field='pk',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+
+    pensum = ParentHiddenRelatedField(
+        queryset=Pensum.objects.all(),
+        parent_lookup_kwargs={
+            'schedule_slug': 'schedule__slug',
+            'pensums_employee': 'employee__abbreviation'
+        }
+    )
+
+
 class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
                   'reduction_url', 'reduction', 'factors_url', 'factors',
                   'part_of_job_time', 'basic_threshold', 'calculated_threshold', 'pensum_hours_from_plan', 'plans',
+                  'additional_hours_factors_url', 'additional_hours_factors',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -133,6 +164,14 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
 
     part_of_job_time = StringRelatedField(read_only=True, source='employee.part_of_job_time')
     plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
+
+    additional_hours_factors_url = NestedHyperlinkedIdentityField(
+        view_name='pensum-additional_hours_factors-list',
+        lookup_field='employee',
+        lookup_url_kwarg='pensums_employee',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+    additional_hours_factors = PensumAdditionalHoursFactorsSerializer(many=True, read_only=True)
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),

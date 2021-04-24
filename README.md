@@ -50,6 +50,7 @@ heroku open
 - Syllabus / Added language to data provided with Study Programme Import View
 - Modules / Added language field
 - Pensum / Minor refactor of plan's hours property
+- Pensum Additional Hours Factors / Added basic model, view and serializer - need to correct name of basic factors asap
 
 ### To be done:
 

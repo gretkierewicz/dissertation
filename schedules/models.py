@@ -1,6 +1,6 @@
 from django.db import models
 
-from AGH.AGH_utils import get_pensum_function_names, get_pensum_reduction_value
+from AGH.AGH_utils import get_pensum_function_names, get_pensum_reduction_value, get_additional_hours_factors_choices
 from employees.models import Employees
 
 
@@ -74,3 +74,13 @@ class PensumReductions(models.Model):
     @property
     def reduction_value(self):
         return get_pensum_reduction_value(self.function)
+
+
+class PensumAdditionalHoursFactors(models.Model):
+    ADDITIONAL_HOURS_CHOICES = get_additional_hours_factors_choices()
+
+    pensum = models.ForeignKey(Pensum, on_delete=models.CASCADE, related_name='additional_hours_factors')
+    name = models.CharField(max_length=64, choices=ADDITIONAL_HOURS_CHOICES, default=ADDITIONAL_HOURS_CHOICES[0][0])
+    value_per_unit = models.PositiveIntegerField()
+    amount = models.PositiveIntegerField(default=1)
+    description = models.CharField(max_length=128, blank=True)
