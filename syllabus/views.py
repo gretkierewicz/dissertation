@@ -64,6 +64,13 @@ class StudyProgrammesImportView(GenericViewSet):
     def get(self, request, *args, **kwargs):
         response = requests.get(
             f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
+            f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/modules?fields=module-code,language")
+        json_lang = json.loads(response.content).get('syllabus').get('assignments')
+        lang_dict = {}
+        for rec in json_lang:
+            lang_dict[rec.get('assignment').get('module_code')] = rec.get('assignment').get('module').get('language')
+        response = requests.get(
+            f"https://syllabuskrk.agh.edu.pl/{kwargs.get('academic_year')}/magnesite/api/faculties/"
             f"{kwargs.get('department')}/study_plans/{kwargs.get('study_plan')}/")
         try:
             json_data = json.loads(response.content).get('syllabus')
@@ -71,6 +78,7 @@ class StudyProgrammesImportView(GenericViewSet):
             for semester in json_data.get('study_plan').get('semesters'):
                 for group in semester.get('groups'):
                     for module in group.get('modules'):
+                        module['language'] = lang_dict.get(module.get('module_code')) or 'pl'
                         modules.append(module)
             return Response(modules)
         except json.JSONDecodeError:
