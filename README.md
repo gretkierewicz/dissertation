@@ -53,6 +53,7 @@ heroku open
 - Pensum Additional Hours Factors / Added basic model, view and serializer - need to correct name of basic factors asap
 - Pensum Factors renamed to Pensum Basic Threshold Factors
 - Pensum Basic Factors / FIX in recalculating threshold value
+- Pensum / Serializer's fields rearrangement
 
 ### To be done:
 

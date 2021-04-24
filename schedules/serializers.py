@@ -116,8 +116,9 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
-                  'reduction_url', 'reduction', 'basic_threshold_factors_url', 'basic_threshold_factors',
-                  'part_of_job_time', 'basic_threshold', 'calculated_threshold', 'pensum_hours_from_plan', 'plans',
+                  'basic_threshold', 'part_of_job_time', 'basic_threshold_factors_url', 'basic_threshold_factors',
+                  'reduction_url', 'reduction', 'calculated_threshold',
+                  'pensum_hours_from_plan', 'plans',
                   'additional_hours_factors_url', 'additional_hours_factors',
                   # hidden
                   'schedule']
@@ -147,13 +148,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     e_mail = StringRelatedField(read_only=True, source='employee.e_mail')
     pensum_group = StringRelatedField(read_only=True, source='employee.pensum_group')
 
-    reduction_url = NestedHyperlinkedIdentityField(
-        view_name='pensum-reduction-detail',
-        lookup_field='employee',
-        lookup_url_kwarg='pensums_employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
-    )
-    reduction = PensumReductionSerializer(read_only=True)
+    part_of_job_time = StringRelatedField(read_only=True, source='employee.part_of_job_time')
     basic_threshold_factors_url = NestedHyperlinkedIdentityField(
         view_name='pensum-factors-list',
         lookup_field='employee',
@@ -161,8 +156,14 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
     basic_threshold_factors = PensumBasicThresholdFactorSerializer(read_only=True, many=True)
+    reduction_url = NestedHyperlinkedIdentityField(
+        view_name='pensum-reduction-detail',
+        lookup_field='employee',
+        lookup_url_kwarg='pensums_employee',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+    reduction = PensumReductionSerializer(read_only=True)
 
-    part_of_job_time = StringRelatedField(read_only=True, source='employee.part_of_job_time')
     plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
 
     additional_hours_factors_url = NestedHyperlinkedIdentityField(
