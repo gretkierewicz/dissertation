@@ -20,7 +20,7 @@ class Pensum(models.Model):
     basic_threshold = models.FloatField(default=0)
 
     @property
-    def planned_pensum_hours(self):
+    def pensum_hours_from_plan(self):
         return sum([plan.plan_hours for plan in self.employee.plans.all()])
 
     @property

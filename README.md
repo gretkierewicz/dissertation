@@ -49,12 +49,12 @@ heroku open
 
 - Syllabus / Added language to data provided with Study Programme Import View
 - Modules / Added language field
+- Pensum / Minor refactor of plan's hours property
 
 ### To be done:
 
 Major
 - Calculating additional and non-contact hours
-- Getting language of each module for modifying hours factor before adding into pensum
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
 
 Minor

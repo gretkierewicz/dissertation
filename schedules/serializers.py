@@ -87,7 +87,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
                   'reduction_url', 'reduction', 'factors_url', 'factors',
-                  'part_of_job_time', 'basic_threshold', 'calculated_threshold', 'planned_pensum_hours', 'plans',
+                  'part_of_job_time', 'basic_threshold', 'calculated_threshold', 'pensum_hours_from_plan', 'plans',
                   # hidden
                   'schedule']
         extra_kwargs = {
