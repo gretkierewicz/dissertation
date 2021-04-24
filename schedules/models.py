@@ -42,7 +42,7 @@ class Pensum(models.Model):
         return ret if ret > 0 else 0
 
 
-class PensumFactors(models.Model):
+class PensumBasicThresholdFactors(models.Model):
     ADD = 'Addition'
     MUL = 'Multiplication'
     TYPES = [
@@ -50,7 +50,7 @@ class PensumFactors(models.Model):
         (MUL, MUL),
     ]
 
-    pensum = models.ForeignKey(Pensum, on_delete=models.CASCADE, related_name='factors')
+    pensum = models.ForeignKey(Pensum, on_delete=models.CASCADE, related_name='basic_threshold_factors')
     name = models.CharField(max_length=64, default='')
     factor_type = models.CharField(max_length=len(MUL), choices=TYPES, default=ADD)
     value = models.FloatField(default=1)

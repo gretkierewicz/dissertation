@@ -51,6 +51,7 @@ heroku open
 - Modules / Added language field
 - Pensum / Minor refactor of plan's hours property
 - Pensum Additional Hours Factors / Added basic model, view and serializer - need to correct name of basic factors asap
+- Pensum Factors renamed to Pensum Basic Threshold Factors
 
 ### To be done:
 

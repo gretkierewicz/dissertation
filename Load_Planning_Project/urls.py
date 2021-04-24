@@ -88,7 +88,7 @@ pensum_reduction_paths = [
                 'delete': 'destroy'
             }), name='pensum-reduction-detail')]
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/reduction/
-pensum_router.register(r'factors', schedules_views.PensumFactorsViewSet, basename='pensum-factors')
+pensum_router.register(r'factors', schedules_views.PensumBasicThresholdFactorsViewSet, basename='pensum-factors')
 # generates:
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/factors/{pk}
