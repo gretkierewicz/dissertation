@@ -30,10 +30,11 @@ class Pensum(models.Model):
         # reduce if employee has part-time job
         ret *= self.employee.part_of_job_time
 
-        for factor in self.factors.all():
+        # calculate all basic threshold factors
+        for factor in self.basic_threshold_factors.all():
             ret = factor.calculate_value(ret)
 
-        # after calculating factors, reduce by functions value
+        # reduce with function's value
         try:
             ret -= self.reduction.reduction_value
         except Exception:
