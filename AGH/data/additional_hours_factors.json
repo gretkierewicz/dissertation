@@ -2,36 +2,46 @@
   "major factors": [
     {
       "factor ID": "congress language",
-      "factor description": "dodatkowe godziny za prowadzenie zajęć w języku kongresowym",
+      "factor description": "§52/1a dodatkowe godziny za prowadzenie zajęć w języku kongresowym",
       "value": 0.3
     },
     {
       "factor ID": "min contact hours",
-      "factor description": "minimum godz. żywych (kontaktowych)/etat",
+      "factor description": "§52/4 minimum godz. żywych (kontaktowych)/etat",
       "value": 0.5
     },
     {
-      "factor ID": "part-job limit",
+      "factor ID": "max deficit",
+      "factor description": "§50/8 Liczba godzin zajęć dydaktycznych poniżej pensum dydaktycznego nie może przekraczać 45 godzin",
+      "value": 45
+    }
+  ],
+  "job-time factors": [
+    {
+      "factor ID": "§54/16 part-job limit",
       "factor description": "limit/etat dla części etatu",
       "value": 1.5
     },
     {
-      "factor ID": "full-job limit contact only",
+      "factor ID": "§54/13 full-job limit contact only",
       "factor description": "limit/etat dla pełnego etatu (godz. żywe)",
       "value": 1.7
     },
     {
-      "factor ID": "full-job limit all PL",
+      "factor ID": "§54/13 full-job limit all PL",
       "factor description": "limit/etat dla pełnego etatu (wszystko j.pol.)",
       "value": 2.0
     },
     {
-      "factor ID": "full-job limit all EN",
+      "factor ID": "§?? full-job limit all EN",
       "factor description": "limit/etat dla pełnego etatu (wszystko j.ang.)",
       "value": 2.2
     }
   ],
   "additional hours factors": [
+    {
+      "description": "§52/2/1 dodatkowa liczba godzin zaliczanych do obciążenia dydaktycznego nauczyciela akademickiego"
+    },
     {
       "factor ID": "bachelor thesis",
       "factor description": "opieka nad pracą dyplomową na studiach inżynierskich lub licencjackich",
@@ -93,6 +103,9 @@
     }
   ],
   "exams": [
+    {
+      "description": "§52/2/2 dodatkowa liczba godzin zaliczanych do obciążenia z tytułu przeprowadzania egzaminów"
+    },
     {
       "factor ID": "k",
       "factor description": "współczynnik ze zbioru: [0; 0,05; 0,1; 0,15; 0,2; 0,25; 0,3]",

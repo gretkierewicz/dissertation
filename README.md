@@ -56,6 +56,7 @@ heroku open
 - Pensum / Serializer's fields rearrangement
 - Pensum Additional Hours Factors / Added validation for value per unit and amount
 - Cleanup
+- AGH / Added additional information in JSON data file - refactoring utils
 
 ### To be done:
 

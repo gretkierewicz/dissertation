@@ -71,7 +71,7 @@ def get_additional_hours_factors_choices():
         try:
             return [
                 (item.get('factor ID'), item.get('factor description'))
-                for item in json.load(json_file).get('additional hours factors')
+                for item in json.load(json_file).get('additional hours factors') if item.get('factor ID')
             ]
         except IndexError:
             return None
@@ -84,12 +84,12 @@ class AdditionalHoursFactorData:
             self.__json_data = json.load(json_file)
         factors = self.__json_data.get('additional hours factors')
         groups = self.__json_data.get('groups')
-        factor_data = next((item for item in factors if item["factor ID"] == factor_ID), None)
+        factor_data = next((item for item in factors if item.get("factor ID") == factor_ID), None)
 
         self.factor_ID = factor_ID
         self.group_ID = factor_data.get('group ID')
 
-        group = next((item for item in groups if item["group ID"] == self.group_ID), None)
+        group = next((item for item in groups if item.get("group ID") == self.group_ID), None)
 
         self.limit_key_name = next(item for item in factor_data.keys() if item.startswith('limit per '))
         self.limit_per_unit = factor_data.get(self.limit_key_name)
