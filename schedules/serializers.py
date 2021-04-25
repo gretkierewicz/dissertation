@@ -201,7 +201,7 @@ class ModulesToSetupRelatedField(SlugRelatedField):
 class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = ExamsAdditionalHours
-        fields = ['url', 'module_url', 'module', 'module_name', 'type', 'portion',
+        fields = ['url', 'module_url', 'module', 'module_name', 'students_number', 'type', 'portion',
                   # hidden
                   'pensum']
         extra_kwargs = {
@@ -224,6 +224,7 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
     )
     module = ModulesToSetupRelatedField(slug_field='module_code', queryset=Modules.objects.filter(examination=True))
     module_name = SerializerLambdaField(lambda obj: obj.module.name)
+    students_number = SerializerLambdaField(lambda obj: obj.module.main_order.students_number)
 
     pensum = ParentHiddenRelatedField(
         queryset=Pensum.objects.all(),
