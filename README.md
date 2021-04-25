@@ -55,6 +55,7 @@ heroku open
 - Pensum / Added nested Exams Additional Hours model, serializer and view
 - Exams Additional Hours / Added validation for portion field (0-1 range)
 - Exams Additional Hours / Added fields corresponding to model's fields
+- Exams Additional Hours / Excluding modules to pick with no order set
 
 ### To be done:
 

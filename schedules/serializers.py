@@ -180,20 +180,22 @@ class ModulesToSetupRelatedField(SlugRelatedField):
     """
 
     def get_queryset(self):
-        # add employee's staffed exams
-        modules_pk_to_exclude = [
-            exam.module.pk for exam in self.queryset.first().schedule.pensums.get(
-                employee__abbreviation=self.context.get('request').resolver_match.kwargs.get('pensums_employee')
-            ).exams_additional_hours.all()
-        ]
-        # add already fully staffed exams
-        for module in self.queryset:
+        queryset = self.queryset
+        pensum = queryset.first().schedule.pensums.get(
+            employee__abbreviation=self.context.get('request').resolver_match.kwargs.get('pensums_employee')
+        )
+        # exclude modules with no orders at all
+        modules_pk_to_exclude = [module.pk for module in queryset if not module.main_order]
+        # exclude employee's staffed exams
+        modules_pk_to_exclude.extend([exam.module.pk for exam in pensum.exams_additional_hours.all()])
+        # exclude already fully staffed exams
+        for module in queryset:
             if module.exams_portion_staffed >= 1 and module.pk not in modules_pk_to_exclude:
                 modules_pk_to_exclude.append(module.pk)
-        # remove from set instance if present
+        # do not exclude instance if present
         if self.root.instance:
             modules_pk_to_exclude.remove(self.root.instance.module.pk)
-        return self.queryset.exclude(pk__in=modules_pk_to_exclude)
+        return queryset.exclude(pk__in=set(modules_pk_to_exclude))
 
 
 class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):

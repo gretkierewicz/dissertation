@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from AGH.data.Classes_names import CLASSES_NAMES
@@ -22,6 +23,14 @@ class Modules(models.Model):
 
     def __repr__(self):
         return self.module_code
+
+    @property
+    def main_order(self):
+        try:
+            classes = self.form_of_classes.exclude(order=None).get(name='Lectures')
+        except ObjectDoesNotExist:
+            classes = self.form_of_classes.exclude(order=None).first()
+        return classes.order if classes else None
 
     @property
     def exams_portion_staffed(self):
