@@ -56,6 +56,7 @@ Major
 - Examination additional hours update
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
 - Modules / Removing csv import as it is much more convenient to import data with JSON files (easily nested data)
+- Employees / Refactor of csv import actions descriptions
 
 Minor
 - Implement custom filters, sorting or search

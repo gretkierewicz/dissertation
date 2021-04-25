@@ -36,6 +36,9 @@ class DegreeViewSet(mixins.CreateModelMixin,
         """
         Action to upload CSV file(s).
         POST method will try to create new records.
+        Handled column headers:
+         - REQUIRED:
+        'name' - unique string,
         """
         return read_csv_files(self=self, request=request, model=Degrees, lookup='name')
 
@@ -66,6 +69,9 @@ class PositionViewSet(mixins.CreateModelMixin,
         """
         Action to upload CSV file(s).
         POST method will try to create new records.
+        Handled column headers:
+         - REQUIRED:
+        'name' - unique string,
         """
         return read_csv_files(self=self, request=request, model=Positions, lookup='name')
 
@@ -107,5 +113,20 @@ class EmployeeViewSet(ModelViewSet):
         Action to upload CSV file(s).
         POST method will try to create new records.
         PUT method will update existing or create new records.
+        Handled column headers:
+         - REQUIRED:
+        'first_name' - string,
+        'last_name' - string,
+        'abbreviation' - unique string,
+        'degree' - string ('name' field corresponding in Degrees table),
+        'position' - string ('name' field corresponding in Positions table),
+        'e_mail' - unique string,
+        'supervisor' - string ('abbreviation' field related to Employees table), possible blank,
+         - NOT REQUIRED:
+        'year_of_studies' - positive integer, default=null,
+        'is_procedure_for_a_doctoral_degree_approved' - True/False, default=False,
+        'has_scholarship' - True/False, default=False,
+        'pensum_group' - 'badawczo-dydaktyczna'/'dydaktyczna', default='dydaktyczna',
+        'part_of_job_time' - float from 0-1 range, default=1
         """
         return read_csv_files(self=self, request=request, model=Employees, lookup='e_mail')
