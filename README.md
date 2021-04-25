@@ -49,14 +49,14 @@ heroku open
 
 - Pensum / Property name change from pensum_hours_from_plan to pensum_contact_hours
 - Pensum / Added property pensum_additional_hours
+- Modules / Removing csv import as it is much more convenient to import data with JSON files (easily nested data)
+- Employees / Refactor of csv import actions descriptions
 
 ### To be done:
 
 Major
 - Examination additional hours update
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
-- Modules / Removing csv import as it is much more convenient to import data with JSON files (easily nested data)
-- Employees / Refactor of csv import actions descriptions
 
 Minor
 - Implement custom filters, sorting or search
