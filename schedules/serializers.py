@@ -176,7 +176,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
                   'basic_threshold', 'part_of_job_time', 'basic_threshold_factors_url', 'basic_threshold_factors',
                   'reduction_url', 'reduction', 'calculated_threshold',
-                  'pensum_hours_from_plan', 'plans',
+                  'pensum_contact_hours', 'plans',
                   'additional_hours_factors_url', 'additional_hours_factors',
                   # hidden
                   'schedule']
