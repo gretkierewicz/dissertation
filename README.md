@@ -48,11 +48,12 @@ heroku open
 ### 25/04/2020
 
 - Pensum / Property name change from pensum_hours_from_plan to pensum_contact_hours
+- Pensum / Added property pensum_additional_hours
 
 ### To be done:
 
 Major
-- Calculating additional and non-contact hours
+- Examination additional hours update
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
 
 Minor

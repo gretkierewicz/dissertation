@@ -1,6 +1,7 @@
 from django.db import models
 
-from AGH.AGH_utils import get_additional_hours_factors_choices, get_pensum_function_names, get_pensum_reduction_value
+from AGH.AGH_utils import get_additional_hours_factors_choices, get_major_factors_value, get_pensum_function_names, \
+    get_pensum_reduction_value
 from employees.models import Employees
 
 
@@ -22,6 +23,20 @@ class Pensum(models.Model):
     @property
     def pensum_contact_hours(self):
         return sum([plan.plan_hours for plan in self.employee.plans.all()])
+
+    @property
+    def pensum_additional_hours(self):
+        sum_of_factors_hours = sum(
+            [factor.amount * factor.value_per_unit for factor in self.additional_hours_factors.all()])
+        # add additional hours for plans with congress language
+        # TODO: consider using filter if list of congress lang. is given
+        # congress_language_plans = self.employee.plans.filter(order__classes__module__language__in=['en', 'fr', ...])
+        congress_language_plans = self.employee.plans.exclude(order__classes__module__language='pl')
+        congress_language_factor = get_major_factors_value('congress language factor')
+        sum_of_factors_hours += sum([plan.plan_hours * congress_language_factor for plan in congress_language_plans])
+        # TODO: examination additional hours
+        # TODO: if custom factor should be enabled - add it to JSON file and migrate model (update choices)
+        return sum_of_factors_hours
 
     @property
     def calculated_threshold(self):

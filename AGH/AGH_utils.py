@@ -94,3 +94,14 @@ class AdditionalHoursFactorData:
         self.limit_key_name = next(item for item in factor_data.keys() if item.startswith('limit per '))
         self.limit_per_unit = factor_data.get(self.limit_key_name)
         self.max_amount_for_group = group['limit per year'] if group else None
+
+
+def get_major_factors_value(name):
+    base_path = os.path.dirname(__file__)
+    with open(
+            os.path.join(base_path, "data/additional_hours_factors.json"), 'r', encoding='utf8'
+    ) as json_file:
+        return next(
+            (item.get('value') for item in json.load(json_file).get('major factors') if item.get('factor ID') == name),
+            None
+        )

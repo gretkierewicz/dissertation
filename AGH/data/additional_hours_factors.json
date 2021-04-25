@@ -1,7 +1,7 @@
 {
   "major factors": [
     {
-      "factor ID": "congress language",
+      "factor ID": "congress language factor",
       "factor description": "§52/1a dodatkowe godziny za prowadzenie zajęć w języku kongresowym",
       "value": 0.3
     },
