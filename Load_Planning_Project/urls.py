@@ -99,6 +99,13 @@ pensum_router.register(
 # generates:
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/additional_hours_factors/
 # /schedules/{schedule_slug}/pensum/{pensums_employee}/additional_hours_factors/{pk}
+pensum_router.register(
+    r'exams_additional_hours',
+    schedules_views.ExamsAdditionalHoursViewSet,
+    basename='pensum-exams_additional_hours')
+# generates:
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/exams_additional_hours/
+# /schedules/{schedule_slug}/pensum/{pensums_employee}/exams_additional_hours/{pk}
 
 router.register(r'syllabus', syllabus_views.SyllabusView, basename='syllabus')
 # generates:

@@ -1,4 +1,5 @@
 from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField, StringRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
@@ -6,9 +7,11 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from AGH.AGH_utils import AdditionalHoursFactorData
 from employees.models import Employees
+from modules.models import Modules
 from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
-from .models import Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, PensumReductions, Schedules
+from .models import ExamsAdditionalHours, Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, \
+    PensumReductions, Schedules
 
 
 class ScheduleSerializer(ModelSerializer):
@@ -170,14 +173,74 @@ class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
         return value
 
 
+class ModulesToSetupRelatedField(SlugRelatedField):
+    """
+    Modules related field excluding exams fully staffed
+    """
+
+    def get_queryset(self):
+        # add employee's staffed exams
+        modules_pk_to_exclude = [
+            exam.module.pk for exam in self.queryset.first().schedule.pensums.get(
+                employee__abbreviation=self.context.get('request').resolver_match.kwargs.get('pensums_employee')
+            ).exams_additional_hours.all()
+        ]
+        # add already fully staffed exams
+        for module in self.queryset:
+            if module.exams_portion_staffed >= 1 and module.pk not in modules_pk_to_exclude:
+                modules_pk_to_exclude.append(module.pk)
+        # remove from set instance if present
+        if self.root.instance:
+            modules_pk_to_exclude.remove(self.root.instance.module.pk)
+        return self.queryset.exclude(pk__in=modules_pk_to_exclude)
+
+
+class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
+    class Meta:
+        model = ExamsAdditionalHours
+        fields = ['url', 'module', 'type', 'portion',
+                  # hidden
+                  'pensum']
+        extra_kwargs = {
+            'url': {'view_name': 'pensum-exams_additional_hours-detail'},
+            'portion': {'initial': 1}
+        }
+
+    parent_lookup_kwargs = {
+        'schedule_slug': 'pensum__schedule__slug',
+        'pensums_employee': 'pensum__employee__abbreviation'
+    }
+
+    module = ModulesToSetupRelatedField(slug_field='module_code', queryset=Modules.objects.filter(examination=True))
+
+    pensum = ParentHiddenRelatedField(
+        queryset=Pensum.objects.all(),
+        parent_lookup_kwargs={
+            'schedule_slug': 'schedule__slug',
+            'pensums_employee': 'employee__abbreviation'
+        }
+    )
+
+    def validate_portion(self, value):
+        # get sum of all portions for this module's exam
+        module = get_object_or_404(Modules, **{'module_code': self.initial_data.get('module')})
+        portion_to_set = module.exams_portion_staffed
+        if self.instance:
+            portion_to_set -= self.instance.portion
+        if value + portion_to_set > 1:
+            raise ValidationError(f"Sum of all portions for this module's exams would exceed 1. Maximum value to set: "
+                                  f"{1 - portion_to_set}")
+        return value
+
+
 class PensumSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
                   'basic_threshold', 'part_of_job_time', 'basic_threshold_factors_url', 'basic_threshold_factors',
-                  'reduction_url', 'reduction', 'calculated_threshold',
-                  'pensum_contact_hours', 'plans',
+                  'reduction_url', 'reduction', 'calculated_threshold', 'pensum_contact_hours', 'plans',
                   'pensum_additional_hours', 'additional_hours_factors_url', 'additional_hours_factors',
+                  'exams_additional_hours_url', 'exams_additional_hours',
                   # hidden
                   'schedule']
         extra_kwargs = {
@@ -231,6 +294,13 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
     additional_hours_factors = PensumAdditionalHoursFactorsSerializer(many=True, read_only=True)
+    exams_additional_hours_url = NestedHyperlinkedIdentityField(
+        view_name='pensum-exams_additional_hours-list',
+        lookup_field='employee',
+        lookup_url_kwarg='pensums_employee',
+        parent_lookup_kwargs=parent_lookup_kwargs
+    )
+    exams_additional_hours = ExamsAdditionalHoursSerializer(many=True, read_only=True)
 
     schedule = ParentHiddenRelatedField(
         queryset=Schedules.objects.all(),

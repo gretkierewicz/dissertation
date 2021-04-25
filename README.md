@@ -52,11 +52,11 @@ heroku open
 - Modules / Removing csv import as it is much more convenient to import data with JSON files (easily nested data)
 - Employees / Refactor of csv import actions descriptions
 - AGH / Added custom entry for additional hours to the JSON data file + migration
+- Pensum / Added nested Exams Additional Hours model, serializer and view
 
 ### To be done:
 
 Major
-- Examination additional hours update
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
 
 Minor

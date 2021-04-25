@@ -99,3 +99,19 @@ class PensumAdditionalHoursFactors(models.Model):
     value_per_unit = models.PositiveIntegerField()
     amount = models.PositiveIntegerField(default=1)
     description = models.CharField(max_length=128, blank=True)
+
+
+class ExamsAdditionalHours(models.Model):
+    class Meta:
+        unique_together = (('pensum', 'module'),)
+
+    EXAM_TYPES_CHOICES = [
+        ('Written', "Written"),
+        ('Oral', 'Oral')
+    ]
+    from modules.models import Modules
+
+    pensum = models.ForeignKey(Pensum, on_delete=models.CASCADE, related_name='exams_additional_hours')
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='exams_additional_hours')
+    type = models.CharField(max_length=8, choices=EXAM_TYPES_CHOICES, default=EXAM_TYPES_CHOICES[0][0])
+    portion = models.FloatField(default=1)

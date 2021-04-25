@@ -18,10 +18,14 @@ class Modules(models.Model):
     language = models.CharField(max_length=2, default='pl')
 
     def __str__(self):
-        return f"{self.name} (Code: {self.module_code})"
+        return f'{self.module_code} - "{self.name}"'
 
     def __repr__(self):
         return self.module_code
+
+    @property
+    def exams_portion_staffed(self):
+        return sum([x.portion for x in self.exams_additional_hours.all()])
 
     @property
     def lectures_hours(self):
