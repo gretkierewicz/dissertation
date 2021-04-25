@@ -45,18 +45,9 @@ heroku open
 
 ## Last changes
 
-### 24/04/2020
+### 25/04/2020
 
-- Syllabus / Added language to data provided with Study Programme Import View
-- Modules / Added language field
-- Pensum / Minor refactor of plan's hours property
-- Pensum Additional Hours Factors / Added basic model, view and serializer - need to correct name of basic factors asap
-- Pensum Factors renamed to Pensum Basic Threshold Factors
-- Pensum Basic Factors / FIX in recalculating threshold value
-- Pensum / Serializer's fields rearrangement
-- Pensum Additional Hours Factors / Added validation for value per unit and amount
-- Cleanup
-- AGH / Added additional information in JSON data file - refactoring utils
+- 
 
 ### To be done:
 
