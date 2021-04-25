@@ -203,7 +203,7 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
                   'pensum']
         extra_kwargs = {
             'url': {'view_name': 'pensum-exams_additional_hours-detail'},
-            'portion': {'initial': 1}
+            'portion': {'min_value': 0, 'max_value': 1, 'initial': 1}
         }
 
     parent_lookup_kwargs = {
