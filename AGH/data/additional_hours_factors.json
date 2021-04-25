@@ -114,7 +114,8 @@
     {
       "factor ID": "k",
       "factor description": "współczynnik ze zbioru: [0; 0,05; 0,1; 0,15; 0,2; 0,25; 0,3]",
-      "value": 0.3
+      "value for written": 0.3,
+      "value for oral": 0.3
     },
     {
       "factor ID": "N_min",

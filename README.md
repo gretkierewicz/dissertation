@@ -57,6 +57,7 @@ heroku open
 - Exams Additional Hours / Added fields corresponding to model's fields
 - Exams Additional Hours / Excluding modules to pick with no order set
 - Exams Additional Hours / Added field with student's number (to check for proper value for calculating additional hours)
+- Pensum / Added exams into calculations of additional hours
 
 ### To be done:
 

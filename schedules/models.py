@@ -1,7 +1,7 @@
 from django.db import models
 
-from AGH.AGH_utils import get_additional_hours_factors_choices, get_major_factors_value, get_pensum_function_names, \
-    get_pensum_reduction_value
+from AGH.AGH_utils import ExamsFactors, get_additional_hours_factors_choices, get_major_factors_value, \
+    get_pensum_function_names, get_pensum_reduction_value
 from employees.models import Employees
 
 
@@ -34,8 +34,16 @@ class Pensum(models.Model):
         congress_language_plans = self.employee.plans.exclude(order__classes__module__language='pl')
         congress_language_factor = get_major_factors_value('congress language factor')
         sum_of_factors_hours += sum([plan.plan_hours * congress_language_factor for plan in congress_language_plans])
-        # TODO: examination additional hours
-        return sum_of_factors_hours
+        # examination additional hours
+        exam_additional_hours = 0
+        for exam in self.exams_additional_hours.all():
+            if not exam.module.main_order:
+                continue
+            if exam.module.main_order.students_number > ExamsFactors.min_students_number:
+                exam_additional_hours += exam.portion * (
+                    ExamsFactors.factor_for_written_exam if exam.type != 'Oral' else ExamsFactors.factor_for_oral_exam
+                ) * exam.module.main_order.students_number
+        return sum_of_factors_hours + min(exam_additional_hours, ExamsFactors.max_summary_hours)
 
     @property
     def calculated_threshold(self):

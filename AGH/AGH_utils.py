@@ -105,3 +105,20 @@ def get_major_factors_value(name):
             (item.get('value') for item in json.load(json_file).get('major factors') if item.get('factor ID') == name),
             None
         )
+
+
+class ExamsFactors:
+    factor_for_written_exam = factor_for_oral_exam = min_students_number = max_summary_hours = 0
+    __base_path = os.path.dirname(__file__)
+    with open(
+            os.path.join(__base_path, "data/additional_hours_factors.json"), 'r', encoding='utf8'
+    ) as __json_file:
+        __data = json.load(__json_file).get('exams')
+        for __rec in __data:
+            if __rec.get('factor ID') == 'k':
+                factor_for_written_exam = __rec.get('value for written')
+                factor_for_oral_exam = __rec.get('value for oral')
+            if __rec.get('factor ID') == 'N_min':
+                min_students_number = __rec.get('value')
+            if __rec.get('factor ID') == 'sum_max':
+                max_summary_hours = __rec.get('limit per year')
