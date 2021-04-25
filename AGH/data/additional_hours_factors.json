@@ -90,6 +90,11 @@
       "factor ID": "international program student",
       "factor description": "opieka nad studentem, stażystą lub stypendystą odbywającym kształcenie w ramach programów krajowych lub międzynarodowych",
       "limit per semester": 10
+    },
+    {
+      "factor ID": "custom additional hours factor",
+      "factor description": "dodatkowa liczba godzin z innego tytułu",
+      "limit per year": 9999
     }
   ],
   "groups": [

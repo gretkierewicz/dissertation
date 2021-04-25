@@ -35,7 +35,6 @@ class Pensum(models.Model):
         congress_language_factor = get_major_factors_value('congress language factor')
         sum_of_factors_hours += sum([plan.plan_hours * congress_language_factor for plan in congress_language_plans])
         # TODO: examination additional hours
-        # TODO: if custom factor should be enabled - add it to JSON file and migrate model (update choices)
         return sum_of_factors_hours
 
     @property

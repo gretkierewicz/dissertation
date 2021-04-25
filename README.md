@@ -51,6 +51,7 @@ heroku open
 - Pensum / Added property pensum_additional_hours
 - Modules / Removing csv import as it is much more convenient to import data with JSON files (easily nested data)
 - Employees / Refactor of csv import actions descriptions
+- AGH / Added custom entry for additional hours to the JSON data file + migration
 
 ### To be done:
 
