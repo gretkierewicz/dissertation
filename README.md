@@ -54,6 +54,7 @@ heroku open
 - AGH / Added custom entry for additional hours to the JSON data file + migration
 - Pensum / Added nested Exams Additional Hours model, serializer and view
 - Exams Additional Hours / Added validation for portion field (0-1 range)
+- Exams Additional Hours / Added fields corresponding to model's fields
 
 ### To be done:
 

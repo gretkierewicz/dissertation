@@ -10,6 +10,7 @@ from employees.models import Employees
 from modules.models import Modules
 from orders.serializers import EmployeePlansSerializer
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
+from utils.serializers import SerializerLambdaField
 from .models import ExamsAdditionalHours, Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, \
     PensumReductions, Schedules
 
@@ -198,7 +199,7 @@ class ModulesToSetupRelatedField(SlugRelatedField):
 class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = ExamsAdditionalHours
-        fields = ['url', 'module', 'type', 'portion',
+        fields = ['url', 'module_url', 'module', 'module_name', 'type', 'portion',
                   # hidden
                   'pensum']
         extra_kwargs = {
@@ -211,7 +212,16 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
         'pensums_employee': 'pensum__employee__abbreviation'
     }
 
+    module_url = AdvNestedHyperlinkedIdentityField(
+        view_name='modules-detail',
+        lookup_field=None,
+        parent_lookup_kwargs={
+            'schedule_slug': 'pensum__schedule__slug',
+            'module_code': 'module__module_code'
+        }
+    )
     module = ModulesToSetupRelatedField(slug_field='module_code', queryset=Modules.objects.filter(examination=True))
+    module_name = SerializerLambdaField(lambda obj: obj.module.name)
 
     pensum = ParentHiddenRelatedField(
         queryset=Pensum.objects.all(),
