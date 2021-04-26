@@ -45,24 +45,13 @@ heroku open
 
 ## Last changes
 
-### 25/04/2020
+### 26/04/2020
 
-- Pensum / Property name change from pensum_hours_from_plan to pensum_contact_hours
-- Pensum / Added property pensum_additional_hours
-- Modules / Removing csv import as it is much more convenient to import data with JSON files (easily nested data)
-- Employees / Refactor of csv import actions descriptions
-- AGH / Added custom entry for additional hours to the JSON data file + migration
-- Pensum / Added nested Exams Additional Hours model, serializer and view
-- Exams Additional Hours / Added validation for portion field (0-1 range)
-- Exams Additional Hours / Added fields corresponding to model's fields
-- Exams Additional Hours / Excluding modules to pick with no order set
-- Exams Additional Hours / Added field with student's number (to check for proper value for calculating additional hours)
-- Pensum / Added exams into calculations of additional hours
+- 
 
 ### To be done:
 
 Major
-- Calculating exams within additional hours
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
 
 Minor
