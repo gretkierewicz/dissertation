@@ -9,5 +9,6 @@ CLASSES_NAMES = [
     'Zajęcia z wychowania fizycznego',
     'Prace kontrolne i przejściowe',
     'Conversation seminar',
-    'Workshops'
+    'Workshops',
+    'Others'
 ]

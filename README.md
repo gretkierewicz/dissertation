@@ -48,6 +48,7 @@ heroku open
 ### 26/04/2020
 
 - Syllabus / Serializers cleanup
+- Classes / 'Others' choice added
 
 ### To be done:
 
