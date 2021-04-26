@@ -1,7 +1,7 @@
 import re
 
 from django.urls import reverse
-from rest_framework.fields import BooleanField, CharField, ChoiceField, IntegerField, SerializerMethodField
+from rest_framework.fields import CharField, ChoiceField, SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 
@@ -68,37 +68,5 @@ class SyllabusSerializer(Serializer):
 
 
 # STUDY PLANS SECTION
-class ClassesSerializer(Serializer):
-    name = CharField()
-    classes_hours = IntegerField()
-
-
-class ModulesSerializer(Serializer):
-    module_code = CharField()
-    name = CharField()
-    examination = BooleanField()
-    form_of_classes = ClassesSerializer(many=True, required=False)
-
-
-class GroupsSerializer(Serializer):
-    name = CharField()
-    type = CharField()
-    modules = ModulesSerializer(many=True, required=False)
-
-
-class SemestersSerializer(Serializer):
-    number = IntegerField()
-    groups = GroupsSerializer(many=True, required=False)
-
-
-class StudyPlanSerializer(Serializer):
-    name = CharField()
-    semesters = SemestersSerializer(many=True, required=False)
-
-
-class ProgrammeSerializer(Serializer):
-    study_plan = StudyPlanSerializer()
-
-
 class ImportModulesSerializer(Serializer):
     schedule = SlugRelatedField(queryset=Schedules.objects.all(), slug_field='slug')
