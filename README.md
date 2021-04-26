@@ -49,6 +49,7 @@ heroku open
 
 - Syllabus / Serializers cleanup
 - Classes / 'Others' choice added
+- Migrations update
 
 ### To be done:
 
