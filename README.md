@@ -48,6 +48,7 @@ heroku open
 ### 27/04/2020
 
 - ModulesToSetupRelatedField FIX - it filters out modules/exams from other schedules now
+- ExamsAdditionalHoursSerializer FIX - crash if no order in module at all and yet exam is present (after deleting order)
 
 ### To be done:
 

@@ -185,7 +185,8 @@ class ModulesToSetupRelatedField(SlugRelatedField):
             employee__abbreviation=self.context.get('request').resolver_match.kwargs.get('pensums_employee'),
             schedule__slug=schedule_slug
         )
-        # exclude modules with no orders at all
+        queryset = self.queryset.filter(schedule__slug=schedule_slug)
+        # exclude modules with no orders at all (cannot simply exclude as main_order is a property)
         modules_pk_to_exclude = [module.pk for module in queryset if not module.main_order]
         # exclude employee's staffed exams
         modules_pk_to_exclude.extend([exam.module.pk for exam in pensum.exams_additional_hours.all()])
@@ -225,7 +226,8 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
     )
     module = ModulesToSetupRelatedField(slug_field='module_code', queryset=Modules.objects.filter(examination=True))
     module_name = SerializerLambdaField(lambda obj: obj.module.name)
-    students_number = SerializerLambdaField(lambda obj: obj.module.main_order.students_number)
+    students_number = SerializerLambdaField(
+        lambda obj: obj.module.main_order.students_number if obj.module.main_order else None)
 
     pensum = ParentHiddenRelatedField(
         queryset=Pensum.objects.all(),
