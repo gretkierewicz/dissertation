@@ -1,3 +1,10 @@
+### 26/04/2020
+
+- Syllabus / Serializers cleanup
+- Classes / 'Others' choice added
+- Migrations update
+- SQL Model scheme update + SVG file
+
 ### 25/04/2020
 
 - Pensum / Property name change from pensum_hours_from_plan to pensum_contact_hours
