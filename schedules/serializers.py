@@ -180,9 +180,10 @@ class ModulesToSetupRelatedField(SlugRelatedField):
     """
 
     def get_queryset(self):
-        queryset = self.queryset
-        pensum = queryset.first().schedule.pensums.get(
-            employee__abbreviation=self.context.get('request').resolver_match.kwargs.get('pensums_employee')
+        schedule_slug = self.context.get('request').resolver_match.kwargs.get('schedule_slug')
+        pensum = Pensum.objects.get(
+            employee__abbreviation=self.context.get('request').resolver_match.kwargs.get('pensums_employee'),
+            schedule__slug=schedule_slug
         )
         # exclude modules with no orders at all
         modules_pk_to_exclude = [module.pk for module in queryset if not module.main_order]

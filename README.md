@@ -47,7 +47,7 @@ heroku open
 
 ### 27/04/2020
 
-- 
+- ModulesToSetupRelatedField FIX - it filters out modules/exams from other schedules now
 
 ### To be done:
 
