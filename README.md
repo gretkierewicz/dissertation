@@ -45,15 +45,15 @@ heroku open
 
 ## Last changes
 
-### 27/04/2020
+### 04/05/2020
 
-- ModulesToSetupRelatedField FIX - it filters out modules/exams from other schedules now
-- ExamsAdditionalHoursSerializer FIX - crash if no order in module at all and yet exam is present (after deleting order)
+- DB model update plus export of png and svg files
 
 ### To be done:
 
 Major
 - Setting up limits, pensum value and filters for employees possible to choose for plans/etc
+- In terms of §53/1 - consider including module's study types
 
 Minor
 - Implement custom filters, sorting or search

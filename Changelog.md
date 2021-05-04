@@ -1,3 +1,8 @@
+### 27/04/2020
+
+- ModulesToSetupRelatedField FIX - it filters out modules/exams from other schedules now
+- ExamsAdditionalHoursSerializer FIX - crash if no order in module at all and yet exam is present (after deleting order)
+
 ### 26/04/2020
 
 - Syllabus / Serializers cleanup
