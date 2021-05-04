@@ -35,6 +35,7 @@ def read_csv_files(self, request, model, lookup):
 
 class SerializerLambdaField(SerializerMethodField):
     """
+    Source: https://blog.ridmik.com/a-cleaner-alternative-to-serializermethodfield-in-django/
     SerializerLambdaField - Custom Serializer Method Field
     Allows use of lambda function as parameter
     """
