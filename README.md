@@ -48,6 +48,7 @@ heroku open
 ### 05/05/2020
 
 - Cleanup in additional hours factors JSON file
+- Update for model schema
 
 ### To be done:
 
