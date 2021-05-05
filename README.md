@@ -45,10 +45,9 @@ heroku open
 
 ## Last changes
 
-### 04/05/2020
+### 05/05/2020
 
-- DB model update plus export of png and svg files
-- Added source of code used to build SerializerLambdaField
+- Cleanup in additional hours factors JSON file
 
 ### To be done:
 

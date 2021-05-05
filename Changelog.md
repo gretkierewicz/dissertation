@@ -1,3 +1,8 @@
+### 04/05/2020
+
+- DB model update plus export of png and svg files
+- Added source of code used to build SerializerLambdaField
+
 ### 27/04/2020
 
 - ModulesToSetupRelatedField FIX - it filters out modules/exams from other schedules now
