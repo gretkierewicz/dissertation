@@ -55,12 +55,13 @@ heroku open
   Update for AdditionalHoursFactorData class
 - PensumAdditionalHoursFactorsSerializer / refactoring methods
 - Pensum model / new property - pensum_additional_horus_not_counted_into_limit + serializer update
+- README and minor additional hours factors JSON file update
 
 ### To be done:
 
 Major
-- Setting up limits, pensum value and filters for employees possible to choose for plans/etc
-- In terms of §53/1 - consider including module's study types
+- Implement factors: deficits for contact hours and job-time hours limits
+- Filters for employees possible to choose for plans/etc
 
 Minor
 - Implement custom filters, sorting or search

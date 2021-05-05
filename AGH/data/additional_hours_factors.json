@@ -6,12 +6,12 @@
       "value": 0.3
     },
     {
-      "factor ID": "min contact hours",
+      "factor ID": "max relative deficit for contact hours",
       "factor description": "§52/4 minimum godz. żywych (kontaktowych)/etat",
       "value": 0.5
     },
     {
-      "factor ID": "max deficit",
+      "factor ID": "max absolute deficit for contact hours",
       "factor description": "§50/8 Liczba godzin zajęć dydaktycznych poniżej pensum dydaktycznego nie może przekraczać 45 godzin",
       "value": 45
     }
@@ -29,7 +29,7 @@
     },
     {
       "factor ID": "full-job over-time hours limit",
-      "factor description": "§54/13 limit/etat dla pełnego etatu (wszystko j.pol.)",
+      "factor description": "§54/13 limit/etat dla pełnego etatu",
       "value": 2.0
     }
   ],
