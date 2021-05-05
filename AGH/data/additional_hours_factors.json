@@ -28,7 +28,7 @@
       "value": 1.7
     },
     {
-      "factor ID": "full-job over-time hours limit",
+      "factor ID": "over-time hours limit",
       "factor description": "§54/13 limit/etat dla pełnego etatu",
       "value": 2.0
     }

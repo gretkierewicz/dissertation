@@ -57,11 +57,12 @@ heroku open
 - Pensum model / new property - pensum_additional_horus_not_counted_into_limit + serializer update
 - README and minor additional hours factors JSON file update
 - Pensum model / Added min_for_contact_hours value and corresponding flag
+- Pensum model / Added job-time related factors and flags
 
 ### To be done:
 
 Major
-- Implement factors: deficits for contact hours and job-time hours limits
+- validator for reaching limit
 - Filters for employees possible to choose for plans/etc
 
 Minor

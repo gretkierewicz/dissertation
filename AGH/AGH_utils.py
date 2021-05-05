@@ -97,15 +97,22 @@ class AdditionalHoursFactorData:
         self.is_counted_into_limit = factor_data.get('is counted into limit', True)
 
 
-def get_major_factors_value(name):
+def __get_factor_value(factor_name, sector_name='major factors'):
     base_path = os.path.dirname(__file__)
     with open(
             os.path.join(base_path, "data/additional_hours_factors.json"), 'r', encoding='utf8'
     ) as json_file:
-        return next(
-            (item.get('value') for item in json.load(json_file).get('major factors') if item.get('factor ID') == name),
-            None
-        )
+        return next((
+            item.get('value') for item in json.load(json_file).get(sector_name) if item.get('factor ID') == factor_name
+        ), None)
+
+
+def get_major_factors_value(name):
+    return __get_factor_value(name)
+
+
+def get_job_time_hours_limit(name):
+    return __get_factor_value(name, sector_name="job-time hours limits")
 
 
 class ExamsFactors:

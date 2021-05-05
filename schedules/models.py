@@ -1,8 +1,14 @@
 from django.db import models
 
-from AGH.AGH_utils import AdditionalHoursFactorData, ExamsFactors, get_additional_hours_factors_choices, \
-    get_major_factors_value, \
-    get_pensum_function_names, get_pensum_reduction_value
+from AGH.AGH_utils import (
+    AdditionalHoursFactorData,
+    ExamsFactors,
+    get_additional_hours_factors_choices,
+    get_major_factors_value,
+    get_job_time_hours_limit,
+    get_pensum_function_names,
+    get_pensum_reduction_value
+)
 from employees.models import Employees
 
 
@@ -52,7 +58,7 @@ class Pensum(models.Model):
                 exam_additional_hours += exam.portion * (
                     ExamsFactors.factor_for_written_exam if exam.type != 'Oral' else ExamsFactors.factor_for_oral_exam
                 ) * exam.module.main_order.students_number
-        return sum_of_factors_hours + min(exam_additional_hours, ExamsFactors.max_summary_hours)
+        return (sum_of_factors_hours + min(exam_additional_hours, ExamsFactors.max_summary_hours)).__round__(1)
 
     @property
     def calculated_threshold(self):
@@ -80,8 +86,31 @@ class Pensum(models.Model):
         return max([relative_min * self.calculated_threshold, absolute_min])
 
     @property
-    def is_min_for_contact_hours_reached(self):
-        return self.pensum_contact_hours >= self.min_for_contact_hours
+    def amount_until_contact_hours_min(self):
+        hours = self.min_for_contact_hours - self.pensum_contact_hours
+        return hours if hours > 0 else 0
+
+    @property
+    def limit_for_contact_hours(self):
+        ret = self.calculated_threshold
+        if self.employee.part_of_job_time < 1.0:
+            ret *= get_job_time_hours_limit("part-job contact hours limit")
+        else:
+            ret *= get_job_time_hours_limit("full-job contact hours limit")
+        return ret
+
+    @property
+    def amount_until_contact_hours_limit(self):
+        return self.limit_for_contact_hours - self.pensum_contact_hours
+
+    @property
+    def limit_for_over_time_hours(self):
+        return self.calculated_threshold * get_job_time_hours_limit("over-time hours limit")
+
+    @property
+    def amount_until_over_time_hours_limit(self):
+        return (self.limit_for_over_time_hours - self.pensum_contact_hours - self.pensum_additional_hours
+                + self.pensum_additional_horus_not_counted_into_limit).__round__(1)
 
 
 class PensumBasicThresholdFactors(models.Model):
