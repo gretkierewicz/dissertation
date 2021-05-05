@@ -53,6 +53,7 @@ heroku open
   ponadwymiarowych, o którym mowa w zdaniu pierwszym, nie uwzględnia się godzin, o których mowa w 
   § 52 ust. 2 pkt 1 lit. a (tj. z tytułu opieki nad pracą dyplomową)")
   Update for AdditionalHoursFactorData class
+- PensumAdditionalHoursFactorsSerializer / refactoring methods
 
 ### To be done:
 
