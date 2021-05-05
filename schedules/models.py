@@ -73,6 +73,16 @@ class Pensum(models.Model):
             pass
         return ret if ret > 0 else 0
 
+    @property
+    def min_for_contact_hours(self):
+        relative_min = 1 - get_major_factors_value("max relative deficit for contact hours")
+        absolute_min = self.calculated_threshold - get_major_factors_value("max absolute deficit for contact hours")
+        return max([relative_min * self.calculated_threshold, absolute_min])
+
+    @property
+    def is_min_for_contact_hours_reached(self):
+        return self.pensum_contact_hours >= self.min_for_contact_hours
+
 
 class PensumBasicThresholdFactors(models.Model):
     ADD = 'Addition'

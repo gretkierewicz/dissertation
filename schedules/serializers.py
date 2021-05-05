@@ -248,7 +248,8 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
         model = Pensum
         fields = ['url', 'employee_url', 'first_name', 'last_name', 'employee', 'e_mail', 'pensum_group',
                   'basic_threshold', 'part_of_job_time', 'basic_threshold_factors_url', 'basic_threshold_factors',
-                  'reduction_url', 'reduction', 'calculated_threshold', 'pensum_contact_hours', 'plans',
+                  'reduction_url', 'reduction', 'calculated_threshold',
+                  'pensum_contact_hours', 'min_for_contact_hours', 'is_min_for_contact_hours_reached', 'plans',
                   'pensum_additional_hours', 'pensum_additional_horus_not_counted_into_limit',
                   'additional_hours_factors_url', 'additional_hours_factors',
                   'exams_additional_hours_url', 'exams_additional_hours',

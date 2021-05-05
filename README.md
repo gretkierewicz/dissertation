@@ -56,6 +56,7 @@ heroku open
 - PensumAdditionalHoursFactorsSerializer / refactoring methods
 - Pensum model / new property - pensum_additional_horus_not_counted_into_limit + serializer update
 - README and minor additional hours factors JSON file update
+- Pensum model / Added min_for_contact_hours value and corresponding flag
 
 ### To be done:
 
