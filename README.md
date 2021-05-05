@@ -49,6 +49,10 @@ heroku open
 
 - Cleanup in additional hours factors JSON file
 - Update for model schema
+- New flag for § 54 ust. 13 - additional hours not counted into limits ("Do maksymalnego dopuszczalnego wymiaru godzin 
+  ponadwymiarowych, o którym mowa w zdaniu pierwszym, nie uwzględnia się godzin, o których mowa w 
+  § 52 ust. 2 pkt 1 lit. a (tj. z tytułu opieki nad pracą dyplomową)")
+  Update for AdditionalHoursFactorData class
 
 ### To be done:
 

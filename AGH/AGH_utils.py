@@ -94,6 +94,7 @@ class AdditionalHoursFactorData:
         self.limit_key_name = next(item for item in factor_data.keys() if item.startswith('limit per '))
         self.limit_per_unit = factor_data.get(self.limit_key_name)
         self.max_amount_for_group = group['limit per year'] if group else None
+        self.is_counted_into_limit = factor_data.get('is counted into limit', True)
 
 
 def get_major_factors_value(name):

@@ -41,25 +41,29 @@
       "factor ID": "bachelor thesis",
       "factor description": "opieka nad pracą dyplomową na studiach inżynierskich lub licencjackich",
       "limit per unit": 10,
-      "group ID": "bachelors"
+      "group ID": "bachelors",
+      "is counted into limit": false
     },
     {
       "factor ID": "multi bachelor thesis",
       "factor description": "opieka nad zespołową pracą dyplomową na studiach inżynierskich lub licencjackich",
       "limit per unit": 15,
-      "group ID": "bachelors"
+      "group ID": "bachelors",
+      "is counted into limit": false
     },
     {
       "factor ID": "master thesis",
       "factor description": "opieka nad pracą dyplomową na studiach magisterskich",
       "limit per unit": 15,
-      "group ID": "masters"
+      "group ID": "masters",
+      "is counted into limit": false
     },
     {
       "factor ID": "multi master thesis",
       "factor description": "opieka nad zespołową pracą dyplomową na studiach magisterskich",
       "limit per unit": 30,
-      "group ID": "masters"
+      "group ID": "masters",
+      "is counted into limit": false
     },
     {
       "factor ID": "doctoral student before opening procedure for PhD",
