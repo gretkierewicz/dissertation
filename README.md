@@ -54,6 +54,7 @@ heroku open
   § 52 ust. 2 pkt 1 lit. a (tj. z tytułu opieki nad pracą dyplomową)")
   Update for AdditionalHoursFactorData class
 - PensumAdditionalHoursFactorsSerializer / refactoring methods
+- Pensum model / new property - pensum_additional_horus_not_counted_into_limit + serializer update
 
 ### To be done:
 

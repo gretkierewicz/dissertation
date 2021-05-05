@@ -1,6 +1,7 @@
 from django.db import models
 
-from AGH.AGH_utils import ExamsFactors, get_additional_hours_factors_choices, get_major_factors_value, \
+from AGH.AGH_utils import AdditionalHoursFactorData, ExamsFactors, get_additional_hours_factors_choices, \
+    get_major_factors_value, \
     get_pensum_function_names, get_pensum_reduction_value
 from employees.models import Employees
 
@@ -23,6 +24,14 @@ class Pensum(models.Model):
     @property
     def pensum_contact_hours(self):
         return sum([plan.plan_hours for plan in self.employee.plans.all()])
+
+    @property
+    def pensum_additional_horus_not_counted_into_limit(self):
+        return sum([
+            factor.amount * factor.value_per_unit
+            for factor in self.additional_hours_factors.all()
+            if not AdditionalHoursFactorData(factor.name).is_counted_into_limit
+        ])
 
     @property
     def pensum_additional_hours(self):
