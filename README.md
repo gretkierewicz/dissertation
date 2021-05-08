@@ -56,6 +56,7 @@ heroku open
 - ExamsAdditionalHoursSerializer / Refactoring portion's validation method
 - PensumAdditionalHoursFactorsSerializer / Added validation for reaching pensum limit + refactoring validation method
 - PlansSerializer / refactoring plan_hours validation - including reaching pensum additional hours limit
+- Cleanup
 
 ### To be done:
 

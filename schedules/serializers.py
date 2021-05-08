@@ -306,10 +306,10 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
                   # contact hours section:
                   'min_for_contact_hours', 'amount_until_contact_hours_min',
                   'pensum_contact_hours',
-                  'amount_until_contact_hours_limit', 'limit_for_contact_hours',
+                  'limit_for_contact_hours', 'amount_until_contact_hours_limit',
+                  'limit_for_over_time_hours', 'amount_until_over_time_hours_limit',
                   'plans',
                   # additional hours section:
-                  'limit_for_over_time_hours', 'amount_until_over_time_hours_limit',
                   'pensum_additional_hours', 'pensum_additional_hours_not_counted_into_limit',
                   'additional_hours_factors_url', 'additional_hours_factors',
                   'exams_additional_hours_url', 'exams_additional_hours',
