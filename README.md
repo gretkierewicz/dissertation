@@ -45,19 +45,9 @@ heroku open
 
 ## Last changes
 
-### 05/05/2020
+### 08/05/2020
 
-- Cleanup in additional hours factors JSON file
-- Update for model schema
-- New flag for § 54 ust. 13 - additional hours not counted into limits ("Do maksymalnego dopuszczalnego wymiaru godzin 
-  ponadwymiarowych, o którym mowa w zdaniu pierwszym, nie uwzględnia się godzin, o których mowa w 
-  § 52 ust. 2 pkt 1 lit. a (tj. z tytułu opieki nad pracą dyplomową)")
-  Update for AdditionalHoursFactorData class
-- PensumAdditionalHoursFactorsSerializer / refactoring methods
-- Pensum model / new property - pensum_additional_horus_not_counted_into_limit + serializer update
-- README and minor additional hours factors JSON file update
-- Pensum model / Added min_for_contact_hours value and corresponding flag
-- Pensum model / Added job-time related factors and flags
+- 
 
 ### To be done:
 
