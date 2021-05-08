@@ -32,7 +32,7 @@ class Pensum(models.Model):
         return sum([plan.plan_hours for plan in self.employee.plans.all()])
 
     @property
-    def pensum_additional_horus_not_counted_into_limit(self):
+    def pensum_additional_hours_not_counted_into_limit(self):
         return sum([
             factor.amount * factor.value_per_unit
             for factor in self.additional_hours_factors.all()
@@ -110,7 +110,7 @@ class Pensum(models.Model):
     @property
     def amount_until_over_time_hours_limit(self):
         return (self.limit_for_over_time_hours - self.pensum_contact_hours - self.pensum_additional_hours
-                + self.pensum_additional_horus_not_counted_into_limit).__round__(1)
+                + self.pensum_additional_hours_not_counted_into_limit).__round__(1)
 
 
 class PensumBasicThresholdFactors(models.Model):

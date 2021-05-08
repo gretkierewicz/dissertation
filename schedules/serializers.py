@@ -259,7 +259,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
                   'plans',
                   # additional hours section:
                   'limit_for_over_time_hours', 'amount_until_over_time_hours_limit',
-                  'pensum_additional_hours', 'pensum_additional_horus_not_counted_into_limit',
+                  'pensum_additional_hours', 'pensum_additional_hours_not_counted_into_limit',
                   'additional_hours_factors_url', 'additional_hours_factors',
                   'exams_additional_hours_url', 'exams_additional_hours',
                   # hidden
