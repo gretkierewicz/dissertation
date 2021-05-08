@@ -34,15 +34,13 @@ class Pensum(models.Model):
     @property
     def pensum_additional_hours_not_counted_into_limit(self):
         return sum([
-            factor.amount * factor.value_per_unit
-            for factor in self.additional_hours_factors.all()
+            factor.total_factor_hours for factor in self.additional_hours_factors.all()
             if not AdditionalHoursFactorData(factor.name).is_counted_into_limit
         ])
 
     @property
     def pensum_additional_hours(self):
-        sum_of_factors_hours = sum(
-            [factor.amount * factor.value_per_unit for factor in self.additional_hours_factors.all()])
+        sum_of_factors_hours = sum([factor.total_factor_hours for factor in self.additional_hours_factors.all()])
         # add additional hours for plans with congress language
         # TODO: consider using filter if list of congress lang. is given
         # congress_language_plans = self.employee.plans.filter(order__classes__module__language__in=['en', 'fr', ...])
@@ -155,6 +153,14 @@ class PensumAdditionalHoursFactors(models.Model):
     value_per_unit = models.PositiveIntegerField()
     amount = models.PositiveIntegerField(default=1)
     description = models.CharField(max_length=128, blank=True)
+
+    @property
+    def total_factor_hours(self):
+        return self.value_per_unit * self.amount
+
+    @property
+    def total_factor_hours_counted_into_limit(self):
+        return self.total_factor_hours if AdditionalHoursFactorData(self.name).is_counted_into_limit else 0
 
 
 class ExamsAdditionalHours(models.Model):

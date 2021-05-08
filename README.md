@@ -49,6 +49,7 @@ heroku open
 
 - Plans / Validation for plan hours - prevent exceeding limit for contact hours
 - Pensum model / Typo cleanup
+- PensumAdditionalHoursFactors / New properties within model + refactoring
 
 ### To be done:
 

@@ -89,7 +89,7 @@ class PensumReductionSerializer(NestedHyperlinkedModelSerializer):
 class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = PensumAdditionalHoursFactors
-        fields = ['url', 'name', 'value_per_unit', 'amount', 'description',
+        fields = ['url', 'name', 'value_per_unit', 'amount', 'description', 'total_factor_hours_counted_into_limit',
                   # hidden
                   'pensum']
         extra_kwargs = {
