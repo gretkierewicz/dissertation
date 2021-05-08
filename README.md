@@ -55,11 +55,11 @@ heroku open
 - ExamsAdditionalHoursSerializer / Added validation for portion not to reach pensum's limit
 - ExamsAdditionalHoursSerializer / Refactoring portion's validation method
 - PensumAdditionalHoursFactorsSerializer / Added validation for reaching pensum limit + refactoring validation method
+- PlansSerializer / refactoring plan_hours validation - including reaching pensum additional hours limit
 
 ### To be done:
 
 Major
-- validator for reaching limit
 - Filters for employees possible to choose for plans/etc
 
 Minor

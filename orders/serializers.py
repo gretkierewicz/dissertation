@@ -80,6 +80,8 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
     )
 
     def validate_plan_hours(self, data):
+        max_value_to_set = reason = None
+
         # prevent exceeding order's hours number by its plans summary hours
         # TODO: in case of importing orders with nested plans, order instance needs to be passed with initial_data
         url_kwargs = self.context['request'].resolver_match.kwargs
@@ -90,25 +92,32 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
             'classes__name': url_kwargs['classes_name']}
         # finding parent order instance
         order = get_object_or_404(Orders, **order_filter_kwargs)
-        if order.plans_sum_hours - (self.instance.plan_hours if self.instance else 0) + data > order.order_hours:
-            raise ValidationError(
-                f"Order's hours number cannot be exceeded by summary number of its plans hours. "
-                f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
-                f"{order.order_hours - order.plans_sum_hours + (self.instance.plan_hours if self.instance else 0)}"
-            )
-        # prevent exceeding employee pensum's maximum contact hours
+        tmp = order.order_hours - order.plans_sum_hours + (self.instance.plan_hours if self.instance else 0)
+        if data > tmp:
+            max_value_to_set = tmp
+            reason = "Order's hours number cannot be exceeded by summary number of its plans hours."
+
+        # prevent exceeding employee's pensum maximum contact hours
         # get filter kwargs from request's URL
         pensum_filter_kwargs = {
             'schedule__slug': url_kwargs['schedule_slug'],
             'employee__abbreviation': self.initial_data.get('employee')}
         # finding employee's pensum instance
         pensum = get_object_or_404(Pensum, **pensum_filter_kwargs)
-        if data > (self.instance.plan_hours if self.instance else 0) + pensum.amount_until_contact_hours_limit:
-            raise ValidationError(
-                f"Employee's pensum contact hours limit cannot be exceeded. "
-                f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
-                f"{(self.instance.plan_hours if self.instance else 0) + pensum.amount_until_contact_hours_limit}"
-            )
+        tmp = pensum.amount_until_contact_hours_limit + (self.instance.plan_hours if self.instance else 0)
+        if data > tmp and (not max_value_to_set or max_value_to_set > tmp):
+            max_value_to_set = tmp
+            reason = "Employee's pensum contact hours limit cannot be exceeded."
+
+        # prevent exceeding employee's pensum additional hours limit
+        tmp = pensum.amount_until_over_time_hours_limit + (self.instance.plan_hours if self.instance else 0)
+        if data > tmp and (not max_value_to_set or max_value_to_set > tmp):
+            max_value_to_set = tmp
+            reason = "Employee's pensum additional hours limit cannot be exceeded."
+
+        if max_value_to_set:
+            raise ValidationError(f"Max. value possible: {max_value_to_set}."
+                                  f"{' Reason: {}'.format(reason) if reason else ''}")
         return data
 
 
