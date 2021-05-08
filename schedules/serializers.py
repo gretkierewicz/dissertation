@@ -5,7 +5,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from AGH.AGH_utils import AdditionalHoursFactorData
+from AGH.AGH_utils import AdditionalHoursFactorData, ExamsFactors, get_exam_hours
 from employees.models import Employees
 from modules.models import Modules
 from orders.serializers import EmployeePlansSerializer
@@ -241,6 +241,28 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
         if value + portion_to_set > 1:
             raise ValidationError(f"Sum of all portions for this module's exams would exceed 1. Maximum value to set: "
                                   f"{1 - portion_to_set}")
+        # prevent exceeding pensum's limit
+        url_kwargs = self.context['request'].resolver_match.kwargs
+        # get filter kwargs from request's URL
+        module_filter_kwargs = {
+            'schedule__slug': url_kwargs['schedule_slug'],
+            'module_code': self.initial_data.get('module')}
+        # finding parent module instance
+        module = get_object_or_404(Modules, **module_filter_kwargs)
+        pensum_filter_kwargs = {
+            'schedule__slug': url_kwargs['schedule_slug'],
+            'employee__abbreviation': url_kwargs['pensums_employee']}
+        # finding parent pensum instance
+        pensum = get_object_or_404(Pensum, **pensum_filter_kwargs)
+        exam_hours = get_exam_hours(module, self.initial_data.get('type'))
+        if module.main_order and module.main_order.students_number > ExamsFactors.min_students_number:
+            if pensum.amount_until_over_time_hours_limit < exam_hours * (
+                value - (self.instance.portion if self.instance else 0)
+            ):
+                raise ValidationError(
+                    "Employee pensum's additional hours limit reached. Maximum portion to set: {}".format(
+                        pensum.amount_until_over_time_hours_limit / exam_hours + (
+                            self.instance.portion if self.instance else 0)))
         return value
 
 

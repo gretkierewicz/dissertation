@@ -4,6 +4,7 @@ from AGH.AGH_utils import (
     AdditionalHoursFactorData,
     ExamsFactors,
     get_additional_hours_factors_choices,
+    get_exam_hours,
     get_major_factors_value,
     get_job_time_hours_limit,
     get_pensum_function_names,
@@ -172,6 +173,4 @@ class ExamsAdditionalHours(models.Model):
         if not self.module.main_order:
             return 0
         if self.module.main_order.students_number > ExamsFactors.min_students_number:
-            return self.portion * (
-                ExamsFactors.factor_for_written_exam if self.type != 'Oral' else ExamsFactors.factor_for_oral_exam
-            ) * self.module.main_order.students_number
+            return self.portion * get_exam_hours(self.module, self.type)

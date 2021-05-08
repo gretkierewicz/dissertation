@@ -130,3 +130,9 @@ class ExamsFactors:
                 min_students_number = __rec.get('value')
             if __rec.get('factor ID') == 'sum_max':
                 max_summary_hours = __rec.get('limit per year')
+
+
+def get_exam_hours(module, _type):
+    return module.main_order.students_number * (
+        ExamsFactors.factor_for_written_exam if _type != 'Oral' else ExamsFactors.factor_for_oral_exam
+    )
