@@ -51,6 +51,7 @@ heroku open
 - Pensum model / Typo cleanup
 - PensumAdditionalHoursFactors / New properties within model + refactoring
 - ExamsAdditionalHours / New property within model + refactoring
+- Plans / Added plan_additional_hours property
 
 ### To be done:
 

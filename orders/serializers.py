@@ -45,7 +45,7 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Plans
-        fields = ['url', 'employee_url', 'employee', 'plan_hours',
+        fields = ['url', 'employee_url', 'employee', 'plan_hours', 'plan_additional_hours',
                   # hidden
                   'order']
         extra_kwargs = {

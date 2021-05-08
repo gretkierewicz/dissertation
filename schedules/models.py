@@ -42,11 +42,7 @@ class Pensum(models.Model):
     def pensum_additional_hours(self):
         sum_of_factors_hours = sum([factor.total_factor_hours for factor in self.additional_hours_factors.all()])
         # add additional hours for plans with congress language
-        # TODO: consider using filter if list of congress lang. is given
-        # congress_language_plans = self.employee.plans.filter(order__classes__module__language__in=['en', 'fr', ...])
-        congress_language_plans = self.employee.plans.exclude(order__classes__module__language='pl')
-        congress_language_factor = get_major_factors_value('congress language factor')
-        sum_of_factors_hours += sum([plan.plan_hours * congress_language_factor for plan in congress_language_plans])
+        sum_of_factors_hours += sum([plan.plan_additional_hours for plan in self.employee.plans.all()])
         # examination additional hours
         exam_additional_hours = sum([exam.total_factor_hours for exam in self.exams_additional_hours.all()])
         return (sum_of_factors_hours + min(exam_additional_hours, ExamsFactors.max_summary_hours)).__round__(2)

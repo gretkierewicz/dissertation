@@ -2,6 +2,7 @@ from math import ceil
 
 from django.db import models
 
+from AGH.AGH_utils import get_major_factors_value
 from employees.models import Employees
 from modules.models import Classes
 
@@ -37,3 +38,9 @@ class Plans(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE, related_name='plans')
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='plans')
     plan_hours = models.PositiveIntegerField()
+
+    @property
+    def plan_additional_hours(self):
+        # TODO: consider using filter if list of congress lang. is given
+        factor = get_major_factors_value('congress language factor')
+        return 0 if self.order.classes.module.language == 'pl' else self.plan_hours * factor
