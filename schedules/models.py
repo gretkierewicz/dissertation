@@ -48,15 +48,8 @@ class Pensum(models.Model):
         congress_language_factor = get_major_factors_value('congress language factor')
         sum_of_factors_hours += sum([plan.plan_hours * congress_language_factor for plan in congress_language_plans])
         # examination additional hours
-        exam_additional_hours = 0
-        for exam in self.exams_additional_hours.all():
-            if not exam.module.main_order:
-                continue
-            if exam.module.main_order.students_number > ExamsFactors.min_students_number:
-                exam_additional_hours += exam.portion * (
-                    ExamsFactors.factor_for_written_exam if exam.type != 'Oral' else ExamsFactors.factor_for_oral_exam
-                ) * exam.module.main_order.students_number
-        return (sum_of_factors_hours + min(exam_additional_hours, ExamsFactors.max_summary_hours)).__round__(1)
+        exam_additional_hours = sum([exam.total_factor_hours for exam in self.exams_additional_hours.all()])
+        return (sum_of_factors_hours + min(exam_additional_hours, ExamsFactors.max_summary_hours)).__round__(2)
 
     @property
     def calculated_threshold(self):
@@ -108,7 +101,7 @@ class Pensum(models.Model):
     @property
     def amount_until_over_time_hours_limit(self):
         return (self.limit_for_over_time_hours - self.pensum_contact_hours - self.pensum_additional_hours
-                + self.pensum_additional_hours_not_counted_into_limit).__round__(1)
+                + self.pensum_additional_hours_not_counted_into_limit).__round__(2)
 
 
 class PensumBasicThresholdFactors(models.Model):
@@ -177,3 +170,12 @@ class ExamsAdditionalHours(models.Model):
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='exams_additional_hours')
     type = models.CharField(max_length=8, choices=EXAM_TYPES_CHOICES, default=EXAM_TYPES_CHOICES[0][0])
     portion = models.FloatField(default=1)
+
+    @property
+    def total_factor_hours(self):
+        if not self.module.main_order:
+            return 0
+        if self.module.main_order.students_number > ExamsFactors.min_students_number:
+            return self.portion * (
+                ExamsFactors.factor_for_written_exam if self.type != 'Oral' else ExamsFactors.factor_for_oral_exam
+            ) * self.module.main_order.students_number

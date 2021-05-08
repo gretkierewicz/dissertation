@@ -198,6 +198,7 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = ExamsAdditionalHours
         fields = ['url', 'module_url', 'module', 'module_name', 'students_number', 'type', 'portion',
+                  'total_factor_hours',
                   # hidden
                   'pensum']
         extra_kwargs = {
