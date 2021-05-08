@@ -118,6 +118,8 @@ class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
     )
 
     def validate_value_per_unit(self, value):
+        max_value_to_set = reason = None
+
         other_factors, factor_data = self.__get_additional_hours_factor_data()
         if not factor_data.group_ID and other_factors:
             similar_factors_hours = sum([item.amount * item.value_per_unit for item in other_factors])
@@ -125,18 +127,34 @@ class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
             # TODO: consider replacing this simple logic of doubling semester limits
             if factor_data.limit_key_name.split()[-1] == 'semester':
                 limit *= 2
+            tmp = (limit - similar_factors_hours) // int(self.initial_data.get('amount'))
+            if value > tmp:
+                max_value_to_set = int(tmp)
+                reason = f"Value exceeds limit per year for this factor."
 
-            if value * int(self.initial_data.get('amount')) > limit - similar_factors_hours:
-                raise ValidationError(
-                    f"Value exceeds limit per year for this factor. Maximum value to be set with this amount: "
-                    f"{(limit - similar_factors_hours) // int(self.initial_data.get('amount'))}. "
-                    f"Hours until limit (value * amount): {limit - similar_factors_hours}."
-                )
-        if value > factor_data.limit_per_unit:
-            raise ValidationError(
-                f"Value exceeds limit per unit for this factor. Maximum value to be set: "
-                f"{factor_data.limit_per_unit}"
-            )
+        if value > factor_data.limit_per_unit and (
+                not max_value_to_set or max_value_to_set > factor_data.limit_per_unit
+        ):
+            max_value_to_set = factor_data.limit_per_unit
+            reason = "Value exceeds limit per unit for this factor."
+
+        # prevent exceeding employee pensum's additional hours limit
+        url_kwargs = self.context['request'].resolver_match.kwargs
+        # get filter kwargs from request's URL
+        pensum_filter_kwargs = {
+            'schedule__slug': url_kwargs['schedule_slug'],
+            'employee__abbreviation': url_kwargs['pensums_employee']}
+        # finding parent pensum instance
+        pensum = get_object_or_404(Pensum, **pensum_filter_kwargs)
+        tmp = pensum.amount_until_over_time_hours_limit + (self.instance.value_per_unit if self.instance else 0)
+        if value > tmp:
+            if not max_value_to_set or tmp < max_value_to_set:
+                max_value_to_set = int(tmp)
+                reason = "Value exceeds employee's pensum additional hours limit."
+
+        if max_value_to_set:
+            raise ValidationError(f"Max. value possible: {max_value_to_set}."
+                                  f"{' Reason: {}'.format(reason) if reason else ''}")
         return value
 
     def validate_amount(self, value):
