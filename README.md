@@ -47,7 +47,7 @@ heroku open
 
 ### 08/05/2020
 
-- 
+- Plans / Validation for plan hours - prevent exceeding limit for contact hours
 
 ### To be done:
 

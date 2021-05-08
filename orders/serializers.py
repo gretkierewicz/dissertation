@@ -7,7 +7,7 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from employees.models import Employees
 from modules.models import Classes
-from schedules.models import Schedules
+from schedules.models import Pensum, Schedules
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 from utils.serializers import SerializerLambdaField
 from .models import Orders, Plans
@@ -84,17 +84,30 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         # TODO: in case of importing orders with nested plans, order instance needs to be passed with initial_data
         url_kwargs = self.context['request'].resolver_match.kwargs
         # get filter kwargs from request's URL
-        filter_kwargs = {
+        order_filter_kwargs = {
             'classes__module__schedule__slug': url_kwargs['schedule_slug'],
             'classes__module__module_code': url_kwargs['module_module_code'],
             'classes__name': url_kwargs['classes_name']}
         # finding parent order instance
-        order = get_object_or_404(Orders, **filter_kwargs)
+        order = get_object_or_404(Orders, **order_filter_kwargs)
         if order.plans_sum_hours - (self.instance.plan_hours if self.instance else 0) + data > order.order_hours:
             raise ValidationError(
                 f"Order's hours number cannot be exceeded by summary number of its plans hours. "
                 f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
                 f"{order.order_hours - order.plans_sum_hours + (self.instance.plan_hours if self.instance else 0)}"
+            )
+        # prevent exceeding employee pensum's maximum contact hours
+        # get filter kwargs from request's URL
+        pensum_filter_kwargs = {
+            'schedule__slug': url_kwargs['schedule_slug'],
+            'employee__abbreviation': self.initial_data.get('employee')}
+        # finding employee's pensum instance
+        pensum = get_object_or_404(Pensum, **pensum_filter_kwargs)
+        if data > (self.instance.plan_hours if self.instance else 0) + pensum.amount_until_contact_hours_limit:
+            raise ValidationError(
+                f"Employee's pensum contact hours limit cannot be exceeded. "
+                f"Maximum number of hours to set with {'this' if self.instance else 'new'} plan: "
+                f"{(self.instance.plan_hours if self.instance else 0) + pensum.amount_until_contact_hours_limit}"
             )
         return data
 
