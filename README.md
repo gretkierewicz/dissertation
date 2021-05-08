@@ -57,6 +57,7 @@ heroku open
 - PensumAdditionalHoursFactorsSerializer / Added validation for reaching pensum limit + refactoring validation method
 - PlansSerializer / refactoring plan_hours validation - including reaching pensum additional hours limit
 - Cleanup
+- Pensum Model / amount_until_contact_hours_limit fix
 
 ### To be done:
 

@@ -76,7 +76,7 @@ class Pensum(models.Model):
     @property
     def amount_until_contact_hours_min(self):
         hours = self.min_for_contact_hours - self.pensum_contact_hours
-        return hours if hours > 0 else 0
+        return hours if hours >= 0 else 0
 
     @property
     def limit_for_contact_hours(self):
@@ -89,7 +89,7 @@ class Pensum(models.Model):
 
     @property
     def amount_until_contact_hours_limit(self):
-        return self.limit_for_contact_hours - self.pensum_contact_hours
+        return min(self.limit_for_contact_hours - self.pensum_contact_hours , self.amount_until_over_time_hours_limit)
 
     @property
     def limit_for_over_time_hours(self):
