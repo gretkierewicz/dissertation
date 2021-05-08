@@ -1,3 +1,5 @@
+import math
+
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField, StringRelatedField
@@ -233,15 +235,9 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
     )
 
     def validate_portion(self, value):
-        # get sum of all portions for this module's exam
-        module = get_object_or_404(Modules, **{'module_code': self.initial_data.get('module')})
-        portion_to_set = module.exams_portion_staffed
-        if self.instance:
-            portion_to_set -= self.instance.portion
-        if value + portion_to_set > 1:
-            raise ValidationError(f"Sum of all portions for this module's exams would exceed 1. Maximum value to set: "
-                                  f"{1 - portion_to_set}")
-        # prevent exceeding pensum's limit
+        max_value_to_set = reason = None
+
+        # prevent exceeding employee's pensum additional hours limit
         url_kwargs = self.context['request'].resolver_match.kwargs
         # get filter kwargs from request's URL
         module_filter_kwargs = {
@@ -259,10 +255,24 @@ class ExamsAdditionalHoursSerializer(NestedHyperlinkedModelSerializer):
             if pensum.amount_until_over_time_hours_limit < exam_hours * (
                 value - (self.instance.portion if self.instance else 0)
             ):
-                raise ValidationError(
-                    "Employee pensum's additional hours limit reached. Maximum portion to set: {}".format(
-                        pensum.amount_until_over_time_hours_limit / exam_hours + (
-                            self.instance.portion if self.instance else 0)))
+                # flooring decimals is needed as rounding up would exceed limit even more
+                max_value_to_set = math.floor(pensum.amount_until_over_time_hours_limit / exam_hours + (
+                    self.instance.portion if self.instance else 0) * 1000) / 1000
+                reason = "Value exceeds employee's pensum additional hours limit."
+
+        # get sum of all portions for this module's exam
+        module = get_object_or_404(Modules, **{'module_code': self.initial_data.get('module')})
+        portion_to_set = module.exams_portion_staffed
+        if self.instance:
+            portion_to_set -= self.instance.portion
+        if value + portion_to_set > 1:
+            if not max_value_to_set or max_value_to_set > 1 - portion_to_set:
+                max_value_to_set = 1 - portion_to_set
+                reason = "Sum of all portions for this module's exams would exceed 1."
+
+        if max_value_to_set:
+            raise ValidationError(f"Max. value possible: {max_value_to_set}."
+                                  f"{' Reason: {}'.format(reason) if reason else ''}")
         return value
 
 

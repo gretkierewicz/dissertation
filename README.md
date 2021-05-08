@@ -53,6 +53,7 @@ heroku open
 - ExamsAdditionalHours / New property within model + refactoring
 - Plans / Added plan_additional_hours property
 - ExamsAdditionalHoursSerializer / Added validation for portion not to reach pensum's limit
+- PensumAdditionalHoursFactorsSerializer / Added validation for reaching pensum limit + refactoring validation method
 
 ### To be done:
 
