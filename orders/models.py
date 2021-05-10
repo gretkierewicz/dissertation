@@ -31,6 +31,12 @@ class Orders(models.Model):
         return f"Order of {self.classes}"
 
 
+def get_plans_additional_hours(module, plan_hours):
+    # TODO: consider using filter if list of congress lang. is given
+    factor = get_major_factors_value('congress language factor')
+    return 0 if module.language == 'pl' else plan_hours * factor
+
+
 class Plans(models.Model):
     class Meta:
         unique_together = ['order', 'employee']
@@ -41,9 +47,7 @@ class Plans(models.Model):
 
     @property
     def plan_additional_hours(self):
-        # TODO: consider using filter if list of congress lang. is given
-        factor = get_major_factors_value('congress language factor')
-        return 0 if self.order.classes.module.language == 'pl' else self.plan_hours * factor
+        return get_plans_additional_hours(self.order.classes.module, self.plan_hours)
 
     def __str__(self):
         return f"{self.employee}'s plan of {self.order.classes}"

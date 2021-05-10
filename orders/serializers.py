@@ -10,7 +10,7 @@ from modules.models import Classes
 from schedules.models import Pensum, Schedules
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField
 from utils.serializers import SerializerLambdaField
-from .models import Orders, Plans
+from .models import Orders, Plans, get_plans_additional_hours
 
 
 class ScheduledEmployeesField(SlugRelatedField):
@@ -118,7 +118,9 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
             reason = "Employee's pensum contact hours limit cannot be exceeded."
 
         # prevent exceeding employee's pensum additional hours limit
-        tmp = pensum.amount_until_over_time_hours_limit + (self.instance.plan_hours if self.instance else 0)
+        factor = get_plans_additional_hours(order.classes.module,  1)
+        tmp = (pensum.amount_until_over_time_hours_limit / (factor + 1)) + (
+            self.instance.plan_hours if self.instance else 0)
         if data > tmp and (not max_value_to_set or max_value_to_set > tmp):
             max_value_to_set = tmp
             reason = "Employee's pensum additional hours limit cannot be exceeded."

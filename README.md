@@ -54,6 +54,7 @@ heroku open
 - Doc strings and utils cleanup
 - Admin panel / Registered rest of the models
 - Pensum / Custom serializer for list view
+- FIX / plan hours validator - now will include congress' modules additional hours
 
 ### To be done:
 
