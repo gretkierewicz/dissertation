@@ -154,9 +154,8 @@ class BasicAPITests:
                     # check response code with get method
                     self.test_get_obj_code(obj=obj, msg=msg)
                     # check data integrity of data sent and serialized instance
-                    if self.list_serializer:
-                        self.assertJSONEqual(
-                            json.dumps(response.data), self.list_serializer(instance=obj, context=self.context).data)
+                    self.assertJSONEqual(
+                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
@@ -175,9 +174,8 @@ class BasicAPITests:
                     # check response code with get method
                     self.test_get_obj_code(obj=obj, msg=msg)
                     # check data integrity of data sent and serialized instance
-                    if self.list_serializer:
-                        self.assertJSONEqual(
-                            json.dumps(response.data), self.list_serializer(instance=obj, context=self.context).data)
+                    self.assertJSONEqual(
+                        json.dumps(response.data), self.serializer(instance=obj, context=self.context).data)
         else:
             APITestCase.skipTest(self, 'Lack of data')
 
