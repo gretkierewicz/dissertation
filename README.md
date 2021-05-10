@@ -55,11 +55,9 @@ heroku open
 - Admin panel / Registered rest of the models
 - Pensum / Custom serializer for list view
 - FIX / plan hours validator - now will include congress' modules additional hours
+- Plans / Filtering out employees with no more free hours to setup
 
 ### To be done:
-
-Major
-- Filters for employees possible to choose for plans/etc
 
 Minor
 - Implement custom filters, sorting or search

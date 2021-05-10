@@ -34,7 +34,9 @@ class ScheduledEmployeesField(SlugRelatedField):
         pensums = Schedules.objects.get(
             slug=self.context.get('request').resolver_match.kwargs.get('schedule_slug')
         ).pensums.all()
-        # return only employees possible to be choose
+        # exclude pensums with no more free hours
+        pensums = [pensum for pensum in pensums if pensum.amount_until_contact_hours_limit >= 1]
+        # return only employees possible to be chosen
         return self.queryset.filter(pensums__in=pensums).exclude(plans__in=plans)
 
 
