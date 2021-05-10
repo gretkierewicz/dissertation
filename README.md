@@ -53,6 +53,7 @@ heroku open
 - FIX / Employee's url hyper-links generators
 - Doc strings and utils cleanup
 - Admin panel / Registered rest of the models
+- Pensum / Custom serializer for list view
 
 ### To be done:
 

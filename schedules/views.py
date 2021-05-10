@@ -9,7 +9,8 @@ from utils.ViewSets import OneToOneRelationViewSet
 from .models import ExamsAdditionalHours, Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, \
     PensumReductions, Schedules
 from .serializers import ExamsAdditionalHoursSerializer, PensumAdditionalHoursFactorsSerializer, \
-    PensumBasicThresholdFactorSerializer, PensumReductionSerializer, PensumSerializer, ScheduleSerializer
+    PensumBasicThresholdFactorSerializer, PensumListSerializer, PensumReductionSerializer, PensumSerializer, \
+    ScheduleSerializer
 
 
 class SchedulesViewSet(ModelViewSet):
@@ -36,6 +37,11 @@ class PensumViewSet(NestedViewSetMixin, ModelViewSet):
     serializer_class = PensumSerializer
     # Custom lookup_field - needs entry in extra_kwargs of serializer!
     lookup_field = 'employee'
+
+    # Custom list method with simpler serializer
+    def list(self, request, *args, **kwargs):
+        serializer = PensumListSerializer(self.get_queryset(), many=True, context={'request': request})
+        return Response(serializer.data)
 
     def get_object(self):
         return self.get_queryset().filter(employee__abbreviation=self.kwargs.get(self.lookup_field)).first()

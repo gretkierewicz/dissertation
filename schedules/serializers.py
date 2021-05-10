@@ -315,9 +315,6 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
                   'exams_additional_hours_url', 'exams_additional_hours',
                   # hidden
                   'schedule']
-        extra_kwargs = {
-            'value': {'read_only': True}
-        }
 
     parent_lookup_kwargs = {
         'schedule_slug': 'schedule__slug'
@@ -391,3 +388,13 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
             'schedule_slug': 'slug'
         },
     )
+
+
+class PensumListSerializer(PensumSerializer):
+    class Meta:
+        model = Pensum
+        fields = ['url',
+                  'employee_url', 'first_name', 'last_name', 'employee', 'pensum_group',
+                  'calculated_threshold',
+                  'pensum_contact_hours', 'amount_until_contact_hours_min',
+                  'pensum_additional_hours', 'amount_until_over_time_hours_limit']
