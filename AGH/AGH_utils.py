@@ -11,11 +11,12 @@ dydaktyczna = 'dydaktyczna'
 
 def get_pensum(position, group=dydaktyczna):
     """
-    get_pensum function to read pensum value of Group-Position pair based on JSON data:
+    Reads pensum value of Group-Position pair based on JSON data:
     data/PensumThresholds_BadawczoDydaktyczna.json and data/PensumThresholds_Dydaktyczna.json files
-    position: name of employee's position
-    group: (optional, def='dydaktyczna')) name of pensum group
-    return: pensum value if position-group mathup is found in JSON data, None otherwise
+
+    params: position - employee's position name
+    params: group - employee's group name
+    return: pensum basic threshold for given position-group matchup
     """
     base_path = os.path.dirname(__file__)
     with open(
@@ -34,8 +35,9 @@ def get_pensum(position, group=dydaktyczna):
 
 def get_pensum_function_names():
     """
-    get_pensum_function_names lists all names of employee's functions based on JSON data:
-    data/PensumReduction.json file
+    Lists all names of employee's functions based on JSON data: data/PensumReduction.json file
+
+    return: list of possible employee's function names
     """
     base_path = os.path.dirname(__file__)
     with open(
@@ -46,8 +48,10 @@ def get_pensum_function_names():
 
 def get_pensum_reduction_value(function):
     """
-    get_pensum_reduction_value returns pensum reduction for given function name based on JSON data:
-    data/PensumReduction.json file
+    Returns pensum reduction factor for given function name based on JSON data: data/PensumReduction.json file
+
+    params: function - employee's function name
+    return: pensum's reduction value
     """
     base_path = os.path.dirname(__file__)
     with open(
@@ -61,8 +65,10 @@ def get_pensum_reduction_value(function):
 
 def get_additional_hours_factors_choices():
     """
-    get_additional_hours_factors_choices returns list of tuples (key, display_name), based on data in JSON file:
-    data/additional_hours_factors.json
+    Returns list of tuples (key, display_name), based on data in JSON file: data/additional_hours_factors.json in format
+    that can be used within model's choices kwarg.
+
+    return: list of tuples of additional hours possibilities names
     """
     base_path = os.path.dirname(__file__)
     with open(
@@ -78,6 +84,9 @@ def get_additional_hours_factors_choices():
 
 
 class AdditionalHoursFactorData:
+    """
+    Class containing data regarding given factor ID based on data/additional_hours_factors.json file
+    """
     def __init__(self, factor_ID):
         base_path = os.path.dirname(__file__)
         with open(os.path.join(base_path, "data/additional_hours_factors.json"), 'r', encoding='utf8') as json_file:
@@ -87,14 +96,17 @@ class AdditionalHoursFactorData:
         factor_data = next((item for item in factors if item.get("factor ID") == factor_ID), None)
 
         self.factor_ID = factor_ID
-        self.group_ID = factor_data.get('group ID')
+        self.group_ID = self.limit_key_name = self.limit_per_unit = self.max_amount_for_group = None
+        self.is_counted_into_limit = False
+        if factor_data:
+            self.group_ID = factor_data.get('group ID')
 
-        group = next((item for item in groups if item.get("group ID") == self.group_ID), None)
+            group = next((item for item in groups if item.get("group ID") == self.group_ID), None)
 
-        self.limit_key_name = next(item for item in factor_data.keys() if item.startswith('limit per '))
-        self.limit_per_unit = factor_data.get(self.limit_key_name)
-        self.max_amount_for_group = group['limit per year'] if group else None
-        self.is_counted_into_limit = factor_data.get('is counted into limit', True)
+            self.limit_key_name = next(item for item in factor_data.keys() if item.startswith('limit per '))
+            self.limit_per_unit = factor_data.get(self.limit_key_name)
+            self.max_amount_for_group = group['limit per year'] if group else None
+            self.is_counted_into_limit = factor_data.get('is counted into limit', True)
 
 
 def __get_factor_value(factor_name, sector_name='major factors'):

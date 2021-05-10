@@ -51,6 +51,7 @@ heroku open
 - Cleanup of str representations of model's instances
 - additional hours factors json data / cleanup for better readability
 - FIX / Employee's url hyper-links generators
+- Doc strings and utils cleanup
 
 ### To be done:
 

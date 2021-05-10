@@ -46,7 +46,8 @@ class AdvNestedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
 
 class ParentHiddenRelatedField(HiddenField):
     """
-    GetParentHiddenField - Hidden Field that returns parent object pointed with URL or passed with serializer's data
+    Hidden Field that returns parent object pointed with URL or passed with serializer's data
+
     params: queryset - queryset to find instance with
     params: parent_lookup_kwargs - parent's lookup URL kwargs names (keys) and fields (values)
     return: model instance

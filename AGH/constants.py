@@ -16,5 +16,7 @@ ET = 'equal to'
 LT = 'less than'
 NA = 'N/A'
 
-DEPARTMENTS = [(_, _.upper()) for _ in low_departments]
-ACADEMIC_YEARS = [f"{_}-{_ + 1}" for _ in range(academic_year_start_with, academic_time_with_offset.year)][::-1]
+DEPARTMENTS = [(dep_name, dep_name.upper()) for dep_name in low_departments]
+ACADEMIC_YEARS = [
+    f"{year}-{year + 1}" for year in range(academic_year_start_with, academic_time_with_offset.year)
+][::-1]
