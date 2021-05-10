@@ -91,7 +91,7 @@
       "limit per semester": 10
     },
     {
-      "factor ID": "custom additional hours factor",
+      "factor ID": "custom additional hours",
       "factor description": "dodatkowa liczba godzin z innego tytułu",
       "limit per year": 9999
     }
