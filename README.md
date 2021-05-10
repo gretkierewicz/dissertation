@@ -48,6 +48,7 @@ heroku open
 ### 10/05/2020
 
 - Tests / Fix for posting data tests. Deleting module's and order's tests for now. 100% pass for employees.
+- Cleanup of str representations of model's instances
 
 ### To be done:
 

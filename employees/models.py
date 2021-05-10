@@ -12,9 +12,6 @@ class Degrees(models.Model):
     def __str__(self):
         return self.name
 
-    def __repr__(self):
-        return self.name
-
 
 class Positions(models.Model):
     class Meta:
@@ -23,9 +20,6 @@ class Positions(models.Model):
     name = models.CharField(max_length=45, unique=True)
 
     def __str__(self):
-        return self.name
-
-    def __repr__(self):
         return self.name
 
 
@@ -57,7 +51,4 @@ class Employees(models.Model):
     part_of_job_time = models.FloatField(default=1)
 
     def __str__(self):
-        return self.abbreviation
-
-    def __repr__(self):
-        return self.abbreviation
+        return f"{self.abbreviation}: {self.first_name} {self.last_name}"

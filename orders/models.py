@@ -28,7 +28,7 @@ class Orders(models.Model):
         return sum([_.plan_hours for _ in self.plans.all()])
 
     def __str__(self):
-        return f"Order of: {self.classes}"
+        return f"Order of {self.classes}"
 
 
 class Plans(models.Model):
@@ -44,3 +44,6 @@ class Plans(models.Model):
         # TODO: consider using filter if list of congress lang. is given
         factor = get_major_factors_value('congress language factor')
         return 0 if self.order.classes.module.language == 'pl' else self.plan_hours * factor
+
+    def __str__(self):
+        return f"{self.employee}'s plan of {self.order.classes}"

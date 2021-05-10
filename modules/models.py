@@ -19,7 +19,7 @@ class Modules(models.Model):
     language = models.CharField(max_length=2, default='pl')
 
     def __str__(self):
-        return f'{self.module_code} - "{self.name}"'
+        return f'{self.module_code}' + (f' (name: {self.name})' if self.name else '') + ' module'
 
     def __repr__(self):
         return self.module_code
@@ -76,7 +76,4 @@ class Classes(models.Model):
     students_limit_per_group = models.PositiveIntegerField(null=True)
 
     def __str__(self):
-        return f'{self.module.module_code} - {self.name}: "{self.module.name}"'
-
-    def __repr__(self):
-        return f"{self.module.module_code}: {self.name}"
+        return f'{self.name} of {self.module}'

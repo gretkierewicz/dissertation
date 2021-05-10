@@ -17,7 +17,7 @@ class Schedules(models.Model):
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return self.slug
+        return f"{self.slug} schedule"
 
 
 class Pensum(models.Model):
@@ -27,6 +27,9 @@ class Pensum(models.Model):
     schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='pensums')
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, related_name='pensums')
     basic_threshold = models.FloatField(default=0)
+
+    def __str__(self):
+        return f"{self.employee}'s pensum of {self.schedule}"
 
     @property
     def pensum_contact_hours(self):
@@ -114,6 +117,10 @@ class PensumBasicThresholdFactors(models.Model):
     factor_type = models.CharField(max_length=len(MUL), choices=TYPES, default=ADD)
     value = models.FloatField(default=1)
 
+    def __str__(self):
+        return f"{self.factor_type} factor of {self.pensum}" + (
+            f" (name: {self.name})" if self.name else "")
+
     def calculate_value(self, value):
         if self.factor_type == self.ADD:
             return value + self.value
@@ -130,6 +137,9 @@ class PensumReductions(models.Model):
     pensum = models.OneToOneField(Pensum, on_delete=models.CASCADE, related_name='reduction')
     function = models.CharField(max_length=max([len(name) for name in get_pensum_function_names()]), choices=ROLES)
 
+    def __str__(self):
+        return f"{self.function} function of {self.pensum}"
+
     @property
     def reduction_value(self):
         return get_pensum_reduction_value(self.function)
@@ -143,6 +153,10 @@ class PensumAdditionalHoursFactors(models.Model):
     value_per_unit = models.PositiveIntegerField()
     amount = models.PositiveIntegerField(default=1)
     description = models.CharField(max_length=128, blank=True)
+
+    def __str__(self):
+        return f"{self.name} factor of {self.pensum}" + (
+            f" (description: {self.description})" if self.description else "")
 
     @property
     def total_factor_hours(self):
@@ -167,6 +181,9 @@ class ExamsAdditionalHours(models.Model):
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='exams_additional_hours')
     type = models.CharField(max_length=8, choices=EXAM_TYPES_CHOICES, default=EXAM_TYPES_CHOICES[0][0])
     portion = models.FloatField(default=1)
+
+    def __str__(self):
+        return f"{self.module}'s exam of {self.pensum} (portion: {self.portion})"
 
     @property
     def total_factor_hours(self):
