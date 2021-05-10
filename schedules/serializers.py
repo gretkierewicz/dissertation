@@ -322,10 +322,13 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     parent_lookup_kwargs = {
         'schedule_slug': 'schedule__slug'
     }
-    url = NestedHyperlinkedIdentityField(
+    url = AdvNestedHyperlinkedIdentityField(
         view_name='pensums-detail',
-        lookup_field='employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
+        lookup_field=None,
+        parent_lookup_kwargs={
+            **parent_lookup_kwargs,
+            'employee': 'employee__abbreviation'
+        }
     )
 
     employee_url = AdvNestedHyperlinkedIdentityField(
@@ -342,35 +345,43 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     pensum_group = StringRelatedField(read_only=True, source='employee.pensum_group')
 
     part_of_job_time = StringRelatedField(read_only=True, source='employee.part_of_job_time')
-    basic_threshold_factors_url = NestedHyperlinkedIdentityField(
+    basic_threshold_factors_url = AdvNestedHyperlinkedIdentityField(
         view_name='pensum-factors-list',
-        lookup_field='employee',
-        lookup_url_kwarg='pensums_employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
+        lookup_field=None,
+        parent_lookup_kwargs={
+            **parent_lookup_kwargs,
+            'pensums_employee': 'employee__abbreviation'
+        }
     )
     basic_threshold_factors = PensumBasicThresholdFactorSerializer(read_only=True, many=True)
-    reduction_url = NestedHyperlinkedIdentityField(
+    reduction_url = AdvNestedHyperlinkedIdentityField(
         view_name='pensum-reduction-detail',
-        lookup_field='employee',
-        lookup_url_kwarg='pensums_employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
+        lookup_field=None,
+        parent_lookup_kwargs={
+            **parent_lookup_kwargs,
+            'pensums_employee': 'employee__abbreviation'
+        }
     )
     reduction = PensumReductionSerializer(read_only=True)
 
     plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
 
-    additional_hours_factors_url = NestedHyperlinkedIdentityField(
+    additional_hours_factors_url = AdvNestedHyperlinkedIdentityField(
         view_name='pensum-additional_hours_factors-list',
-        lookup_field='employee',
-        lookup_url_kwarg='pensums_employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
+        lookup_field=None,
+        parent_lookup_kwargs={
+            **parent_lookup_kwargs,
+            'pensums_employee': 'employee__abbreviation'
+        }
     )
     additional_hours_factors = PensumAdditionalHoursFactorsSerializer(many=True, read_only=True)
-    exams_additional_hours_url = NestedHyperlinkedIdentityField(
+    exams_additional_hours_url = AdvNestedHyperlinkedIdentityField(
         view_name='pensum-exams_additional_hours-list',
-        lookup_field='employee',
-        lookup_url_kwarg='pensums_employee',
-        parent_lookup_kwargs=parent_lookup_kwargs
+        lookup_field=None,
+        parent_lookup_kwargs={
+            **parent_lookup_kwargs,
+            'pensums_employee': 'employee__abbreviation'
+        }
     )
     exams_additional_hours = ExamsAdditionalHoursSerializer(many=True, read_only=True)
 

@@ -49,7 +49,6 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
                   # hidden
                   'order']
         extra_kwargs = {
-            'url': {'view_name': 'classes-order-plans-detail', 'lookup_field': 'employee'},
             'plan_hours': {'min_value': 0}
         }
 
@@ -59,6 +58,15 @@ class PlansSerializer(NestedHyperlinkedModelSerializer):
         'module_module_code': 'order__classes__module__module_code',
         'classes_name': 'order__classes__name',
     }
+
+    url = AdvNestedHyperlinkedIdentityField(
+        view_name='classes-order-plans-detail',
+        lookup_field=None,
+        parent_lookup_kwargs={
+            **parent_lookup_kwargs,
+            'employee': 'employee__abbreviation'
+        }
+    )
 
     employee_url = AdvNestedHyperlinkedIdentityField(
         view_name='employees-detail',
