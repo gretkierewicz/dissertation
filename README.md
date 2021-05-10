@@ -52,6 +52,7 @@ heroku open
 - additional hours factors json data / cleanup for better readability
 - FIX / Employee's url hyper-links generators
 - Doc strings and utils cleanup
+- Admin panel / Registered rest of the models
 
 ### To be done:
 
