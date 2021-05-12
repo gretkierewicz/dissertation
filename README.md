@@ -10,6 +10,10 @@ Heroku deploy: http://shielded-ocean-48265.herokuapp.com (PostgreSQL)
 ~~http://gret.ct8.pl/ with MySQL DB\
 Local with SQLite DB~~
 
+## DB Model
+
+![DB model](https://github.com/gretkierewicz/dissertation/blob/master/DB%20model/db_model_2.png)
+
 ## Deployment
 
 ```bash
@@ -44,18 +48,6 @@ heroku open
 ```
 
 ## Last changes
-
-### 10/05/2020
-
-- Tests / Fix for posting data tests. Deleting module's and order's tests for now. 100% pass for employees.
-- Cleanup of str representations of model's instances
-- additional hours factors json data / cleanup for better readability
-- FIX / Employee's url hyper-links generators
-- Doc strings and utils cleanup
-- Admin panel / Registered rest of the models
-- Pensum / Custom serializer for list view
-- FIX / plan hours validator - now will include congress' modules additional hours
-- Plans / Filtering out employees with no more free hours to setup
 
 ### To be done:
 
