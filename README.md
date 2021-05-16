@@ -54,6 +54,7 @@ heroku open
 - Employees / Removing unused fields
 - Cleanup
 - Employees / Missing migrations
+- Orders / Classes field gone write only. Added module and classes_name fields and urls for these
 
 ### To be done:
 
