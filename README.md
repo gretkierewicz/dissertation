@@ -52,6 +52,7 @@ heroku open
 ### 16/05/2020
 
 - Employees / Removing unused fields
+- Cleanup
 
 ### To be done:
 

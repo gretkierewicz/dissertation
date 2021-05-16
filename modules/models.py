@@ -19,7 +19,7 @@ class Modules(models.Model):
     language = models.CharField(max_length=2, default='pl')
 
     def __str__(self):
-        return f'{self.module_code}' + (f' (name: {self.name})' if self.name else '') + ' module'
+        return f'{self.module_code}' + (f' (name: {self.name})' if self.name else '') + f' module of {self.schedule}'
 
     def __repr__(self):
         return self.module_code

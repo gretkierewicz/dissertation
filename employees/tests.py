@@ -30,18 +30,6 @@ class EmployeeFields:
     string_fields = (first_name, last_name, abbreviation, e_mail)
 
 
-class PensumFields:
-    name = 'name'
-    value = 'value'
-    limit = 'limit'
-    degrees = 'degrees'
-    positions = 'positions'
-    year_of_studies = 'year_of_studies'
-    year_condition = 'year_condition'
-    is_procedure_for_a_doctoral_degree_approved = 'is_procedure_for_a_doctoral_degree_approved'
-    has_scholarship = 'has_scholarship'
-
-
 class DegreesTests(BasicAPITests, APITestCase):
     @classmethod
     def setUpTestData(cls):

@@ -62,11 +62,9 @@ class EmployeeSerializer(ModelSerializer):
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position', 'pensum_group',
                   'part_of_job_time', 'supervisor_url', 'supervisor', 'subordinates',]
         extra_kwargs = {
-            'year_of_studies': {'min_value': 0},
+            'url': {'lookup_field': 'abbreviation'},
             'part_of_job_time': {'min_value': 0, 'max_value': 1}
         }
-
-    url = HyperlinkedIdentityField(view_name='employees-detail', lookup_field='abbreviation')
 
     degree = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all())
     position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
