@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Schedules, Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, PensumReductions, \
-    ExamsAdditionalHours
+from .models import ExamsAdditionalHours, Pensum, PensumAdditionalHoursFactors, PensumBasicThresholdFactors, \
+    PensumReductions, Schedules
 
 admin.site.register(Schedules)
 admin.site.register(Pensum)

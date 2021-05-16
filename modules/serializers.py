@@ -1,7 +1,5 @@
-from rest_framework.relations import SlugRelatedField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
-from employees.models import Employees
 from orders.serializers import ClassesOrderSerializer
 from schedules.models import Schedules
 from utils.relations import AdvNestedHyperlinkedIdentityField, ParentHiddenRelatedField

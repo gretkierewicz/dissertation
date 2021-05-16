@@ -1,10 +1,9 @@
 import json
-import random
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 
-from utils.random_generators import random_bool, random_max_len_field_str, random_str
+from utils.random_generators import random_max_len_field_str, random_str
 from utils.tests import BasicAPITests
 from .models import Degrees, Employees, Positions
 from .serializers import DegreeSerializer, EmployeeListSerializer, EmployeeSerializer, PositionSerializer

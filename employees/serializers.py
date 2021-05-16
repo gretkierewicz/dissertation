@@ -1,7 +1,6 @@
-from rest_framework.relations import HyperlinkedIdentityField, SlugRelatedField
+from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 
-from utils.relations import AdvNestedHyperlinkedIdentityField
 from .models import Degrees, Employees, Positions
 
 

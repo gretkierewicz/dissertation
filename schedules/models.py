@@ -1,15 +1,8 @@
 from django.db import models
 
-from AGH.AGH_utils import (
-    AdditionalHoursFactorData,
-    ExamsFactors,
-    get_additional_hours_factors_choices,
-    get_exam_hours,
-    get_major_factors_value,
-    get_job_time_hours_limit,
-    get_pensum_function_names,
-    get_pensum_reduction_value
-)
+from AGH.AGH_utils import (AdditionalHoursFactorData, ExamsFactors, get_additional_hours_factors_choices,
+                           get_exam_hours, get_job_time_hours_limit, get_major_factors_value, get_pensum_function_names,
+                           get_pensum_reduction_value)
 from employees.models import Employees
 
 

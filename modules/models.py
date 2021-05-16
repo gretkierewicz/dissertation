@@ -2,7 +2,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from AGH.data.Classes_names import CLASSES_NAMES
-from employees.models import Employees
 from schedules.models import Schedules
 
 
