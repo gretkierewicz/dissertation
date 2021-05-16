@@ -53,6 +53,7 @@ heroku open
 
 - Employees / Removing unused fields
 - Cleanup
+- Employees / Missing migrations
 
 ### To be done:
 
