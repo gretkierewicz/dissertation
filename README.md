@@ -49,6 +49,10 @@ heroku open
 
 ## Last changes
 
+### 16/05/2020
+
+- Employees / Removing unused fields
+
 ### To be done:
 
 Minor

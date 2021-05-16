@@ -40,9 +40,6 @@ class Employees(models.Model):
     e_mail = models.EmailField(max_length=45, unique=True)
     supervisor = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='subordinates')
-    year_of_studies = models.PositiveSmallIntegerField(null=True, blank=True)
-    is_procedure_for_a_doctoral_degree_approved = models.BooleanField(default=False)
-    has_scholarship = models.BooleanField(default=False)
     pensum_group = models.CharField(
         max_length=max([len(gr) for gr in (badawczo_dydaktyczna, dydaktyczna)]),
         choices=PENSUM_GROUPS_CHOICES,

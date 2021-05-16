@@ -26,9 +26,6 @@ class EmployeeFields:
     degree = 'degree'
     position = 'position'
     supervisor = 'supervisor'
-    year_of_studies = 'year_of_studies'
-    is_procedure_for_a_doctoral_degree_approved = 'is_procedure_for_a_doctoral_degree_approved'
-    has_scholarship = 'has_scholarship'
 
     string_fields = (first_name, last_name, abbreviation, e_mail)
 
@@ -176,9 +173,6 @@ class EmployeesTests(BasicAPITests, APITestCase):
             'all fields': {
                 **create_payload_data(),
                 EmployeeFields.supervisor: Employees.objects.create(**create_model_data()).abbreviation,
-                EmployeeFields.year_of_studies: random.randint(1, 100),
-                EmployeeFields.is_procedure_for_a_doctoral_degree_approved: random_bool(),
-                EmployeeFields.has_scholarship: random_bool(),
             }
         }
 

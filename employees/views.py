@@ -81,8 +81,7 @@ class EmployeeRenderer(CSVRenderer):
     Custom CSV Renderer for Employee View Set
     Needs custom import CSV format action -> method csv_files_upload()
     """
-    header = ['first_name', 'last_name', 'abbreviation', 'degree', 'position', 'e_mail',
-              'supervisor', 'year_of_studies', 'is_procedure_for_a_doctoral_degree_approved', 'has_scholarship']
+    header = ['first_name', 'last_name', 'abbreviation', 'degree', 'position', 'e_mail', 'supervisor']
 
 
 class EmployeeViewSet(ModelViewSet):
@@ -123,9 +122,6 @@ class EmployeeViewSet(ModelViewSet):
         'e_mail' - unique string,
         'supervisor' - string ('abbreviation' field related to Employees table), possible blank,
          - NOT REQUIRED:
-        'year_of_studies' - positive integer, default=null,
-        'is_procedure_for_a_doctoral_degree_approved' - True/False, default=False,
-        'has_scholarship' - True/False, default=False,
         'pensum_group' - 'badawczo-dydaktyczna'/'dydaktyczna', default='dydaktyczna',
         'part_of_job_time' - float from 0-1 range, default=1
         """

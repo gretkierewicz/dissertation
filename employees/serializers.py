@@ -60,8 +60,7 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position', 'pensum_group',
-                  'part_of_job_time', 'supervisor_url', 'supervisor', 'subordinates',
-                  'year_of_studies', 'has_scholarship', 'is_procedure_for_a_doctoral_degree_approved']
+                  'part_of_job_time', 'supervisor_url', 'supervisor', 'subordinates',]
         extra_kwargs = {
             'year_of_studies': {'min_value': 0},
             'part_of_job_time': {'min_value': 0, 'max_value': 1}
