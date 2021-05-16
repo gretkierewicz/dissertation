@@ -15,7 +15,7 @@ class ModuleRenderer(CSVRenderer):
     """
     classes_hours = ['lectures_hours', 'laboratory_classes_hours', 'auditorium_classes_hours', 'project_classes_hours',
                      'seminar_classes_hours']
-    header = ['module_code', 'name', 'examination', 'supervisor'] + classes_hours
+    header = ['module_code', 'name', 'examination'] + classes_hours
 
 
 class ModuleViewSet(NestedViewSetMixin, ModelViewSet):

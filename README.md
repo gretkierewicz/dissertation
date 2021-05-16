@@ -55,6 +55,7 @@ heroku open
 - Cleanup
 - Employees / Missing migrations
 - Orders / Classes field gone write only. Added module and classes_name fields and urls for these
+- Removing unnecessary "supervisor" fields
 
 ### To be done:
 

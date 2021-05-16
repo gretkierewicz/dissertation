@@ -65,7 +65,7 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         model = Modules
         fields = ['url',
                   'module_code', 'name',
-                  'supervisor', 'supervisor_url', 'examination', 'language',
+                  'examination', 'language',
                   'form_of_classes_url', 'form_of_classes',
                   # hidden
                   'schedule']
@@ -85,15 +85,6 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    supervisor_url = AdvNestedHyperlinkedIdentityField(
-        view_name='employees-detail',
-        lookup_field=None,
-        parent_lookup_kwargs={
-            'abbreviation': 'supervisor__abbreviation'
-        }
-    )
-    supervisor = SlugRelatedField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
-
     form_of_classes_url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-list',
         lookup_field='module_code',
@@ -110,17 +101,6 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
         }
     )
 
-    def validate_empty_values(self, data):
-        # as syllabus data has no field named supervisor
-        if isinstance(data, list):
-            for sub_data in data:
-                if not sub_data.get('supervisor'):
-                    sub_data['supervisor'] = None
-        else:
-            if not data.get('supervisor'):
-                data['supervisor'] = None
-        return super().validate_empty_values(data)
-
     # overwrite for handling nested classes (this will not delete missing classes in data)
     def create(self, validated_data):
         form_of_classes = validated_data.pop('form_of_classes')
@@ -134,6 +114,6 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
 class ModuleFlatSerializer(ModuleSerializer):
     class Meta:
         model = Modules
-        fields = ['module_code', 'name', 'examination', 'supervisor',
+        fields = ['module_code', 'name', 'examination',
                   'lectures_hours', 'laboratory_classes_hours', 'auditorium_classes_hours', 'project_classes_hours',
                   'seminar_classes_hours']

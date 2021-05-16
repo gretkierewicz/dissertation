@@ -43,15 +43,6 @@ class PositionSerializer(HyperlinkedModelSerializer):
     employees = EmployeeListSerializer(read_only=True, many=True)
 
 
-class SupervisorField(SlugRelatedField):
-    """
-    Supervisor Field to filter instance of employee from basic queryset
-    """
-
-    def get_queryset(self):
-        return self.queryset.exclude(pk=self.root.instance.pk) if self.root.instance else self.queryset
-
-
 class EmployeeSerializer(ModelSerializer):
     """
     Employee Serializer - Extended Employee Serializer with additional urls and nested serializers
@@ -60,7 +51,7 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employees
         fields = ['url', 'first_name', 'last_name', 'abbreviation', 'e_mail', 'degree', 'position', 'pensum_group',
-                  'part_of_job_time', 'supervisor_url', 'supervisor', 'subordinates',]
+                  'part_of_job_time']
         extra_kwargs = {
             'url': {'lookup_field': 'abbreviation'},
             'part_of_job_time': {'min_value': 0, 'max_value': 1}
@@ -68,13 +59,3 @@ class EmployeeSerializer(ModelSerializer):
 
     degree = SlugRelatedField(slug_field='name', queryset=Degrees.objects.all())
     position = SlugRelatedField(slug_field='name', queryset=Positions.objects.all())
-    supervisor = SupervisorField(slug_field='abbreviation', queryset=Employees.objects.all(), allow_null=True)
-
-    supervisor_url = AdvNestedHyperlinkedIdentityField(
-        view_name='employees-detail',
-        lookup_field=None,
-        parent_lookup_kwargs={
-            'abbreviation': 'supervisor__abbreviation'
-        }
-    )
-    subordinates = EmployeeListSerializer(read_only=True, many=True)

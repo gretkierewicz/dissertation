@@ -38,8 +38,6 @@ class Employees(models.Model):
     degree = models.ForeignKey(Degrees, on_delete=models.SET_DEFAULT, default=1, related_name='employees')
     position = models.ForeignKey(Positions, on_delete=models.SET_DEFAULT, default=1, related_name='employees')
     e_mail = models.EmailField(max_length=45, unique=True)
-    supervisor = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
-                                   related_name='subordinates')
     pensum_group = models.CharField(
         max_length=max([len(gr) for gr in (badawczo_dydaktyczna, dydaktyczna)]),
         choices=PENSUM_GROUPS_CHOICES,

@@ -25,7 +25,6 @@ class EmployeeFields:
     e_mail = 'e_mail'
     degree = 'degree'
     position = 'position'
-    supervisor = 'supervisor'
 
     string_fields = (first_name, last_name, abbreviation, e_mail)
 
@@ -144,7 +143,6 @@ class EmployeesTests(BasicAPITests, APITestCase):
                 EmployeeFields.e_mail: random_max_len_field_str(cls.model, EmployeeFields.e_mail)[:-6] + '@ab.ba',
                 EmployeeFields.degree: Degrees.objects.create(name=random_str(5)).name,
                 EmployeeFields.position: Positions.objects.create(name=random_str(5)).name,
-                'supervisor': None,
             }
 
         cls.valid_post_data_payload = {
@@ -156,11 +154,9 @@ class EmployeesTests(BasicAPITests, APITestCase):
                 EmployeeFields.e_mail: random_str(1) + '@ab.ba',
                 EmployeeFields.degree: Degrees.objects.create(name=random_str(5)).name,
                 EmployeeFields.position: Positions.objects.create(name=random_str(5)).name,
-                EmployeeFields.supervisor: None,
             },
             'all fields': {
                 **create_payload_data(),
-                EmployeeFields.supervisor: Employees.objects.create(**create_model_data()).abbreviation,
             }
         }
 
@@ -175,15 +171,10 @@ class EmployeesTests(BasicAPITests, APITestCase):
         rand_abbreviation = random_max_len_field_str(cls.model, EmployeeFields.abbreviation)
         cls.invalid_post_data_payload = {
             'empty ' + EmployeeFields.first_name: {**create_payload_data(), EmployeeFields.first_name: ''},
-            'self supervising with new abbreviation': {
-                **create_payload_data(), 'abbreviation': rand_abbreviation, 'supervisor': rand_abbreviation}
         }
 
         cls.invalid_put_data_payload = {
             **cls.invalid_post_data_payload,
-            'self supervising with old abbreviation': {
-                **create_payload_data(), 'abbreviation': cls.obj.abbreviation, 'supervisor': cls.obj.abbreviation
-            }
         }
         cls.invalid_partial_data = {}
         for field in EmployeeFields.string_fields:
@@ -192,8 +183,7 @@ class EmployeesTests(BasicAPITests, APITestCase):
                 **create_payload_data(),
                 field: random_max_len_field_str(cls.model, EmployeeFields.first_name) + random_str(1)}
 
-        cls.invalid_partial_data = {
-            'self supervising': {'supervisor': cls.obj.abbreviation}}
+        cls.invalid_partial_data = {}
         for field in EmployeeFields.string_fields:
             cls.invalid_partial_data['empty ' + field] = {field: ''}
             cls.invalid_partial_data['too long ' + field] = {

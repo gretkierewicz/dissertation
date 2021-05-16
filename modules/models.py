@@ -14,7 +14,6 @@ class Modules(models.Model):
     module_code = models.SlugField(max_length=45)
     name = models.CharField(max_length=256)
     examination = models.BooleanField(default=False)
-    supervisor = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, related_name='supervised_modules')
     schedule = models.ForeignKey(Schedules, on_delete=models.CASCADE, related_name='modules')
     language = models.CharField(max_length=2, default='pl')
 
