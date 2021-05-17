@@ -108,6 +108,19 @@ class ModuleSerializer(NestedHyperlinkedModelSerializer):
             Classes.objects.create(**classes_data)
         return module
 
+    # overwrite for handling nested classes (this will not delete missing classes in data)
+    def update(self, instance, validated_data):
+        form_of_classes = validated_data.pop('form_of_classes')
+        Modules.objects.filter(pk=instance.pk).update(**validated_data)
+        for classes_data in form_of_classes:
+            classes_data['module'] = instance
+            classes = Classes.objects.filter(module=instance, name=classes_data.get('name'))
+            if classes:
+                classes.update(**classes_data)
+            else:
+                Classes.objects.create(**classes_data)
+        return Modules.objects.get(pk=instance.pk)
+
 
 class ModuleFlatSerializer(ModuleSerializer):
     class Meta:

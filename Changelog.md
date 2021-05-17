@@ -1,3 +1,12 @@
+### 16/05/2020
+
+- Employees / Removing unused fields
+- Cleanup
+- Employees / Missing migrations
+- Orders / Classes field gone write only. Added module and classes_name fields and urls for these
+- Removing unnecessary "supervisor" fields
+- Imports cleanup
+
 ### 10/05/2020
 
 - Tests / Fix for posting data tests. Deleting module's and order's tests for now. 100% pass for employees.

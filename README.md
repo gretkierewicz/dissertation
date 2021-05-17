@@ -49,14 +49,9 @@ heroku open
 
 ## Last changes
 
-### 16/05/2020
+### 17/05/2020
 
-- Employees / Removing unused fields
-- Cleanup
-- Employees / Missing migrations
-- Orders / Classes field gone write only. Added module and classes_name fields and urls for these
-- Removing unnecessary "supervisor" fields
-- Imports cleanup
+- Modules / FIX for PUT method and nested classes
 
 ### To be done:
 
