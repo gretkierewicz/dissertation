@@ -315,6 +315,9 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
                   'exams_additional_hours_url', 'exams_additional_hours',
                   # hidden
                   'schedule']
+        extra_kwargs = {
+            'basic_threshold': {'min_value': 0}
+        }
 
     parent_lookup_kwargs = {
         'schedule_slug': 'schedule__slug'
