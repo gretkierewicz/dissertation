@@ -162,7 +162,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         parent_lookup_kwargs=parent_lookup_kwargs
     )
 
-    module = CharField(source='classes.module')
+    module = CharField(source='classes.module', read_only=True)
     module_url = AdvNestedHyperlinkedIdentityField(
         view_name='modules-detail',
         lookup_field=None,
@@ -172,7 +172,7 @@ class OrdersSerializer(NestedHyperlinkedModelSerializer):
         }
     )
 
-    classes_name = CharField(source='classes.name')
+    classes_name = CharField(source='classes.name', read_only=True)
     classes_url = AdvNestedHyperlinkedIdentityField(
         view_name='classes-detail',
         lookup_field=None,
