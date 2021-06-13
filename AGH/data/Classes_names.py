@@ -10,5 +10,6 @@ CLASSES_NAMES = [
     'Prace kontrolne i przejściowe',
     'Conversation seminar',
     'Workshops',
-    'Others'
+    'Others',
+    'E-learning'
 ]
