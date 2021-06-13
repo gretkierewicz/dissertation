@@ -4,12 +4,10 @@
 import json
 import os
 
-# pensum groups
-badawczo_dydaktyczna = 'badawczo-dydaktyczna'
-dydaktyczna = 'dydaktyczna'
+from AGH.data.constants import BADAWCZO_DYDAKTYCZNA, DYDAKTYCZNA
 
 
-def get_pensum(position, group=dydaktyczna):
+def get_pensum(position, group=DYDAKTYCZNA):
     """
     Reads pensum value of Group-Position pair based on JSON data:
     data/PensumThresholds_BadawczoDydaktyczna.json and data/PensumThresholds_Dydaktyczna.json files
@@ -23,13 +21,13 @@ def get_pensum(position, group=dydaktyczna):
             os.path.join(base_path, "data/PensumThresholds_BadawczoDydaktyczna.json"), 'r', encoding='utf8'
     ) as json_file:
         for item in json.load(json_file):
-            if (position.lower() in [x.lower() for x in item.get('positions')]) and (group == badawczo_dydaktyczna):
+            if (position.lower() in [x.lower() for x in item.get('positions')]) and (group == BADAWCZO_DYDAKTYCZNA):
                 return item.get('value')
     with open(
             os.path.join(base_path, "data/PensumThresholds_Dydaktyczna.json"), 'r', encoding='utf8'
     ) as json_file:
         for item in json.load(json_file):
-            if (position.lower() in [x.lower() for x in item.get('positions')]) and (group == dydaktyczna):
+            if (position.lower() in [x.lower() for x in item.get('positions')]) and (group == DYDAKTYCZNA):
                 return item.get('value')
 
 

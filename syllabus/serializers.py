@@ -5,7 +5,7 @@ from rest_framework.fields import CharField, ChoiceField, SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import Serializer
 
-from AGH.constants import ACADEMIC_YEARS, DEPARTMENTS
+from AGH.data.constants import ACADEMIC_YEARS, DEPARTMENTS
 from schedules.models import Schedules
 
 
