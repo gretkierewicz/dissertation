@@ -26,7 +26,7 @@ SECRET_KEY = environ.get('SECRET_KEY', default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(environ.get('DEBUG', default=0))
 
-ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '.herokuapp.com'])
+ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 # Application definition
 
