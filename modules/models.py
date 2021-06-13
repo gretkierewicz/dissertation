@@ -1,7 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from AGH.data.Classes_names import CLASSES_NAMES
 from schedules.models import Schedules
 
 
@@ -55,10 +54,11 @@ class Modules(models.Model):
         return self.__return_classes_hours(name='Seminar_classes')
 
     def __return_classes_hours(self, name):
-        if name in [slug for slug, _ in Classes.NAME_CHOICES]:
+        try:
             classes = self.classes.filter(name=name).first()
             return classes.classes_hours if classes else 0
-        return None
+        except Exception as e:
+            return None
 
 
 class Classes(models.Model):
@@ -66,10 +66,8 @@ class Classes(models.Model):
         ordering = ['module', 'name']
         unique_together = (('module', 'name'),)
 
-    NAME_CHOICES = [(_, _) for _ in CLASSES_NAMES]
-
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, related_name='form_of_classes')
-    name = models.CharField(max_length=31, choices=NAME_CHOICES, default=CLASSES_NAMES[0])
+    name = models.CharField(max_length=64)
     classes_hours = models.PositiveIntegerField()
     students_limit_per_group = models.PositiveIntegerField(null=True)
 

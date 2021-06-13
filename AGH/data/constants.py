@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 # list taken from syllabus: https://syllabuskrk.agh.edu.pl/2019-2020/magnesite/api/faculties/WRONG_DEP_NAME/study_plans
 DEPARTMENTS_LOWERCASE = 'wimir, weaiiib, wgig, wimiip, wggiis, wimic, wh, wwnig, wieit, weip, wggios, wmn, wms, wfiis, ' \
                   'wz, wo, wgtjz, wiwm'.split(', ')
