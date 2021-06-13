@@ -152,7 +152,7 @@ class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
                 max_value_to_set = int(tmp)
                 reason = "Value exceeds employee's pensum additional hours limit."
 
-        if max_value_to_set:
+        if max_value_to_set is not None:
             raise ValidationError(f"Max. value possible: {max_value_to_set}."
                                   f"{' Reason: {}'.format(reason) if reason else ''}")
         return value
