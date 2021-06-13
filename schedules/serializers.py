@@ -183,7 +183,7 @@ class PensumAdditionalHoursFactorsSerializer(NestedHyperlinkedModelSerializer):
             }
             other_factors = PensumAdditionalHoursFactors.objects.filter(**filter_kwargs)
         return (
-            other_factors.exclude(pk=self.instance.pk) if self.instance else other_factors,
+            other_factors.exclude(pk=self.instance.pk) if self.instance and other_factors else other_factors,
             additional_hours_factor_data
         )
 
