@@ -76,12 +76,7 @@ class Pensum(models.Model):
 
     @property
     def limit_for_contact_hours(self):
-        ret = self.calculated_threshold
-        if self.employee.part_of_job_time < 1.0:
-            ret *= get_job_time_hours_limit("part-job contact hours limit")
-        else:
-            ret *= get_job_time_hours_limit("full-job contact hours limit")
-        return ret
+        return self.calculated_threshold * get_job_time_hours_limit("contact hours limit")
 
     @property
     def amount_until_contact_hours_limit(self):
@@ -89,7 +84,12 @@ class Pensum(models.Model):
 
     @property
     def limit_for_over_time_hours(self):
-        return self.calculated_threshold * get_job_time_hours_limit("over-time hours limit")
+        ret = self.calculated_threshold
+        if self.employee.part_of_job_time < 1.0:
+            ret *= get_job_time_hours_limit("part-time hours limit")
+        else:
+            ret *= get_job_time_hours_limit("full-time hours limit")
+        return ret
 
     @property
     def amount_until_over_time_hours_limit(self):

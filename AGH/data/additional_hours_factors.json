@@ -18,17 +18,17 @@
   ],
   "job-time hours limits": [
     {
-      "factor ID": "part-job contact hours limit",
-      "factor description": "§54/16 limit/etat dla części etatu",
-      "value": 1.5
-    },
-    {
-      "factor ID": "full-job contact hours limit",
+      "factor ID": "contact hours limit",
       "factor description": "§54/13 limit/etat dla pełnego etatu (godz. żywe)",
       "value": 1.7
     },
     {
-      "factor ID": "over-time hours limit",
+      "factor ID": "part-time hours limit",
+      "factor description": "§54/16 limit/etat dla części etatu",
+      "value": 1.5
+    },
+    {
+      "factor ID": "full-time hours limit",
       "factor description": "§54/13 limit/etat dla pełnego etatu",
       "value": 2.0
     }
