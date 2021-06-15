@@ -96,6 +96,9 @@ class Pensum(models.Model):
         return (self.limit_for_over_time_hours - self.pensum_contact_hours - self.pensum_additional_hours
                 + self.pensum_additional_hours_not_counted_into_limit).__round__(2)
 
+    def plans(self):
+        return self.employee.plans.filter(order__classes__module__schedule=self.schedule)
+
 
 class PensumBasicThresholdFactors(models.Model):
     ADD = 'Addition'

@@ -364,7 +364,7 @@ class PensumSerializer(NestedHyperlinkedModelSerializer):
     )
     reduction = PensumReductionSerializer(read_only=True)
 
-    plans = EmployeePlansSerializer(many=True, read_only=True, source='employee.plans')
+    plans = EmployeePlansSerializer(many=True, read_only=True)
 
     additional_hours_factors_url = AdvNestedHyperlinkedIdentityField(
         view_name='pensum-additional_hours_factors-list',
