@@ -53,10 +53,12 @@ modules_router.register(r'classes', modules_views.ClassViewSet, basename='classe
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/
 # /schedules/{schedule_slug}/modules/{module_module_code}/classes/{name}
 classes_order_paths = [
-    re_path(r'^schedules/(?P<schedule_slug>[^/.]+)/modules/(?P<module_module_code>[^/.]+)/'
-            r'classes/(?P<classes_name>[^/.]+)/order/$',
+    re_path(r'^schedules/(?P<schedule_slug>[^/.]+)/modules/'
+            r'(?P<module_module_code>[^/.]+)/classes/'
+            r'(?P<classes_name>[^/.]+)/order/$',
             orders_views.OrderDetailViewSet.as_view({
-                # request's method name relation with ViewSet's method name (custom create_or_update method)
+                # request's method name relation with ViewSet's
+                # method name (custom create_or_update method)
                 'get': 'retrieve',
                 'put': 'create_or_update',
                 'patch': 'partial_update',

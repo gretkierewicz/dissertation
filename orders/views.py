@@ -17,7 +17,8 @@ class OrdersViewSet(GenericViewSet,
 
 
 class OrderDetailViewSet(OneToOneRelationViewSet):
-    # with NestedViewSetMixin get_queryset is overridden to include Serializer's parent_lookup_kwargs
+    # with NestedViewSetMixin get_queryset is overridden
+    # to include serializer's parent_lookup_kwargs
     queryset = Orders.objects.all()
     serializer_class = ClassesOrderSerializer
 

@@ -93,7 +93,8 @@ DATABASES = environ.get(
 
 # get database url from env vars and update DB connection with it
 DATABASE_URL = environ.get('DATABASE_URL')
-db_from_env = dj_database_url.config(default=DATABASE_URL, conn_max_age=500, ssl_require=True)
+db_from_env = dj_database_url.config(
+    default=DATABASE_URL, conn_max_age=500, ssl_require=True)
 DATABASES['default'].update(db_from_env)
 
 # Password validation

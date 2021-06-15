@@ -9,16 +9,19 @@ def remove_polish_chars(s: str) -> str:
 
 
 class AdvNestedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
+    """
+    NestedHyperlinkedIdentityField that allows null lookup_field.
+    It simplifies creation of OneToOne relation hyper-links,
+    where only parent's kwargs are passed and simplifies creation
+    of other types of fields
+    """
     def get_url(self, obj, view_name, request, format):
-        """
-        NestedHyperlinkedIdentityField that allows null lookup_field.
-        It simplifies creation of OneToOne relation hyper-links, where only parent's kwargs are passed.
-        """
         if hasattr(obj, 'pk') and obj.pk in (None, ''):
             return None
 
         try:
-            # default lookup from rest_framework.relations.HyperlinkedRelatedField
+            # default lookup from
+            # rest_framework.relations.HyperlinkedRelatedField
             lookup_value = getattr(obj, self.lookup_field)
             kwargs = {self.lookup_url_kwarg: lookup_value}
         except Exception:
@@ -46,10 +49,12 @@ class AdvNestedHyperlinkedIdentityField(NestedHyperlinkedIdentityField):
 
 class ParentHiddenRelatedField(HiddenField):
     """
-    Hidden Field that returns parent object pointed with URL or passed with serializer's data
+    Hidden Field that returns parent object pointed with URL
+    or passed with serializer's data
 
     params: queryset - queryset to find instance with
-    params: parent_lookup_kwargs - parent's lookup URL kwargs names (keys) and fields (values)
+    params: parent_lookup_kwargs - parent's lookup URL kwargs names
+    (keys) and fields (values)
     return: model instance
     """
 
@@ -61,16 +66,20 @@ class ParentHiddenRelatedField(HiddenField):
         super().__init__(**kwargs)
 
     def get_value(self, dictionary):
-        # in case of bulk data sent return instance hidden under field's name
-        # instance needs to be set up in parent's create/update methods
-        if dictionary.get(self.field_name) and (dictionary.get(self.field_name) in self.queryset):
+        # in case of bulk data sent, return instance hidden under
+        # field's name. Instance needs to be set up in parent's
+        # create/update methods
+        if dictionary.get(self.field_name) and (
+                dictionary.get(self.field_name) in self.queryset):
             return dictionary.get(self.field_name)
         # update data forwarded to the to_internal_value() method
         filter_kwargs = {}
         for key, value in self.parent_lookup_kwargs.items():
-            # get slug from URL resolver - needs to match parent_lookup_kwargs's names!
+            # get slug from URL resolver
+            # needs to match parent_lookup_kwargs's names!
             if self.context.get('request'):
-                filter_kwargs[value] = self.context.get('request').resolver_match.kwargs.get(key)
+                filter_kwargs[value] = self.context.get(
+                    'request').resolver_match.kwargs.get(key)
         return self.queryset.filter(**filter_kwargs).first()
 
     def to_internal_value(self, data):
