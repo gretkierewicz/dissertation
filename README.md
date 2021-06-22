@@ -1,6 +1,6 @@
 # Dissertation work
 
-The use of the Django framework for the purpose of supporting the KRIM teaching load planning.\
+The use of the Python language for the purpose of supporting the KRIM teaching load planning.\
 Project developed with **Python v3.8.6** (changed from Python v3.6.7)
 
 ## Test-site
