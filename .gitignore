@@ -7,3 +7,4 @@ public
 static
 staticfiles
 *.bak
+migrations/
